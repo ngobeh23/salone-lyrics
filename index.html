@@ -1429,7 +1429,7 @@ function songRow(s,i){
   return `<li class="songrow"><span class="num tnum" aria-hidden="true">${String(i+1).padStart(2,"0")}</span><span class="sr-main"><a class="t stretch" href="#song.${s.slug}">${esc(s.title)}</a><br><span class="a">${who}</span></span><span class="meta">${esc(s.genre)} · ${esc(s.type)} · ${esc(s.year||"—")}</span><span class="go" aria-hidden="true">${s.demo?"Read demo":"View song"}</span></li>`;
 }
 function artistCard(a,i,tag="h3"){
-  return `<a class="acard reveal" href="#artist.${a.slug}"><div class="portrait panel ${panelCls(i)} grain"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"(min-width:1200px) 16vw, (min-width:768px) 24vw, 45vw",alt:""})}</div><div class="row"><${tag}>${esc(a.name)}</${tag}></div><p>${esc(a.genre)} · ${esc(a.town)}</p>${a.hot?`<div class="row"><span class="tag tag-hot">#${a.hot} Hottest 2025</span></div>`:a.pending?`<div class="row"><span class="tag tag-example">Profile in progress</span></div>`:""}</a>`;
+  return `<a class="acard reveal" href="#artist.${a.slug}"><div class="portrait panel ${panelCls(i)} grain"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"(min-width:1200px) 16vw, (min-width:768px) 24vw, 45vw",alt:""})}</div><div class="row"><${tag}>${esc(a.name)}</${tag}></div><p>${esc(a.genre)} · ${esc(a.town)}</p>${a.pending?`<div class="row"><span class="tag tag-example">Profile in progress</span></div>`:""}</a>`;
 }
 function evRow(e){
   const d=parse(e.date), st=evStatus(e), off=st==="cancelled"||st==="postponed";
@@ -1502,9 +1502,7 @@ VIEWS.home = () => {
     <div class="hero-art panel grain" data-hero data-c="0" aria-roledescription="carousel" aria-label="Featured artists">
       <span class="grooves spin" aria-hidden="true"></span>
       <div class="hero-stack floaty">${heroes.map((a,i)=>`<div class="hero-slide ${i===0?"on":""}" aria-hidden="${i!==0}">${portrait(a,{eager:i<2,cls:"cut cut-shadow",sizes:"(min-width:900px) 45vw, 80vw",alt:a.name})}</div>`).join("")}</div>
-      <a class="hero-chip" href="#artist.${hero.slug}" data-hero-chip><span class="dot" aria-hidden="true"></span><span data-hero-name>${esc(hero.name)} · #${hero.hot} Hottest 2025</span></a>
       <div class="hero-ctrl"><button type="button" class="hero-pp" data-hero-pp aria-pressed="false" aria-label="Pause artist slideshow">Pause</button><span class="hero-dots">${heroes.map((a,i)=>`<button type="button" data-hero-go="${i}" aria-label="Show ${esc(a.name)}" aria-current="${i===0}"></button>`).join("")}</span></div>
-      <p class="credit" data-hero-credit>${credSource(hero.photo)}: <a href="${P[hero.photo].page}" target="_blank" rel="noopener">${esc(P[hero.photo].by)}</a></p>
     </div>
   </div>
   <div class="stats wrap" aria-label="On Salone Lyrics">
@@ -1603,13 +1601,12 @@ VIEWS.home = () => {
 };
 function heroCycle(root, heroes){
   const box=$("[data-hero]",root); if(!box) return;
-  const slides=$$(".hero-slide",box), dots=$$("[data-hero-go]",box), pp=$("[data-hero-pp]",box), chip=$("[data-hero-chip]",box), nm=$("[data-hero-name]",box), cr=$("[data-hero-credit]",box);
+  const slides=$$(".hero-slide",box), dots=$$("[data-hero-go]",box), pp=$("[data-hero-pp]",box);
   let i=0, timer=null, paused=REDUCED;
   const show=n=>{ i=(n+slides.length)%slides.length; const a=heroes[i];
     slides.forEach((s,k)=>{ s.classList.toggle("on",k===i); s.setAttribute("aria-hidden",k!==i); });
     dots.forEach((d,k)=>d.setAttribute("aria-current",k===i));
-    box.dataset.c=i%4; chip.href="#artist."+a.slug; nm.textContent=`${a.name}${a.hot?" · #"+a.hot+" Hottest 2025":""}`;
-    cr.innerHTML=`${credSource(a.photo)}: <a href="${P[a.photo].page}" target="_blank" rel="noopener">${esc(P[a.photo].by)}</a>`; };
+    box.dataset.c=i%4; };
   const start=()=>{ clearInterval(timer); if(!paused) timer=setInterval(()=>show(i+1),4200); };
   dots.forEach((d,k)=>d.addEventListener("click",()=>{ show(k); start(); }));
   pp.addEventListener("click",()=>{ paused=!paused; pp.setAttribute("aria-pressed",paused); pp.textContent=paused?"Play":"Pause"; pp.setAttribute("aria-label",(paused?"Play":"Pause")+" artist slideshow"); start(); });
@@ -1775,7 +1772,7 @@ VIEWS.artist = r => {
   return { title:a.name, html:`
   <header class="a-hero grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">
     <div class="txt stack">${crumbs([["Home","#"],["Artists","#artists"],[a.name]])}
-      <div class="facts">${a.hot?`<span class="tag tag-hot">#${a.hot} Hottest 2025</span>`:""}<span class="tag tag-dark">${esc(a.genre)}</span><span class="tag tag-dark">${esc(a.town)}</span>${a.pending?'<span class="tag tag-amber">Profile in progress</span>':""}</div>
+      <div class="facts"><span class="tag tag-dark">${esc(a.genre)}</span><span class="tag tag-dark">${esc(a.town)}</span>${a.pending?'<span class="tag tag-amber">Profile in progress</span>':""}</div>
       <h1 class="display">${esc(a.name)}</h1>${a.aka?`<p class="aka">Also known as ${esc(a.aka)}</p>`:""}<p class="intro">${esc(a.intro)}</p>
       <div class="row-wrap on-dark"><a class="btn btn-green" href="#artist.${a.slug}.music">Songs</a><a class="btn btn-ghost" style="color:#fff" href="#artist.${a.slug}.videos">Watch</a></div>
     </div>
@@ -2139,7 +2136,7 @@ function openPeek(slug,btn){
   const a=artist(slug), pk=$("#peek"); if(!a) return; peekOpener=btn;
   const songs=SONGS().filter(s=>s.artist===a.slug).slice(0,3);
   $("#peek-body").innerHTML=`<div class="peek-img panel ${panelCls(D.artists.indexOf(a))}"><span class="grooves spin" aria-hidden="true"></span>${portrait(a,{sizes:"280px",eager:true})}</div>
-    <div class="peek-txt"><div class="row-wrap" style="gap:6px">${a.hot?`<span class="tag tag-hot">#${a.hot} Hottest 2025</span>`:""}<span class="tag">${esc(a.genre)}</span></div>
+    <div class="peek-txt"><div class="row-wrap" style="gap:6px"><span class="tag">${esc(a.genre)}</span></div>
     <h2 id="peek-title" class="display">${esc(a.name)}</h2><p>${esc(a.intro)}</p>
     ${songs.length?`<p class="peek-songs"><strong>Songs:</strong> ${songs.map(s=>`<a class="link" href="#song.${s.slug}">${esc(s.title)}</a>`).join(", ")}</p>`:""}
     <div class="row-wrap"><a class="btn btn-primary btn-sm" href="#artist.${a.slug}">View profile</a></div>${a.photo?credit(a.photo):""}</div>`;
