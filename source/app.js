@@ -202,7 +202,7 @@ VIEWS.home = () => {
   <section class="hero-shell" aria-labelledby="hero-h"><div class="hero">
     <div class="hero-copy">
       <p class="eyebrow" style="color:var(--blue-deep)">Kushe! Welcome to Salone Lyrics</p>
-      <h1 id="hero-h" class="display"><span>Salone</span><span>music.</span><span class="accent">Every word.</span></h1>
+      <h1 id="hero-h" class="display hero-title"><span class="sr">Salone music. Every word.</span>${heroTitle(["Salone","music.","Every word."])}</h1>
       <p class="hero-lede">Discover the lyrics, artists and stories shaping Sierra Leone’s sound.</p>
       <form class="hero-search" role="search" data-hero-search><label for="hero-q" class="sr">Search songs, lyrics, artists or events</label><input id="hero-q" type="search" placeholder="Search songs, lyrics, artists or events…" autocomplete="off"><button type="submit">Search</button></form>
       <div class="hero-actions"><a class="btn btn-primary" href="#lyrics">Explore Lyrics</a><a class="btn btn-ghost" href="#artists">Discover Artists</a></div>
@@ -269,10 +269,10 @@ VIEWS.home = () => {
   </div></section>
 
   <section class="section" style="background:#fff" aria-labelledby="st-h"><div class="wrap">
-    <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Stories &amp; interviews</p><h2 id="st-h" class="display sec-title">From the newsroom</h2></div><a class="arrow-link" href="#news">All stories</a></div>
-    <div class="stories">
-      <a class="story-feature reveal" href="#story.${feat.slug}"><div class="art panel panel-blue grain"><span class="grooves spin" aria-hidden="true"></span>${pic(feat.photo,{alt:"",sizes:"(min-width:900px) 35vw, 60vw"})}</div><div class="body"><span class="cat">${esc(feat.cat)}</span><h3>${esc(feat.title)}</h3><p>${esc(feat.summary)}</p><p class="date">${fmt(feat.date)}</p></div></a>
-      <ul class="story-list">${rest.map(storyItem).join("")}</ul>
+    <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Stories &amp; interviews</p><h2 id="st-h" class="display sec-title">From the newsroom</h2></div><div class="row-wrap"><button type="button" class="chip" data-news-pp aria-pressed="false" aria-label="Pause newsroom stories">Pause</button><a class="arrow-link" href="#news">All stories</a></div></div>
+    <div class="stories" data-news>
+      <a class="story-feature reveal" href="#story.${feat.slug}" data-news-feat>${featBody(feat)}</a>
+      <ul class="story-list" data-news-list>${rest.map(storyItem).join("")}</ul>
     </div>
   </div></section>
 
@@ -304,9 +304,34 @@ VIEWS.home = () => {
     draw();
     $$("[data-rel]",main).forEach(b=>b.addEventListener("click",()=>{S.rel=b.dataset.rel; $$("[data-rel]",main).forEach(x=>x.setAttribute("aria-pressed",x===b)); draw();}));
     $("[data-hero-search]",main).addEventListener("submit",e=>{e.preventDefault(); openSearch($("#hero-q").value);});
-    railControls(main); bindVideos(main); bindSvcLinks(main); heroCycle(main, heroes); artistMarquee(main);
+    railControls(main); bindVideos(main); bindSvcLinks(main); heroCycle(main, heroes); artistMarquee(main); newsCycle(main);
   }};
 };
+function heroTitle(lines){
+  let k=0;
+  return lines.map((t,l)=>`<span class="ln${l===lines.length-1?" accent":""}" aria-hidden="true">${t.split(" ").map(w=>`<span class="w">${[...w].map(c=>`<span class="ch" style="--k:${k++}">${esc(c)}</span>`).join("")}</span>`).join(" ")}</span>`).join("");
+}
+function featBody(f){
+  return `<div class="art panel panel-blue grain"><span class="grooves spin" aria-hidden="true"></span>${pic(f.photo,{alt:"",sizes:"(min-width:900px) 35vw, 60vw"})}</div><div class="body"><span class="news-bar" aria-hidden="true"></span><span class="cat">${esc(f.cat)}</span><h3>${esc(f.title)}</h3><p>${esc(f.summary)}</p><p class="date">${fmt(f.date)}${f.sample?" · Sample":""}</p></div>`;
+}
+function newsCycle(root){
+  const box=$("[data-news]",root), pp=$("[data-news-pp]",root); if(!box||!pp) return;
+  const feat=$("[data-news-feat]",box), list=$("[data-news-list]",box), all=D.articles, MS=6500;
+  let i=0, timer=null, paused=REDUCED, held=false;
+  const draw=()=>{ const f=all[i];
+    feat.href="#story."+f.slug; feat.innerHTML=featBody(f);
+    list.innerHTML=[1,2,3].map(k=>storyItem(all[(i+k)%all.length],k-1).replace("story-item reveal","story-item reveal in")).join("");
+    box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap"); };
+  const start=()=>{ clearInterval(timer); const stop=paused||held; box.classList.toggle("held",stop); if(stop) return;
+    const bar=$(".news-bar",feat); if(bar){ bar.style.animation="none"; void bar.offsetWidth; bar.style.animation=""; }
+    timer=setInterval(()=>{ i=(i+1)%all.length; draw(); },MS); };
+  const hold=v=>()=>{ held=v; start(); };
+  box.addEventListener("mouseenter",hold(true)); box.addEventListener("mouseleave",hold(false));
+  box.addEventListener("focusin",hold(true)); box.addEventListener("focusout",hold(false));
+  pp.addEventListener("click",()=>{ paused=!paused; pp.setAttribute("aria-pressed",paused); pp.textContent=paused?"Play":"Pause"; pp.setAttribute("aria-label",(paused?"Play":"Pause")+" newsroom stories"); start(); });
+  if(paused){ pp.setAttribute("aria-pressed","true"); pp.textContent="Play"; }
+  cleanup.push(()=>clearInterval(timer)); start();
+}
 function heroCycle(root, heroes){
   const box=$("[data-hero]",root); if(!box) return;
   const slides=$$(".hero-slide",box), dots=$$("[data-hero-go]",box), pp=$("[data-hero-pp]",box);
@@ -317,7 +342,7 @@ function heroCycle(root, heroes){
     box.dataset.c=i%4; };
   const start=()=>{ clearInterval(timer); if(!paused) timer=setInterval(()=>show(i+1),4200); };
   dots.forEach((d,k)=>d.addEventListener("click",()=>{ show(k); start(); }));
-  pp.addEventListener("click",()=>{ paused=!paused; pp.setAttribute("aria-pressed",paused); pp.textContent=paused?"Play":"Pause"; pp.setAttribute("aria-label",(paused?"Play":"Pause")+" artist slideshow"); start(); });
+  pp.addEventListener("click",()=>{ paused=!paused; box.closest(".hero").classList.toggle("still",paused); pp.setAttribute("aria-pressed",paused); pp.textContent=paused?"Play":"Pause"; pp.setAttribute("aria-label",(paused?"Play":"Pause")+" artist slideshow"); start(); });
   if(paused){ pp.setAttribute("aria-pressed","true"); pp.textContent="Play"; }
   box.addEventListener("focusin",()=>clearInterval(timer)); box.addEventListener("focusout",start);
   cleanup.push(()=>clearInterval(timer)); start();

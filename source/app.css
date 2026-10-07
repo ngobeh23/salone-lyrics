@@ -882,3 +882,32 @@ li.songrow:hover .go::after{transform:translateX(4px)}
 .face-sil{width:52%;max-width:150px;height:auto;color:rgba(255,255,255,.85)}
 .panel-green .face-sil,.panel-paper .face-sil{color:rgba(23,33,38,.7)}
 h1[tabindex="-1"]:focus{outline:none}
+
+/* ---------- Home: animated hero title ---------- */
+.hero-title .w{display:inline-block;white-space:nowrap}
+.hero-title .ch{display:inline-block;animation:ch-rise .7s var(--ease) both;animation-delay:calc(var(--k) * 45ms + 120ms)}
+.hero-title .accent .ch{animation:ch-rise .7s var(--ease) both,ch-wave 6s ease-in-out infinite;animation-delay:calc(var(--k) * 45ms + 120ms),calc(var(--k) * 60ms + 2s)}
+.hero.still .hero-title .ch{animation-play-state:paused}
+.hero-copy>:not(h1){animation:fade-up .7s var(--ease) both}
+.hero-copy>:nth-child(3){animation-delay:850ms}
+.hero-copy>:nth-child(4){animation-delay:950ms}
+.hero-copy>:nth-child(5){animation-delay:1050ms}
+@keyframes ch-rise{from{opacity:0;transform:translateY(.5em) rotate(8deg)}to{opacity:1;transform:none}}
+@keyframes ch-wave{0%,14%,100%{transform:none}7%{transform:translateY(-.14em)}}
+@keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ---------- Home: rotating newsroom ---------- */
+.story-feature .body{position:relative}
+.news-bar{position:absolute;left:0;top:0;height:3px;width:100%;background:var(--green);transform-origin:left;transform:scaleX(0);animation:news-bar 6.5s linear forwards}
+.held .news-bar{animation-play-state:paused}
+.swap .story-feature .art picture{animation:news-in .6s var(--ease) both}
+.swap .story-feature .body>:not(.news-bar){animation:fade-up .5s var(--ease) both}
+.swap .story-feature .body>:nth-child(3){animation-delay:60ms}
+.swap .story-feature .body>:nth-child(4){animation-delay:120ms}
+.swap .story-feature .body>:nth-child(5){animation-delay:180ms}
+.swap .story-list li{animation:fade-up .5s var(--ease) both}
+.swap .story-list li:nth-child(2){animation-delay:90ms}
+.swap .story-list li:nth-child(3){animation-delay:180ms}
+@keyframes news-bar{to{transform:scaleX(1)}}
+@keyframes news-in{from{opacity:0;transform:translateX(24px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hero-title .ch,.hero-copy>*,.swap .story-feature *,.swap .story-list li{animation:none!important}.news-bar{display:none}}
