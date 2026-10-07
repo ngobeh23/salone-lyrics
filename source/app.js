@@ -259,7 +259,7 @@ VIEWS.home = () => {
   <div class="wrap">
   </div></section>
 
-  ${marquee(["Afrobeats","Hip-hop","Afropop","R&B","Gumbe","Afro-soul","Highlife"],"mq-skew")}
+  ${marquee(["Afrobeats","Hip-hop","Afropop","R&B","Gumbe","Krio Fusion","Afro-Rudeness","Bubu","Milo Jazz","Palm Wine","Afro-soul","Highlife"],"mq-skew")}
 
   <section class="section" aria-labelledby="ev-h"><div class="wrap">
     <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Events</p><h2 id="ev-h" class="display sec-title">Upcoming events</h2></div><a class="btn btn-ghost btn-sm" href="#events">View all events</a></div>
