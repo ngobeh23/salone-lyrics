@@ -50,7 +50,7 @@ function portrait(a,opts={}){
   return `<span class="type-portrait" aria-hidden="true">${FACE}<span class="nm">${esc(a.name)}</span><span class="pend">${a.pending?"Profile in progress":"Photo coming soon"}</span></span>`;
 }
 const FACE='<svg class="face-sil" viewBox="0 0 120 140" aria-hidden="true"><circle cx="60" cy="48" r="30" fill="currentColor"/><path d="M8 140c4-34 26-52 52-52s48 18 52 52z" fill="currentColor"/></svg>';
-const credit = (key,pre="") => { const p=P[key]; return p?`<p class="credit">${pre}${credSource(key)}: ${p.page?`<a href="${p.page}" target="_blank" rel="noopener">${esc(p.by)}</a>`:esc(p.by)}</p>`:""; };
+const credit = () => ""; // photo credits are kept in asset-manifest.csv, not shown on the site
 const panelCls = i => ["panel-blue","panel-charcoal","panel-green","panel-paper"][i%4];
 function ttile(r){
   const a=artist(r.artist);
@@ -60,7 +60,7 @@ function ttile(r){
 const normT = t => String(t).toLowerCase().replace(/[^a-z0-9]/g,"");
 function trackList(rel){
   const rows=rel.tracklist.map(([t,f],i)=>{ const s=SONGS().find(x=>(x.artist===rel.artist||x.featA===rel.artist)&&normT(x.title)===normT(t));
-    return `<li><span class="num tnum" aria-hidden="true">${String(i+1).padStart(2,"0")}</span><span class="tt">${s?`<a href="#song.${s.slug}">${esc(t)}</a>`:esc(t)}${f?` <span class="ft">feat. ${esc(f)}</span>`:""}</span>${s?`<a class="go" href="#song.${s.slug}" aria-hidden="true" tabindex="-1">View song</a>`:""}</li>`; }).join("");
+    return `<li><span class="num tnum" aria-hidden="true">${String(i+1).padStart(2,"0")}</span><span class="tt">${s?`<a href="#song.${s.slug}">${esc(t)}</a>`:esc(t)}${f?` <span class="ft">feat. ${esc(f)}</span>`:""}</span>${s?`<a class="go" href="#song.${s.slug}" aria-hidden="true" tabindex="-1">View Lyrics</a>`:""}</li>`; }).join("");
   return `<ol class="tracklist">${rows}</ol>${rel.tracklistSource?`<p class="paid-note">${rel.tracklist.length} tracks. Tracklist from <a class="link" href="${rel.tracklistSource}" target="_blank" rel="noopener">Apple Music</a>.</p>`:""}`;
 }
 function relArt(r,alt=""){
@@ -131,7 +131,7 @@ function render(){
   const r=route(); const view=VIEWS[r.name]||VIEWS.notfound; const main=$("#main");
   let out; try{ out=view(r); }catch(e){ console.error(e); out=VIEWS.notfound(r); }
   main.innerHTML=out.html; document.title=out.title?`${out.title} | Salone Lyrics`:"Salone Lyrics";
-  const sec={song:"lyrics",release:"lyrics",artist:"artists",story:"news",event:"events"}[r.name]||r.name;
+  const sec={song:"lyrics",release:"lyrics",artist:"artists",story:"stories",news:"stories",event:"events"}[r.name]||r.name;
   $$(".mainnav a").forEach(a=>{ const n=a.getAttribute("href").slice(1); if(n===sec) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   if(out.after) out.after(main);
   if(S.fromSearch && ["song","artist","story","event"].includes(r.name)){ const b=document.createElement("div"); b.className="wrap"; b.style.paddingTop="16px"; b.innerHTML=`<button class="back-results" type="button">${ICON.left} Back to results for “${esc(S.search.lastQ||"suggestions")}”</button>`; main.prepend(b); $(".back-results",b).addEventListener("click",()=>openSearch(S.search.lastQ)); }
@@ -147,7 +147,7 @@ function byline(s){ const a=artist(s.artist); return `${esc(a.name)}${s.feat?` f
 const peekBtn = (slug,label) => { const a=artist(slug); return a&&!a.hidden?`<button type="button" class="peek" data-peek="${a.slug}" aria-haspopup="dialog">${esc(label||a.name)}</button>`:esc(label||""); };
 function songRow(s,i){
   const who = s.demo ? "Salone Lyrics demo" : `${peekBtn(s.artist)}${s.feat?` feat. ${s.featA?peekBtn(s.featA,s.feat):esc(s.feat)}`:""}`;
-  return `<li class="songrow"><span class="num tnum" aria-hidden="true">${String(i+1).padStart(2,"0")}</span><span class="sr-main"><a class="t stretch" href="#song.${s.slug}">${esc(s.title)}</a><br><span class="a">${who}</span></span><span class="meta">${esc(s.genre)} · ${esc(s.type)} · ${esc(s.year||"—")}</span><span class="go" aria-hidden="true">${s.demo?"Read demo":"View song"}</span></li>`;
+  return `<li class="songrow"><span class="num tnum" aria-hidden="true">${String(i+1).padStart(2,"0")}</span><span class="sr-main"><a class="t stretch" href="#song.${s.slug}">${esc(s.title)}</a><br><span class="a">${who}</span></span><span class="meta">${esc(s.genre)} · ${esc(s.type)} · ${esc(s.year||"—")}</span><span class="go" aria-hidden="true">${s.demo?"Read demo":"View Lyrics"}</span></li>`;
 }
 function artistCard(a,i,tag="h3"){
   return `<a class="acard reveal" href="#artist.${a.slug}"><div class="portrait panel ${panelCls(i)} grain"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"(min-width:1200px) 16vw, (min-width:768px) 24vw, 45vw",alt:""})}</div><div class="row"><${tag}>${esc(a.name)}</${tag}></div><p>${esc(a.genre)} · ${esc(a.town)}</p>${a.pending?`<div class="row"><span class="tag tag-example">Profile in progress</span></div>`:""}</a>`;
@@ -255,12 +255,12 @@ VIEWS.home = () => {
       <p class="lede">${esc(spot.intro)}</p>
       <dl class="spot-facts"><div><dt>Genre</dt><dd>${esc(spot.genre)}</dd></div><div><dt>Based in</dt><dd>${esc(spot.town)}</dd></div>${spot.label?`<div><dt>Label</dt><dd>${esc(spot.label)}</dd></div>`:""}</dl>
       <div class="row-wrap"><a class="btn btn-primary" href="#artist.${spot.slug}">Meet the Artist</a>${spotSongs[0]?`<a class="arrow-link" href="#song.${spotSongs[0].slug}">“${esc(spotSongs[0].title)}”</a>`:""}</div>
-      ${credit(spot.photo).replace('class="credit"','class="credit" style="color:var(--charcoal)"')}
+      
     </div>
   </section>
 
   <section class="section" aria-labelledby="rel-h"><div class="wrap">
-    <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Music</p><h2 id="rel-h" class="display sec-title">Releases</h2></div>
+    <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Albums &amp; EPs</p><h2 id="rel-h" class="display sec-title">Releases</h2></div>
       <div class="chips" role="group" aria-label="Filter releases">${["All","EPs","Albums"].map(f=>`<button type="button" class="chip" data-rel="${f}" aria-pressed="${S.rel===f}">${f}</button>`).join("")}</div></div>
     <div class="rel-grid" id="rel-grid" aria-live="polite"></div>
     <p class="paid-note">Typographic tiles stand in where cover artwork has not been supplied yet.</p>
@@ -284,7 +284,7 @@ VIEWS.home = () => {
   </div></section>
 
   <section class="section" style="background:#fff" aria-labelledby="st-h"><div class="wrap">
-    <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Stories &amp; interviews</p><h2 id="st-h" class="display sec-title">From the newsroom</h2></div><div class="row-wrap"><button type="button" class="chip" data-news-pp aria-pressed="false" aria-label="Pause newsroom stories">Pause</button><a class="arrow-link" href="#news">All stories</a></div></div>
+    <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Artist spotlights &amp; features</p><h2 id="st-h" class="display sec-title">Stories</h2></div><div class="row-wrap"><button type="button" class="chip" data-news-pp aria-pressed="false" aria-label="Pause stories">Pause</button><a class="arrow-link" href="#stories">All stories</a></div></div>
     <div class="stories" data-news>
       <a class="story-feature reveal" href="#story.${feat.slug}" data-news-feat>${featBody(feat)}</a>
       <ul class="story-list" data-news-list>${rest.map(storyItem).join("")}</ul>
@@ -305,7 +305,7 @@ VIEWS.home = () => {
       <p>Profiles, featured releases, Weekly Spotlight, event listings and social campaigns across the website, Instagram and TikTok.</p>
       <div class="row-wrap"><a class="btn btn-green" href="#promote">Explore Promotion Options</a></div>
     </div>
-    <div class="promo-art panel"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${pic("singer-hat",{cls:"cut cut-outline",sizes:"(min-width:900px) 40vw, 90vw"})}</div><div class="promo-cred">${credit("singer-hat","Illustrative image. ")}</div></div>
+    <div class="promo-art panel"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${pic("singer-hat",{cls:"cut cut-outline",sizes:"(min-width:900px) 40vw, 90vw"})}</div></div>
   </section>
 
   <section class="section" aria-labelledby="team-h"><div class="wrap">
@@ -343,7 +343,7 @@ function newsCycle(root){
   const hold=v=>()=>{ held=v; start(); };
   box.addEventListener("mouseenter",hold(true)); box.addEventListener("mouseleave",hold(false));
   box.addEventListener("focusin",hold(true)); box.addEventListener("focusout",hold(false));
-  pp.addEventListener("click",()=>{ paused=!paused; pp.setAttribute("aria-pressed",paused); pp.textContent=paused?"Play":"Pause"; pp.setAttribute("aria-label",(paused?"Play":"Pause")+" newsroom stories"); start(); });
+  pp.addEventListener("click",()=>{ paused=!paused; pp.setAttribute("aria-pressed",paused); pp.textContent=paused?"Play":"Pause"; pp.setAttribute("aria-label",(paused?"Play":"Pause")+" stories"); start(); });
   if(paused){ pp.setAttribute("aria-pressed","true"); pp.textContent="Play"; }
   cleanup.push(()=>clearInterval(timer)); start();
 }
@@ -372,8 +372,8 @@ function bindSvcLinks(root){ $$("[data-svc]",root).forEach(a=>a.addEventListener
 /* ================= LYRICS INDEX ================= */
 VIEWS.lyrics = () => {
   const genres=["All",...new Set(SONGS().map(s=>s.genre))];
-  return { title:"Lyrics & Music", html:`
-  <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Lyrics & Music"]])}<h1 class="display">Lyrics &amp; music</h1><p>Songs from Sierra Leone’s artists, with credits and links. Lyrics appear once each artist approves them.</p></div></header>
+  return { title:"Lyrics", html:`
+  <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Lyrics"]])}<h1 class="display">Lyrics</h1><p>Find and read the lyrics to Sierra Leonean songs, with credits and links to listen.</p></div></header>
   <div class="wrap page">
     <div class="notice notice-info reveal" style="margin-bottom:24px"><strong>See how a lyrics page works</strong><span>Real lyrics are added with artist approval. Meanwhile, <a class="link" href="#song.lyric-reader-demo">open the lyric reader demo</a> to try text size, focus mode, auto-scroll and translations.</span></div>
     <div class="filterbar" role="search">
@@ -396,6 +396,16 @@ VIEWS.lyrics = () => {
 };
 
 /* ================= SONG ================= */
+const PLAT=[["youtube","YouTube"],["youtubeMusic","YouTube Music"],["spotify","Spotify"],["appleMusic","Apple Music"],["audiomack","Audiomack"],["boomplay","Boomplay"],["amazonMusic","Amazon Music"],["deezer","Deezer"],["tidal","Tidal"]];
+function artistProfiles(a){ const m={}; (a.links||[]).forEach(([l,u])=>{ const [p,rest]=l.split(" — "); const hit=PLAT.find(([,n])=>n===p); if(hit&&rest&&/artist/i.test(rest)&&!m[hit[0]]) m[hit[0]]=u; }); return m; }
+function listenBlock(s,a){
+  const L=(s.listen&&s.listen.links)||{}, prof=artistProfiles(a), e=s.listen&&s.listen.embed;
+  // direct song links first, then artist profiles for platforms without a verified song link
+  const btns=PLAT.map(([k,n])=>L[k]?`<a class="btn btn-ghost btn-sm" href="${L[k]}" target="_blank" rel="noopener">Listen on ${n}<span class="sr"> (opens in a new tab)</span></a>`:"").join("")+PLAT.map(([k,n])=>!L[k]&&prof[k]?`<a class="btn btn-ghost btn-sm" href="${prof[k]}" target="_blank" rel="noopener">Visit Artist on ${n}<span class="sr"> (opens in a new tab)</span></a>`:"").join("");
+  const player=e?`<div class="player" data-src="${e.src}" data-h="${e.h}" data-title="${esc(s.title)} on ${esc(e.name)}"><button class="btn btn-primary btn-sm" type="button" data-play-embed>${ICON.play}<span>Play while you read</span></button><span class="player-note">Official recording on ${esc(e.name)}. Without an ${esc(e.name)} sign-in, it may play a preview.</span></div>`:"";
+  return `<section class="listen-sec" aria-labelledby="listen-h"><h2 id="listen-h" class="display">Listen</h2>${player}${btns?`<div class="listen">${btns}</div>`:`<p class="muted">Listening links will be added once the official recording is confirmed.</p>`}<p class="paid-note">Plays happen on each platform and follow its own rules for counting streams.</p></section>`;
+}
+function bindPlayer(root){ const p=$(".player",root); if(!p) return; $("[data-play-embed]",p).addEventListener("click",()=>{ p.innerHTML=`<iframe src="${p.dataset.src}" title="${p.dataset.title}" height="${p.dataset.h}" allow="autoplay *; encrypted-media *; clipboard-write; fullscreen" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"></iframe>`; }); }
 VIEWS.song = r => {
   const s=song(r.slug); if(!s) return VIEWS.notfound(r);
   const a=artist(s.artist), fa=s.featA?artist(s.featA):null;
@@ -403,21 +413,20 @@ VIEWS.song = r => {
   const more=related.length?related:SONGS().filter(x=>x.slug!==s.slug&&x.genre===s.genre).slice(0,5);
   const rel=s.release?release(s.release):null;
   const credits=Object.assign({}, s.credits||{}, s.feat?{"Featuring":s.feat}:{}, s.label?{"Label":s.label}:{});
-  const ytq=`https://www.youtube.com/results?search_query=${encodeURIComponent((s.demo?"":a.name+" ")+s.title)}`;
-  const amq=`https://audiomack.com/search?q=${encodeURIComponent(a.name+" "+s.title)}`;
-  const lyricBlock = s.demo ? `
+  const lyricBlock = s.lyrics ? `
         <div class="toolbar" role="toolbar" aria-label="Reading tools">
           <div class="grp" role="group" aria-label="Text size"><button type="button" data-size="-1" aria-label="Smaller text">A−</button><button type="button" data-size="1" aria-label="Larger text">A+</button></div>
           <div class="grp"><button type="button" id="focusbtn" aria-pressed="false">Focus mode</button></div>
           <div class="grp"><button type="button" id="scrollbtn" aria-pressed="false">Auto-scroll</button><label for="speed">Speed <input id="speed" type="range" min="1" max="5" value="2"></label></div>
           <div class="grp"><button type="button" id="sharebtn">Share</button></div>
         </div>
-        <div class="lang-tabs" role="tablist" aria-label="Lyrics language"><button class="chip" role="tab" id="lt-o" aria-selected="true" aria-controls="lyrics">Original (Krio &amp; English)</button><button class="chip" role="tab" id="lt-t" aria-selected="false" aria-controls="lyrics">${esc(s.translation.label)}</button></div>
+        ${s.translation?`<div class="lang-tabs" role="tablist" aria-label="Lyrics language"><button class="chip" role="tab" id="lt-o" aria-selected="true" aria-controls="lyrics">Original (Krio &amp; English)</button><button class="chip" role="tab" id="lt-t" aria-selected="false" aria-controls="lyrics">${esc(s.translation.label)}</button></div>`:""}
         <article class="lyrics" id="lyrics" role="tabpanel" style="--lsize:${S.lsize}px" aria-label="Lyrics"></article>
-        <p class="paid-note">Demo text written for this preview to show the lyric reader. It is not a real song.</p>`
+        ${s.demo?'<p class="paid-note">Demo text written for this preview to show the lyric reader. It is not a real song.</p>':""}`
     : `
         <div class="toolbar" role="toolbar" aria-label="Song tools"><div class="grp"><button type="button" id="sharebtn">Share</button></div></div>
-        <div class="lyrics-pending reveal"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><h2 class="display">Lyrics coming soon</h2><p>We publish lyrics only when ${esc(a.name)} or their team has approved them, so every word is right. Want to see how this page will read? <a class="link" href="#song.lyric-reader-demo">Open the lyric reader demo</a>.</p><div class="row-wrap"><a class="btn btn-primary btn-sm" href="#song.${s.slug}" data-open-submit>Submit official lyrics</a></div></div>`;
+        <div class="lyrics-pending reveal"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><h2 class="display">Lyrics coming soon</h2><p>We publish lyrics only when ${esc(a.name)} or their team has approved them, so every word is right.</p></div>
+        ${listenBlock(s,a)}`;
   return { title:`${s.title} by ${a.name}`, html:`
   <header class="song-head"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">
     <div class="stack">${crumbs([["Home","#"],["Lyrics","#lyrics"],[s.title]])}
@@ -430,19 +439,10 @@ VIEWS.song = r => {
   <div class="wrap">
     <p class="focus-title display" style="font-size:40px">${esc(s.title)}</p>
     <div class="song-layout"><div style="min-width:0">${lyricBlock}
-        <div class="after-lyrics stack mt-l">
-          <details class="correction" id="submit-box"><summary style="cursor:pointer;font-weight:600;min-height:32px">${s.demo?"Spotted a mistake? Suggest a correction":"Are you the artist or their team? Submit official lyrics"}</summary>
-            <form id="corr" class="stack mt-s" novalidate>
-              <div class="field"><label for="c-role">You are <span class="req">*</span></label><select id="c-role" class="select" required><option value="">Choose one</option><option>The artist</option><option>Management or label</option><option>A fan</option></select><p class="err" id="c-role-e" hidden></p></div>
-              <div class="field"><label for="c-txt">${s.demo?"Correct wording":"Lyrics"} <span class="req">*</span></label><textarea id="c-txt" class="input" required aria-describedby="c-txt-h"></textarea><p class="hint" id="c-txt-h">An editor checks every submission with the artist before the page changes.</p><p class="err" id="c-txt-e" hidden></p></div>
-              <div class="field"><label for="c-em">Your email <span class="req">*</span></label><input id="c-em" class="input" type="email" autocomplete="email" required><p class="err" id="c-em-e" hidden></p></div>
-              <div><button class="btn btn-primary btn-sm" type="submit">Send</button></div><div id="c-msg" aria-live="polite"></div>
-            </form></details>
-        </div>
       </div>
       <aside class="song-aside stack" style="gap:32px;align-content:start">
         <div class="aside-box"><h2>Credits</h2><dl class="credits"><dt>Artist</dt><dd>${esc(s.demo?"Sample":a.name)}</dd>${Object.entries(credits).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}<dt>Year</dt><dd>${esc(yr(s.year))}</dd></dl><p class="paid-note">Full writer and producer credits are added with the lyrics.</p></div>
-        ${s.demo?"":`<div class="aside-box"><h2>Listen</h2><div class="listen"><a class="btn btn-ghost btn-sm" href="${amq}" target="_blank" rel="noopener">Audiomack<span class="muted" style="font-size:12px">Search</span></a><a class="btn btn-ghost btn-sm" href="${ytq}" target="_blank" rel="noopener">YouTube<span class="muted" style="font-size:12px">Search</span></a></div><p class="paid-note">Opens a search on each platform until the artist’s official links are added.</p></div>
+        ${s.demo?"":`${s.lyrics?listenBlock(s,a):""}
         <div class="aside-box"><h2>About the artist</h2><a href="#artist.${a.slug}" class="acard"><div class="portrait panel panel-green" style="aspect-ratio:16/10">${portrait(a,{sizes:"320px",alt:""})}</div><h3>${esc(a.name)}</h3><p>${esc(a.intro)}</p></a><a class="arrow-link" href="#artist.${a.slug}">View ${esc(a.name)}’s profile</a></div>`}
       </aside>
     </div>
@@ -450,14 +450,10 @@ VIEWS.song = r => {
   </div><div style="height:64px"></div>`,
   after(main){
     $("#sharebtn",main).addEventListener("click",()=>share(document.title));
-    const os=$("[data-open-submit]",main); if(os) os.addEventListener("click",e=>{e.preventDefault(); const d=$("#submit-box"); d.open=true; d.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"center"}); setTimeout(()=>$("#c-role").focus(),300); });
-    $("#corr",main).addEventListener("submit",e=>{ e.preventDefault(); let first=null;
-      [["c-role","Choose who you are."],["c-txt","Add the lyrics or correction."],["c-em","Enter your email so the editor can confirm."]].forEach(([id,m])=>{ const el=$("#"+id); let bad=!el.value.trim(); if(id==="c-em"&&!bad&&!/^\S+@\S+\.\S+$/.test(el.value)){bad=true;m="Enter an email address like name@example.com.";} el.setAttribute("aria-invalid",bad); $("#"+id+"-e").hidden=!bad; $("#"+id+"-e").textContent=m; if(bad&&!first) first=el; });
-      if(first){ first.focus(); return; }
-      $("#c-msg").innerHTML=`<div class="notice notice-info"><strong>Submission prepared</strong><span>This preview is not connected to the editorial inbox yet, so nothing has been sent. When connected, an editor confirms with the artist before publishing.</span></div>`; });
-    if(!s.demo) return;
+    bindPlayer(main);
+    if(!s.lyrics) return;
     const ly=$("#lyrics",main);
-    const drawLy=tr=>{ ly.innerHTML=s.lyrics.map(([h,lines])=>`<section><h2>${esc(h)}</h2>${lines.map(l=>`<p>${esc(l)}${tr&&s.translation.lines[l]?`<span class="tr" lang="en">${esc(s.translation.lines[l])}</span>`:""}</p>`).join("")}</section>`).join(""); };
+    const drawLy=tr=>{ ly.innerHTML=s.lyrics.map(([h,lines])=>`<section><h2>${esc(h)}</h2>${lines.map(l=>`<p>${esc(l)}${tr&&s.translation&&s.translation.lines[l]?`<span class="tr" lang="en">${esc(s.translation.lines[l])}</span>`:""}</p>`).join("")}</section>`).join(""); };
     drawLy(false);
     $$("[data-size]",main).forEach(b=>b.addEventListener("click",()=>{ S.lsize=Math.max(15,Math.min(28,S.lsize+(+b.dataset.size)*2)); ly.style.setProperty("--lsize",S.lsize+"px"); try{localStorage.setItem("sl-lsize",S.lsize)}catch(e){} toast(`Text size ${S.lsize}px`); }));
     const fb=$("#focusbtn",main);
@@ -473,6 +469,7 @@ VIEWS.song = r => {
     cleanup.push(()=>{stop();window.removeEventListener("wheel",userStop);window.removeEventListener("touchstart",userStop);});
     const o=$("#lt-o",main), t=$("#lt-t",main);
     const set=tr=>{ o.setAttribute("aria-selected",!tr); t.setAttribute("aria-selected",tr); drawLy(tr); };
+    if(!o||!t) return;
     o.addEventListener("click",()=>set(false)); t.addEventListener("click",()=>set(true));
     [o,t].forEach(b=>b.addEventListener("keydown",e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ const n=b===o?t:o; n.focus(); n.click(); } }));
   }};
@@ -483,12 +480,12 @@ VIEWS.release = r => {
   const rel=release(r.slug); if(!rel) return VIEWS.notfound(r);
   const a=artist(rel.artist); const tracks=SONGS().filter(s=>s.release===rel.slug||rel.tracks.includes(s.slug));
   return { title:`${rel.title} by ${a.name}`, html:`
-  <header class="phead charcoal"><div class="wrap">${crumbs([["Home","#"],["Lyrics & Music","#lyrics"],[rel.title]])}
+  <header class="phead charcoal"><div class="wrap">${crumbs([["Home","#"],["Lyrics","#lyrics"],[rel.title]])}
     <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}</p><div class="row-wrap"><button class="btn btn-green" type="button" data-share>Share release</button></div></div>
     <div style="max-width:360px;width:100%">${relArt(rel,`Cover of ${rel.title} by ${a.name}`)}<p class="credit" style="color:var(--muted-dark);margin-top:8px">${rel.cover?"Cover artwork.":"Typographic tile. Official artwork will be added when supplied."}</p></div></div>
   </div></header>
   <div class="wrap page"><h2 class="display" style="font-size:36px;margin-bottom:16px">${rel.tracklist?"Tracklist":"Songs on Salone Lyrics"}</h2>${rel.tracklist?trackList(rel):tracks.length?`<ol class="songlist">${tracks.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">The tracklist for ${esc(rel.title)} will be added with the artist.</p></div>`}
-  <div class="mt-l"><a class="arrow-link" href="#artist.${a.slug}.music">More music from ${esc(a.name)}</a></div></div>`,
+  <div class="mt-l"><a class="arrow-link" href="#artist.${a.slug}.music">More lyrics from ${esc(a.name)}</a></div></div>`,
   after(main){ $("[data-share]",main).addEventListener("click",()=>share(document.title)); }};
 };
 
@@ -513,7 +510,7 @@ VIEWS.artists = () => {
 };
 
 /* ================= ARTIST ================= */
-const TABS=[["overview","Overview"],["music","Music"],["videos","Videos"],["gallery","Gallery"],["events","Events"]];
+const TABS=[["overview","Overview"],["music","Lyrics"],["videos","Videos"],["gallery","Gallery"],["events","Events"]];
 VIEWS.artist = r => {
   const a=artist(r.slug); if(!a||a.hidden) return VIEWS.notfound(r);
   const tab=TABS.some(t=>t[0]===r.sub)?r.sub:"overview";
@@ -522,7 +519,7 @@ VIEWS.artist = r => {
     <div class="txt stack">${crumbs([["Home","#"],["Artists","#artists"],[a.name]])}
       <div class="facts"><span class="tag tag-dark">${esc(a.genre)}</span><span class="tag tag-dark">${esc(a.town)}</span>${a.pending?'<span class="tag tag-amber">Profile in progress</span>':""}</div>
       <h1 class="display">${esc(a.name)}</h1>${a.aka?`<p class="aka">Also known as ${esc(a.aka)}</p>`:""}<p class="intro">${esc(a.intro)}</p>
-      <div class="row-wrap on-dark"><a class="btn btn-green" href="#artist.${a.slug}.music">Songs</a><a class="btn btn-ghost" style="color:#fff" href="#artist.${a.slug}.videos">Watch</a></div>
+      <div class="row-wrap on-dark"><a class="btn btn-green" href="#artist.${a.slug}.music">View Lyrics</a><a class="btn btn-ghost" style="color:#fff" href="#artist.${a.slug}.videos">Watch</a></div>
     </div>
     <div class="art"><div class="floaty">${portrait(a,{cls:"cut",eager:true,sizes:"(min-width:900px) 40vw, 80vw"})}</div></div>
   </div></header>
@@ -548,21 +545,21 @@ function artistPanel(a,id){
     <aside class="stack" style="gap:28px;align-content:start"><div class="aside-box"><h2>Details</h2><dl class="credits">${a.details?a.details.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join(""):`<dt>Genre</dt><dd>${esc(a.genre)}</dd><dt>Based in</dt><dd>${esc(a.town)}</dd>${a.label?`<dt>Label</dt><dd>${esc(a.label)}</dd>`:""}${(a.facts||[]).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}`}<dt>Songs here</dt><dd>${songs.length}</dd></dl></div>
     <div class="aside-box"><h2>Official links</h2>${a.links.length?`<div class="listen">${a.links.map(([n,u])=>`<a class="btn btn-ghost btn-sm" href="${u}" target="_blank" rel="noopener">${esc(n)}<span aria-hidden="true">↗</span></a>`).join("")}</div>`:`<p class="muted" style="font-size:14px">Official links will be added after confirmation with the artist.</p>`}</div>
     <div class="aside-box"><h2>Booking</h2><p class="muted" style="font-size:14px">Authorised booking information will be added after confirmation with the artist or management.</p></div>
-    <div class="aside-box"><h2>Photo</h2>${a.photo?credit(a.photo):`<p class="muted" style="font-size:14px">Official artist photograph to be supplied.</p>`}</div>
+    
     ${news.length||a.storyIdea?`<div class="aside-box"><h2>Stories</h2>${news.map(n=>`<a class="arrow-link" href="#story.${n.slug}" style="display:flex">${esc(n.title)}</a>`).join("")}${a.storyIdea?`<p class="muted" style="font-size:14px">Coming soon: ${esc(a.storyIdea)}</p>`:""}</div>`:""}</aside></div>`;
-  if(id==="music") return `<h2 class="display" style="font-size:36px;margin-bottom:16px">Songs</h2>${songs.length?`<ol class="songlist">${songs.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">Songs will be added once confirmed with the artist.</p></div>`}
+  if(id==="music") return `<h2 class="display" style="font-size:36px;margin-bottom:16px">Lyrics</h2>${songs.length?`<ol class="songlist">${songs.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">Songs will be added once confirmed with the artist.</p></div>`}
     ${rels.length?`<h2 class="display mt-l" style="font-size:36px;margin-bottom:16px">Albums &amp; EPs</h2><div class="rel-grid">${rels.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(r.type)}${r.year?" · "+esc(r.year):""}</p></div></a>`).join("")}</div>`:""}`;
   if(id==="videos") return vids.length?`<div class="vid-grid">${vids.map(vidCard).join("")}</div>`:`<div class="empty"><p class="display">No videos yet</p><p class="muted">Official videos will appear here.</p><a class="btn btn-ghost btn-sm" href="https://www.youtube.com/results?search_query=${encodeURIComponent(a.name+" Sierra Leone")}" target="_blank" rel="noopener">Search YouTube</a></div>`;
-  if(id==="gallery") return a.photo?`<div class="gal-grid">${[a.photo,...(a.morePhotos||[])].map((k,i)=>galItem(k,i)).join("")}</div><div class="mt-m">${credit(a.photo)}</div>`:`<div class="empty"><p class="muted">Photos will appear once supplied by the artist.</p></div>`;
+  if(id==="gallery") return a.photo?`<div class="gal-grid">${[a.photo,...(a.morePhotos||[])].map((k,i)=>galItem(k,i)).join("")}</div>`:`<div class="empty"><p class="muted">Photos will appear once supplied by the artist.</p></div>`;
   if(id==="events") return `<div class="empty"><p class="display">No confirmed performances</p><p class="muted">${esc(a.name)}’s upcoming shows will be listed here once confirmed by organisers.</p><a class="btn btn-ghost btn-sm" href="#events">All events</a></div>`;
   return "";
 }
 
 /* ================= NEWS ================= */
 VIEWS.news = () => {
-  const cats=["All","Releases","Industry","Culture","Guides","Features"];
-  return { title:"News", html:`
-  <header class="phead charcoal grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["News"]])}<h1 class="display">News &amp; stories</h1><p>Release news, industry milestones and culture from Sierra Leone’s music scene, with sources on every story.</p></div></header>
+  const cats=["All",...new Set(D.articles.map(a=>a.cat))];
+  return { title:"Stories", html:`
+  <header class="phead charcoal grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Stories"]])}<h1 class="display">Stories</h1><p>Artist spotlights, career features and the stories behind the songs, with sources on every story.</p></div></header>
   <div class="wrap page"><div class="chips" role="group" aria-label="Filter stories">${cats.map(c=>`<button class="chip" type="button" data-cat="${c}" aria-pressed="${S.news===c}">${c}</button>`).join("")}</div><div id="newsout" class="mt-m" aria-live="polite"></div></div>`,
   after(main){
     const draw=()=>{ const list=D.articles.filter(a=>S.news==="All"||a.cat===S.news); if(!list.length){ $("#newsout").innerHTML=`<div class="empty"><p class="display">No stories yet</p></div>`; return; }
@@ -571,14 +568,15 @@ VIEWS.news = () => {
     $$("[data-cat]",main).forEach(b=>b.addEventListener("click",()=>{S.news=b.dataset.cat;$$("[data-cat]",main).forEach(x=>x.setAttribute("aria-pressed",x===b));draw();})); draw();
   }};
 };
+VIEWS.stories = r => VIEWS.news(r);
 VIEWS.story = r => {
   const n=story(r.slug); if(!n) return VIEWS.notfound(r);
   const a=n.artist?artist(n.artist):null; const more=D.articles.filter(x=>x.slug!==n.slug).slice(0,3);
   const relA=[a,...(n.related||[]).map(artist)].filter(Boolean).slice(0,4);
   return { title:n.title, html:`
   <div class="progress" id="prog" aria-hidden="true"></div>
-  <article><header class="art-head"><div class="wrap">${crumbs([["Home","#"],["News","#news"],[n.cat]])}<span class="cat">${esc(n.cat)}</span><h1>${esc(n.title)}</h1><p class="summary">${esc(n.summary)}</p><div class="byline"><span>By ${esc(authorName(n))}</span>${n.sample?'<span class="tag tag-example">Sample article</span>':""}<span>${fmtLong(n.date)}</span></div><div class="share-row"><button class="btn btn-ghost btn-sm" type="button" data-share>Share</button><button class="btn btn-ghost btn-sm" type="button" data-copy>Copy link</button></div></div></header>
-  <figure class="art-fig"><div class="art panel panel-blue grain"><span class="grooves spin" aria-hidden="true"></span>${pic(n.photo,{sizes:"(min-width:900px) 40vw, 80vw"})}</div><figcaption>${credit(n.photo)}</figcaption></figure>
+  <article><header class="art-head"><div class="wrap">${crumbs([["Home","#"],["Stories","#stories"],[n.cat]])}<span class="cat">${esc(n.cat)}</span><h1>${esc(n.title)}</h1><p class="summary">${esc(n.summary)}</p><div class="byline"><span>By ${esc(authorName(n))}</span>${n.sample?'<span class="tag tag-example">Sample article</span>':""}<span>${fmtLong(n.date)}</span></div><div class="share-row"><button class="btn btn-ghost btn-sm" type="button" data-share>Share</button><button class="btn btn-ghost btn-sm" type="button" data-copy>Copy link</button></div></div></header>
+  <figure class="art-fig"><div class="art panel panel-blue grain"><span class="grooves spin" aria-hidden="true"></span>${pic(n.photo,{sizes:"(min-width:900px) 40vw, 80vw"})}</div></figure>
   <div class="art-body">${n.body.map(p=>`<p>${linkArtists(p)}</p>`).join("")}
     ${n.sources.length?`<div class="sources-box"><h2 class="eyebrow">Sources</h2><ul>${n.sources.map(u=>`<li><a class="link" href="${u}" target="_blank" rel="noopener">${esc(u.replace(/^https?:\/\/(www\.)?/,"").slice(0,80))}</a></li>`).join("")}</ul></div>`:`<p class="paid-note">Sample article written to show the layout. Tap any highlighted artist name to see their card.</p>`}</div></article>
   <section class="section" style="background:#fff" aria-labelledby="relh"><div class="wrap"><h2 id="relh" class="display sec-title" style="margin-bottom:32px">Related</h2>
@@ -677,16 +675,16 @@ VIEWS.videos = () => ({ title:"Videos", html:`
 /* ================= GALLERY ================= */
 const GAL_BG=["panel-blue","panel-green","panel-charcoal","panel-paper"];
 const galItem=(k,i,col="")=>`<button class="gal-item panel ${GAL_BG[i%4]} grain reveal" type="button" data-photo="${k}" data-col="${col}" aria-label="Open photo: ${esc(P[k].alt)}">${pic(k,{alt:"",sizes:"(min-width:768px) 24vw, 46vw"})}</button>`;
-VIEWS.gallery = () => ({ title:"Gallery", html:`
-  <header class="phead green grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Gallery"]])}<h1 class="display">Gallery</h1><p>Monochrome portraits of Salone’s artists, plus illustrative studio and stage photography.</p></div></header>
-  <div class="wrap page stack" style="gap:56px">${D.gallery.map(c=>`<section aria-labelledby="g-${c.slug}"><div class="sec-head" style="margin-bottom:16px"><h2 id="g-${c.slug}" class="display" style="font-size:clamp(28px,4vw,44px)">${esc(c.title)}</h2><span class="count">${c.items.length} photos</span></div><div class="gal-grid">${c.items.map((k,i)=>galItem(k,i,c.slug)).join("")}</div></section>`).join("")}</div>`,
-  after(main){ bindGallery(main); } });
+VIEWS.gallery = () => { const list=ARTISTS().filter(a=>a.photo&&SONGS().some(s=>s.artist===a.slug||s.featA===a.slug)); return { title:"Gallery", html:`
+  <header class="phead green grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Gallery"]])}<h1 class="display">Gallery</h1><p>Portraits of the artists whose songs are on Salone Lyrics. Choose an artist to see their profile and lyrics.</p></div></header>
+  <div class="wrap page"><section aria-labelledby="g-artists"><div class="sec-head" style="margin-bottom:16px"><h2 id="g-artists" class="display" style="font-size:clamp(28px,4vw,44px)">Artists on Salone Lyrics</h2><span class="count">${list.length} artists</span></div>
+    <div class="gal-grid">${list.map((a,i)=>`<figure class="gal-card reveal"><a class="gal-item panel ${GAL_BG[i%4]} grain" href="#artist.${a.slug}" aria-label="${esc(a.name)}: artist profile">${pic(a.photo,{alt:"",sizes:"(min-width:768px) 24vw, 46vw"})}</a><figcaption><a class="gal-name" href="#artist.${a.slug}">${esc(a.name)}</a><a class="arrow-link" href="#artist.${a.slug}.music">View lyrics</a></figcaption></figure>`).join("")}</div></section></div>` }; };
 function bindGallery(root){ $$(".gal-item",root).forEach(b=>b.addEventListener("click",()=>{ const col=b.dataset.col; const list=col?D.gallery.find(g=>g.slug===col).items:[b.dataset.photo]; openLightbox(list,list.indexOf(b.dataset.photo),b); })); }
 let lb={list:[],i:0,opener:null};
 function openLightbox(list,i,opener){ lb={list,i,opener}; $("#lightbox").hidden=false; document.body.classList.add("locked"); drawLB(); $("#lb-close").focus(); }
 function drawLB(){ const k=lb.list[lb.i], p=P[k];
   $("#lb-fig").innerHTML=`<div class="bg panel ${GAL_BG[lb.i%4]}">${pic(k,{sizes:"80vw",eager:true})}</div>`;
-  $("#lb-cap").innerHTML=`<span>${esc(p.alt)}</span><span class="credit">${credSource(k)}: ${p.page?`<a href="${p.page}" target="_blank" rel="noopener" style="color:#fff">${esc(p.by)}</a>`:esc(p.by)}</span>`;
+  $("#lb-cap").innerHTML=`<span>${esc(p.alt)}</span>`;
   $("#lb-count").textContent=`${lb.i+1} of ${lb.list.length}`; $$(".lb-nav").forEach(n=>n.hidden=lb.list.length<2); }
 function closeLB(){ $("#lightbox").hidden=true; document.body.classList.remove("locked"); if(lb.opener) lb.opener.focus(); }
 function lbStep(d){ lb.i=(lb.i+d+lb.list.length)%lb.list.length; drawLB(); }
@@ -694,7 +692,7 @@ function lbStep(d){ lb.i=(lb.i+d+lb.list.length)%lb.list.length; drawLB(); }
 /* ================= PROMOTE ================= */
 VIEWS.promote = () => ({ title:"Promote With Us", html:`
   <section class="promo grain on-dark"><div class="promo-copy">${crumbs([["Home","#"],["Promote With Us"]])}<h1 class="display" style="font-size:clamp(44px,8vw,96px);line-height:.9">Promote <em style="font-style:normal;color:var(--green)">with us</em></h1><p>Put your music, profile or event in front of fans who come to Salone Lyrics to read, watch and discover. Every paid placement is clearly labelled Promoted.</p><div class="row-wrap"><a class="btn btn-green" href="#promote" data-jump="#enquiry">Request a Quote</a><a class="arrow-link" style="color:#fff" href="#promote" data-jump="#services">Compare services</a></div></div>
-  <div class="promo-art panel"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${pic("seated-studio",{cls:"cut cut-shadow",eager:true,sizes:"(min-width:900px) 40vw, 80vw"})}</div><div class="promo-cred">${credit("seated-studio","Illustrative image. ")}</div></div></section>
+  <div class="promo-art panel"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${pic("seated-studio",{cls:"cut cut-shadow",eager:true,sizes:"(min-width:900px) 40vw, 80vw"})}</div></div></section>
   ${marquee(["Profiles","Releases","Spotlight","Events","Social","Campaigns"])}
   <section class="section" aria-labelledby="ours-h"><div class="wrap"><div class="numsvc">
     <div class="stack reveal" style="align-content:start;gap:16px"><span class="side-tag">What we do</span><h2 id="ours-h" class="display sec-title">Our <span class="hl">services</span></h2><p class="muted" style="max-width:44ch">Choose one placement or combine them into a campaign. The team replies with options and timing.</p>
@@ -788,9 +786,9 @@ VIEWS.about = () => ({ title:"About", html:`
   <div class="wrap page">
     <div class="ideas"><div class="stack reveal" style="align-content:start"><h2 class="display sec-title">Turning words into culture</h2></div><p class="muted reveal" style="max-width:52ch">Salone Lyrics publishes the words to Sierra Leonean songs and introduces the artists who write them. What started on Facebook, Instagram and TikTok now has a home where fans read lyrics, explore biographies, find events and watch videos in one place.</p></div>
     <div class="ideas-art"><div class="ia-1 panel panel-blue grain reveal"><span class="grooves spin" aria-hidden="true"></span>${pic("r-incredible-jj",{sizes:"(min-width:900px) 55vw, 90vw",alt:""})}<span class="ia-tag">A Salone music platform</span></div><div class="ia-2 panel panel-green grain reveal">${pic("r-boii",{sizes:"(min-width:900px) 35vw, 90vw",alt:""})}</div></div>
-    <div class="about-split mt-l"><div class="prose reveal"><h2 class="display" style="font-size:32px">How we check lyrics</h2><p>Lyrics and credits are confirmed with the artist or their team before publication. Readers can suggest corrections from any song page, and an editor reviews each one.</p></div><div class="prose reveal"><h2 class="display" style="font-size:32px">Promoted content</h2><p>Paid placements are always labelled Promoted. Promotion never appears inside lyric text.</p></div></div>
+    <div class="about-split mt-l"><div class="prose reveal"><h2 class="display" style="font-size:32px">How we check lyrics</h2><p>Lyrics and credits are confirmed with the artist or their team before publication.</p></div><div class="prose reveal"><h2 class="display" style="font-size:32px">Promoted content</h2><p>Paid placements are always labelled Promoted. Promotion never appears inside lyric text.</p></div></div>
     <section class="mt-l" aria-labelledby="team-a"><div class="sec-head"><h2 id="team-a" class="display sec-title">Meet the team</h2></div>${teamGrid()}</section>
-    <p class="mt-m"><a class="link" href="#credits">Photo credits and sources</a></p>
+    
   </div>` });
 VIEWS.contact = () => ({ title:"Contact", html:`
   <header class="phead charcoal"><div class="wrap">${crumbs([["Home","#"],["Contact"]])}<h1 class="display">Contact</h1><p>Questions, corrections, partnerships, press or writing for Salone Lyrics. For paid placements, use the promotion enquiry.</p></div></header>
@@ -799,15 +797,11 @@ VIEWS.contact = () => ({ title:"Contact", html:`
     <div class="field full"><label for="cf-t">Topic</label><select id="cf-t" class="select"><option>General question</option><option>Lyrics submission or correction</option><option>Write for Salone Lyrics</option><option>Press and interviews</option><option>Partnership</option></select></div>
     <div class="field full"><label for="cf-m">Message <span class="req">*</span></label><textarea id="cf-m" class="input" required></textarea><p class="err" id="cf-m-e" hidden></p></div></div>
     <div><button class="btn btn-primary" type="submit">Send message</button></div><div id="cf-msg" aria-live="polite"></div></form>
-    <aside class="stack" style="align-content:start"><div class="aside-box"><h2>Follow Salone Lyrics</h2><a class="arrow-link" href="https://www.instagram.com/salonelyrics/" target="_blank" rel="noopener">Instagram @salonelyrics</a><a class="arrow-link" href="https://www.tiktok.com/@salonelyrics" target="_blank" rel="noopener">TikTok @salonelyrics</a></div><div class="aside-box"><h2>Promote your music</h2><a class="btn btn-green" href="#promote">Promote With Us</a></div></aside></div></div>`,
+    <aside class="stack" style="align-content:start"><div class="aside-box"><h2>Follow Salone Lyrics</h2><a class="arrow-link" href="https://www.facebook.com/Vibesalone/" target="_blank" rel="noopener">Facebook</a><a class="arrow-link" href="https://www.instagram.com/salonelyrics/" target="_blank" rel="noopener">Instagram @salonelyrics</a><a class="arrow-link" href="https://www.tiktok.com/@salonelyrics" target="_blank" rel="noopener">TikTok @salonelyrics</a></div><div class="aside-box"><h2>Promote your music</h2><a class="btn btn-green" href="#promote">Promote With Us</a></div></aside></div></div>`,
   after(main){ $("#cform",main).addEventListener("submit",e=>{ e.preventDefault(); let first=null;
     [["cf-n","Enter your name."],["cf-e","Enter your email."],["cf-m","Write a short message."]].forEach(([id,m])=>{ const el=$("#"+id); let bad=!el.value.trim(); if(id==="cf-e"&&!bad&&!/^\S+@\S+\.\S+$/.test(el.value)){bad=true;m="Enter an email address like name@example.com.";} el.setAttribute("aria-invalid",bad); $("#"+id+"-e").hidden=!bad; $("#"+id+"-e").textContent=m; if(bad&&!first) first=el; });
     if(first){first.focus();return;}
-    $("#cf-msg").innerHTML=`<div class="notice notice-info"><strong>Message ready</strong><span>This preview isn’t connected to an inbox yet, so your message has not been sent. Please reach Salone Lyrics on Instagram or TikTok for now.</span></div>`; }); } });
-VIEWS.credits = () => ({ title:"Photo credits", html:`
-  <header class="phead paper"><div class="wrap">${crumbs([["Home","#"],["About","#about"],["Photo credits"]])}<h1 class="display">Photo credits</h1><p>Artist photos were supplied for the site and illustrative photos come from Pexels. Every image was cut out and converted to black and white for this design.</p></div></header>
-  <div class="wrap page"><div class="notice notice-info" style="margin-bottom:24px"><strong>Credits in progress</strong><span>Photographer names for artist photos will be added here once confirmed.</span></div>
-  <div class="table-wrap"><table class="creds-table"><thead><tr><th>Image</th><th>Description</th><th>Source</th><th>Type</th><th>Link</th></tr></thead><tbody>${Object.entries(P).map(([k,p])=>`<tr><td><div class="th">${pic(k,{sizes:"56px",alt:""})}</div></td><td>${esc(p.alt)}</td><td>${esc(p.by)}</td><td>${p.press?"Artist press/profile image":p.artist?"Artist photo":p.team?"Team photo":"Pexels (illustrative)"}</td><td>${p.page?`<a class="link" href="${p.page}" target="_blank" rel="noopener">View source</a>`:"—"}</td></tr>`).join("")}</tbody></table></div></div>` });
+    $("#cf-msg").innerHTML=`<div class="notice notice-info"><strong>Message ready</strong><span>This preview isn’t connected to an inbox yet, so your message has not been sent. Please reach Salone Lyrics on Facebook, Instagram or TikTok for now.</span></div>`; }); } });
 VIEWS.notfound = () => ({ title:"Page not found", html:`<div class="wrap page"><div class="empty" style="margin-block:64px"><h1 class="display" style="font-size:48px">Page not found</h1><p class="muted">The page may have moved. Try searching for a song or artist.</p><div class="row-wrap" style="justify-content:center"><button class="btn btn-primary" type="button" data-open-search-btn>Search</button><a class="btn btn-ghost" href="#">Go home</a></div></div></div>` });
 
 /* ================= SEARCH ================= */
@@ -889,8 +883,8 @@ function openPeek(slug,btn){
   $("#peek-body").innerHTML=`<div class="peek-img panel ${panelCls(D.artists.indexOf(a))}"><span class="grooves spin" aria-hidden="true"></span>${portrait(a,{sizes:"280px",eager:true})}</div>
     <div class="peek-txt"><div class="row-wrap" style="gap:6px"><span class="tag">${esc(a.genre)}</span></div>
     <h2 id="peek-title" class="display">${esc(a.name)}</h2><p>${esc(a.intro)}</p>
-    ${songs.length?`<p class="peek-songs"><strong>Songs:</strong> ${songs.map(s=>`<a class="link" href="#song.${s.slug}">${esc(s.title)}</a>`).join(", ")}</p>`:""}
-    <div class="row-wrap"><a class="btn btn-primary btn-sm" href="#artist.${a.slug}">View profile</a></div>${a.photo?credit(a.photo):""}</div>`;
+    ${songs.length?`<p class="peek-songs"><strong>Lyrics:</strong> ${songs.map(s=>`<a class="link" href="#song.${s.slug}">${esc(s.title)}</a>`).join(", ")}</p>`:""}
+    <div class="row-wrap"><a class="btn btn-primary btn-sm" href="#artist.${a.slug}">View profile</a></div></div>`;
   pk.hidden=false;
   const r=btn.getBoundingClientRect(), box=$(".peek-box",pk);
   if(window.innerWidth>=700){ const w=box.offsetWidth, h=box.offsetHeight; let x=Math.min(Math.max(12,r.left),window.innerWidth-w-12); let y=r.bottom+10; if(y+h>window.innerHeight-12) y=Math.max(12,r.top-h-10); box.style.left=x+"px"; box.style.top=y+"px"; }

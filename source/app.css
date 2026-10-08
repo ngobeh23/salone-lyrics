@@ -939,3 +939,20 @@ h1[tabindex="-1"]:focus{outline:none}
 /* ---------- Team photos ---------- */
 .team-av.has-photo{width:80px;height:80px;border-radius:50%}
 .team-av.has-photo img{object-position:50% 50%}
+
+/* ---------- Lyrics pages: Listen ---------- */
+.listen-sec{margin-top:var(--s6);padding-top:var(--s6);border-top:1.5px solid var(--line);display:grid;gap:16px}
+.listen-sec h2{font-size:clamp(28px,4vw,40px)}
+.listen-sec .listen{display:flex;flex-wrap:wrap;gap:10px}
+.player{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.player .btn svg{width:16px;height:16px}
+.player-note{font-size:13px;color:var(--muted)}
+.player iframe{width:100%;max-width:660px;border:0;border-radius:12px;background:var(--paper)}
+
+/* ---------- Gallery: artist portraits ---------- */
+.gal-card{margin:0;display:grid;gap:10px}
+a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
+.gal-card figcaption{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+@media (max-width:639px){.listen-sec .listen{display:grid;grid-template-columns:minmax(0,1fr)}.listen-sec .listen .btn{width:100%;justify-content:space-between}.player .btn{width:100%;justify-content:center}}
+.gal-name{font:400 20px/1 var(--f-display);text-transform:uppercase;color:inherit;text-decoration:none}
+.gal-card .arrow-link{font-size:13px}
