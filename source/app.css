@@ -911,3 +911,8 @@ h1[tabindex="-1"]:focus{outline:none}
 @keyframes news-bar{to{transform:scaleX(1)}}
 @keyframes news-in{from{opacity:0;transform:translateX(24px) scale(.97)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.hero-title .ch,.hero-copy>*,.swap .story-feature *,.swap .story-list li{animation:none!important}.news-bar{display:none}}
+
+/* ---------- Release cover artwork ---------- */
+.cover{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:12px;background:var(--charcoal)}
+.rel .cover{transition:transform var(--t) var(--ease),box-shadow var(--t)}
+.rel:hover .cover{transform:translateY(-3px);box-shadow:6px 6px 0 var(--charcoal)}

@@ -12,12 +12,14 @@ Live site: https://salonelyrics.vercel.app
 - `asset-manifest.csv`: source and treatment for every image.
 
 ## Photos and permissions
-- **Artist photos are not published yet.** Each artist (`assets/img/r-*`, except team `r-t-*`) shows a Pexels stand-in, credited on the page as "Illustrative image, not the artist". In the data these entries carry `stand:true`.
-- To add an official artist photo once permission is given: replace the `r-<artist>` image files and update that artist's entry in `window.SL_PHOTOS` (in `source/data.js` and `index.html`) with the real source, and the size in `window.SL_DIMS` (in `index.html`).
+- **Artist photos** (`assets/img/r-*`, except team `r-t-*`) were supplied for the site and processed to match the design: background removed, black and white. In `window.SL_PHOTOS` they carry `artist:true` and the credit reads "Photographer credit to be added" until names are confirmed.
+- Kracktwist and Rozzy Sokota have no supplied photo yet (`photo:null`), so their profiles show "Official artist photograph to be supplied".
+- To add or replace an artist photo: replace the `r-<artist>` image files, update that artist's entry in `window.SL_PHOTOS` (in `source/data.js` and `index.html`), and its size in `window.SL_DIMS` (in `index.html`).
+- **Release covers** live in `assets/img/cover-<release>-[500|1000].webp`; a release with `cover:true` shows its cover instead of a typographic tile.
 - Team cards use labelled Pexels placeholder headshots until real team photos are supplied.
 
 ## Content notes
-- Artist biographies, songs and releases are summarised from published sources, listed on each profile.
+- The 15 main artist profiles follow the researched profile document, in its display order. Each lists its sources; proposed story headlines show as "Coming soon".
 - Real song lyrics are not reproduced. Real songs show "Lyrics coming soon"; one labelled demo song shows the full lyric reader.
-- Events and the six Guides/Features articles are labelled samples.
+- Events are real listings; venues, times and ticket links are added as organisers confirm them. The six Guides/Features articles are labelled samples.
 - Forms (newsletter, contact, lyric submission, enquiry) do not send data anywhere yet; they only show a confirmation on screen.

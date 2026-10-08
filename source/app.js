@@ -20,7 +20,10 @@ const story = s => D.articles.find(x=>x.slug===s);
 const event = s => D.events.find(x=>x.slug===s);
 const ARTISTS = () => D.artists.filter(a=>!a.hidden);
 const SONGS = () => D.songs.filter(s=>!s.demo);
-const evStatus = e => (e.status==="upcoming"||e.status==="sold-out") && parse(e.date)<TODAY ? "completed" : e.status;
+const evStatus = e => (e.status==="upcoming"||e.status==="sold-out") && parse(e.endDate||e.date)<TODAY ? "completed" : e.status;
+const evDates = e => e.endDate ? `${fmtLong(e.date)} to ${fmtLong(e.endDate)}` : fmtLong(e.date);
+const evTime = e => e.time ? `${e.time}${e.end?"–"+e.end:""}` : "";
+const gTags = a => a.genre.split(/,|\band\b| \/ /).map(s=>s.trim().replace(/ influences?$/i,"").replace(/^amapiano-influenced pop$/i,"amapiano").replace(/^melodic /i,"")).filter(s=>s&&s!=="To be confirmed").map(s=>s[0].toUpperCase()+s.slice(1));
 const STATUS_LABEL={upcoming:"Upcoming","sold-out":"Sold out",postponed:"Postponed",cancelled:"Cancelled",completed:"Completed"};
 const SAMPLE = `<span class="tag tag-example" title="Sample listing for the preview">Sample</span>`;
 const ICON = {
@@ -47,11 +50,15 @@ function portrait(a,opts={}){
   return `<span class="type-portrait" aria-hidden="true">${FACE}<span class="nm">${esc(a.name)}</span><span class="pend">${a.pending?"Profile in progress":"Photo coming soon"}</span></span>`;
 }
 const FACE='<svg class="face-sil" viewBox="0 0 120 140" aria-hidden="true"><circle cx="60" cy="48" r="30" fill="currentColor"/><path d="M8 140c4-34 26-52 52-52s48 18 52 52z" fill="currentColor"/></svg>';
-const credit = (key,pre="") => { const p=P[key]; return p?`<p class="credit">${pre}${credSource(key)}: <a href="${p.page}" target="_blank" rel="noopener">${esc(p.by)}</a></p>`:""; };
+const credit = (key,pre="") => { const p=P[key]; return p?`<p class="credit">${pre}${credSource(key)}: ${p.page?`<a href="${p.page}" target="_blank" rel="noopener">${esc(p.by)}</a>`:esc(p.by)}</p>`:""; };
 const panelCls = i => ["panel-blue","panel-charcoal","panel-green","panel-paper"][i%4];
 function ttile(r){
   const a=artist(r.artist);
-  return `<div class="ttile ${r.colour}" aria-hidden="true"><span class="disc"></span><span class="meta">${esc(r.type)} · ${esc(r.year||"")}${r.note?" · "+esc(r.note):""}</span><span class="display">${esc(r.title)}</span><span class="meta">${esc(a.name)}</span></div>`;
+  return `<div class="ttile ${r.colour}" aria-hidden="true"><span class="disc"></span><span class="meta">${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.note?" · "+esc(r.note):""}</span><span class="display">${esc(r.title)}</span><span class="meta">${esc(a.name)}</span></div>`;
+}
+
+function relArt(r,alt=""){
+  return r.cover?`<img class="cover" src="${IMG}cover-${r.slug}-500.webp" srcset="${IMG}cover-${r.slug}-500.webp 500w, ${IMG}cover-${r.slug}-1000.webp 1000w" sizes="(min-width:900px) 360px, 45vw" width="500" height="500" alt="${esc(alt)}" loading="lazy" decoding="async">`:ttile(r);
 }
 
 /* ---------- State ---------- */
@@ -141,7 +148,7 @@ function artistCard(a,i,tag="h3"){
 }
 function evRow(e){
   const d=parse(e.date), st=evStatus(e), off=st==="cancelled"||st==="postponed";
-  return `<li class="evrow reveal ${off?"is-off":""} ${st==="completed"?"is-past":""}"><div class="evdate" aria-hidden="true"><span class="d tnum">${d.getDate()}</span><span class="m">${MONTHS[d.getMonth()]}</span></div><div class="evinfo"><div class="row-wrap" style="gap:8px"><span class="status status-${st}">${STATUS_LABEL[st]}</span><span class="tag">${esc(e.type)}</span>${e.paid?"":'<span class="tag tag-green">Free</span>'}${SAMPLE}</div><h3><a href="#event.${e.slug}" style="text-decoration:none">${esc(e.title)}</a></h3><p class="where"><span class="sr">Date: ${fmtLong(e.date)}. </span>${esc(e.venue)}, ${esc(e.town)} · ${esc(e.time)}</p><p class="who">${esc(e.lineup)}</p></div><a class="btn btn-ghost btn-sm ev-cta" href="#event.${e.slug}" aria-label="View event: ${esc(e.title)}">View event</a></li>`;
+  return `<li class="evrow reveal ${off?"is-off":""} ${st==="completed"?"is-past":""}"><div class="evdate" aria-hidden="true"><span class="d tnum">${d.getDate()}</span><span class="m">${MONTHS[d.getMonth()]}</span></div><div class="evinfo"><div class="row-wrap" style="gap:8px"><span class="status status-${st}">${STATUS_LABEL[st]}</span><span class="tag">${esc(e.type)}</span>${e.paid===false?'<span class="tag tag-green">Free</span>':""}${e.sample?SAMPLE:""}</div><h3><a href="#event.${e.slug}" style="text-decoration:none">${esc(e.title)}</a></h3><p class="where"><span class="sr">Date: ${evDates(e)}. </span>${esc(e.venue)}, ${esc(e.town)}${e.endDate?" · Until "+fmt(e.endDate):""}${e.time?" · "+esc(e.time):""}</p><p class="who">${esc(e.lineup)}</p></div><a class="btn btn-ghost btn-sm ev-cta" href="#event.${e.slug}" aria-label="View event: ${esc(e.title)}">View event</a></li>`;
 }
 function storyItem(a,i=0){
   return `<li><a class="story-item reveal" href="#story.${a.slug}"><div><span class="cat">${esc(a.cat)}</span><h3>${esc(a.title)}</h3><p>${esc(a.summary)}</p><p class="date mt-s">${fmt(a.date)}${a.sample?" · Sample":""}</p></div><div class="thumb panel ${panelCls(i+1)}" aria-hidden="true">${pic(a.photo,{sizes:"96px",alt:""})}</div></a></li>`;
@@ -192,7 +199,7 @@ function teamGrid(){
 
 /* ================= HOME ================= */
 VIEWS.home = () => {
-  const heroes=["kracktwist","drizilik","boii","kao-denero","apreel","incredible-jj","emmerson","bakitenno"].map(artist), hero=heroes[0], spot=D.artists.find(a=>a.spotlight);
+  const heroes=["drizilik","laj","incredible-jj","bakitenno","famous","apreel","isat","samza"].map(artist), hero=heroes[0], spot=D.artists.find(a=>a.spotlight);
   const picks=D.picks.map(song);
   const upcoming=D.events.filter(e=>evStatus(e)!=="completed").sort((a,b)=>a.date.localeCompare(b.date));
   const weekend=upcoming.filter(inWeekend);
@@ -238,7 +245,7 @@ VIEWS.home = () => {
       <div class="spot-label"><span class="tag tag-amber">Weekly Spotlight</span></div>
       <h2 id="spot-h" class="display spot-name reveal">${esc(spot.name)}</h2>
       <p class="lede">${esc(spot.intro)}</p>
-      <dl class="spot-facts"><div><dt>Genre</dt><dd>${esc(spot.genre)}</dd></div><div><dt>Based in</dt><dd>${esc(spot.town)}</dd></div><div><dt>Label</dt><dd>${esc(spot.label||"")}</dd></div></dl>
+      <dl class="spot-facts"><div><dt>Genre</dt><dd>${esc(spot.genre)}</dd></div><div><dt>Based in</dt><dd>${esc(spot.town)}</dd></div>${spot.label?`<div><dt>Label</dt><dd>${esc(spot.label)}</dd></div>`:""}</dl>
       <div class="row-wrap"><a class="btn btn-primary" href="#artist.${spot.slug}">Meet the Artist</a>${spotSongs[0]?`<a class="arrow-link" href="#song.${spotSongs[0].slug}">“${esc(spotSongs[0].title)}”</a>`:""}</div>
       ${credit(spot.photo).replace('class="credit"','class="credit" style="color:var(--charcoal)"')}
     </div>
@@ -248,7 +255,7 @@ VIEWS.home = () => {
     <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Music</p><h2 id="rel-h" class="display sec-title">Releases</h2></div>
       <div class="chips" role="group" aria-label="Filter releases">${["All","EPs","Albums"].map(f=>`<button type="button" class="chip" data-rel="${f}" aria-pressed="${S.rel===f}">${f}</button>`).join("")}</div></div>
     <div class="rel-grid" id="rel-grid" aria-live="polite"></div>
-    <p class="paid-note">Release tiles are typographic. Official artwork appears once supplied by the artist.</p>
+    <p class="paid-note">Typographic tiles stand in where cover artwork has not been supplied yet.</p>
   </div></section>
 
   <section class="section" style="background:#fff" aria-labelledby="art-h"><div class="wrap">
@@ -265,7 +272,7 @@ VIEWS.home = () => {
     <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Events</p><h2 id="ev-h" class="display sec-title">Upcoming events</h2></div><a class="btn btn-ghost btn-sm" href="#events">View all events</a></div>
     ${weekend.length?`<div class="notice notice-info reveal" style="margin-bottom:24px"><strong>This weekend</strong><span>${weekend.map(e=>`<a class="link" href="#event.${e.slug}">${esc(e.title)}</a> (${DOW[parse(e.date).getDay()]}, ${esc(e.town)})`).join(" · ")}</span></div>`:""}
     <ul class="evlist">${upcoming.slice(0,4).map(evRow).join("")}</ul>
-    <p class="paid-note">Event listings in this preview are samples showing each status. Confirmed shows replace them at launch.</p>
+    <p class="paid-note">Venues, times and ticket links are added as organisers confirm them.</p>
   </div></section>
 
   <section class="section" style="background:#fff" aria-labelledby="st-h"><div class="wrap">
@@ -300,7 +307,7 @@ VIEWS.home = () => {
   after(main){
     const grid=$("#rel-grid",main);
     const draw=()=>{ const map={EPs:"EP",Albums:"Album"}; const list=D.releases.filter(r=>S.rel==="All"||r.type===map[S.rel]).slice(0,8);
-      grid.innerHTML=list.map(r=>`<a class="rel" href="#release.${r.slug}">${ttile(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)} · ${esc(r.year)}</p></div></a>`).join(""); };
+      grid.innerHTML=list.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}</p></div></a>`).join(""); };
     draw();
     $$("[data-rel]",main).forEach(b=>b.addEventListener("click",()=>{S.rel=b.dataset.rel; $$("[data-rel]",main).forEach(x=>x.setAttribute("aria-pressed",x===b)); draw();}));
     $("[data-hero-search]",main).addEventListener("submit",e=>{e.preventDefault(); openSearch($("#hero-q").value);});
@@ -469,8 +476,8 @@ VIEWS.release = r => {
   const a=artist(rel.artist); const tracks=SONGS().filter(s=>s.release===rel.slug||rel.tracks.includes(s.slug));
   return { title:`${rel.title} by ${a.name}`, html:`
   <header class="phead charcoal"><div class="wrap">${crumbs([["Home","#"],["Lyrics & Music","#lyrics"],[rel.title]])}
-    <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a> · ${esc(rel.year)}</p><div class="row-wrap"><button class="btn btn-green" type="button" data-share>Share release</button></div></div>
-    <div style="max-width:360px;width:100%">${ttile(rel)}<p class="credit" style="color:var(--muted-dark);margin-top:8px">Typographic tile. Official artwork will be added when supplied.</p></div></div>
+    <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}</p><div class="row-wrap"><button class="btn btn-green" type="button" data-share>Share release</button></div></div>
+    <div style="max-width:360px;width:100%">${relArt(rel,`Cover of ${rel.title} by ${a.name}`)}<p class="credit" style="color:var(--muted-dark);margin-top:8px">${rel.cover?"Cover artwork.":"Typographic tile. Official artwork will be added when supplied."}</p></div></div>
   </div></header>
   <div class="wrap page"><h2 class="display" style="font-size:36px;margin-bottom:16px">Songs on Salone Lyrics</h2>${tracks.length?`<ol class="songlist">${tracks.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">The tracklist for ${esc(rel.title)} will be added with the artist.</p></div>`}
   <div class="mt-l"><a class="arrow-link" href="#artist.${a.slug}.music">More music from ${esc(a.name)}</a></div></div>`,
@@ -479,7 +486,7 @@ VIEWS.release = r => {
 
 /* ================= ARTISTS ================= */
 VIEWS.artists = () => {
-  const genres=["All",...new Set(ARTISTS().map(a=>a.genre))];
+  const genres=["All",...[...new Set(ARTISTS().flatMap(gTags))].sort()];
   return { title:"Artists", html:`
   <header class="phead green grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Artists"]])}<h1 class="display">Artists</h1><p>Profiles of Sierra Leone’s leading voices, from veterans to the newest names on the charts.</p></div></header>
   <div class="wrap page">
@@ -487,10 +494,10 @@ VIEWS.artists = () => {
       <div class="field-inline"><label for="ag">Genre</label><select id="ag" class="select">${genres.map(g=>`<option ${S.art.genre===g?"selected":""}>${g}</option>`).join("")}</select></div></div>
     <p class="count" id="acount" aria-live="polite"></p>
     <div class="adir mt-m" id="adir"></div>
-    <p class="paid-note mt-m">Artist photos are taken from press and profile images (sources on each profile) for this private preview. Official photos and approval will be requested before launch.</p>
+    <p class="paid-note mt-m">Artist photos are shown in black and white for this design. Photographer credits will be added once confirmed.</p>
   </div>`,
   after(main){
-    const draw=()=>{ const q=S.art.q.trim().toLowerCase(); const list=ARTISTS().filter(a=>(S.art.genre==="All"||a.genre===S.art.genre)&&(!q||(a.name+" "+(a.aka||"")+" "+a.genre+" "+a.town).toLowerCase().includes(q)));
+    const draw=()=>{ const q=S.art.q.trim().toLowerCase(); const list=ARTISTS().filter(a=>(S.art.genre==="All"||gTags(a).includes(S.art.genre))&&(!q||(a.name+" "+(a.aka||"")+" "+a.genre+" "+a.town).toLowerCase().includes(q)));
       $("#acount").textContent=`${list.length} artist${list.length===1?"":"s"}`;
       $("#adir").innerHTML=list.length?list.map((a,i)=>artistCard(a,i,"h2")).join(""):`<div class="empty" style="grid-column:1/-1"><p class="display">No artists found</p><p class="muted">Try a different name or genre.</p></div>`; reveal($("#adir")); };
     $("#aq").addEventListener("input",e=>{S.art.q=e.target.value;draw();}); $("#ag").addEventListener("change",e=>{S.art.genre=e.target.value;draw();}); draw();
@@ -529,16 +536,16 @@ function artistPanel(a,id){
   const news=D.articles.filter(n=>n.artist===a.slug||(n.related||[]).includes(a.slug));
   if(id==="overview") return `<div class="two-col"><div class="prose"><h2 class="display" style="font-size:36px">Biography</h2>${a.bio.map(p=>`<p>${esc(p)}</p>`).join("")}
     ${a.awards.length?`<h3 class="eyebrow mt-s">Recognition</h3><ul class="awards">${a.awards.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
-    ${a.sources.length?`<details class="sources"><summary>Sources for this profile</summary><ul>${a.sources.map(u=>`<li><a class="link" href="${u}" target="_blank" rel="noopener">${esc(u.replace(/^https?:\/\/(www\.)?/,"").slice(0,70))}</a></li>`).join("")}</ul></details>`:""}</div>
-    <aside class="stack" style="gap:28px;align-content:start"><div class="aside-box"><h2>Details</h2><dl class="credits"><dt>Genre</dt><dd>${esc(a.genre)}</dd><dt>Based in</dt><dd>${esc(a.town)}</dd>${a.label?`<dt>Label</dt><dd>${esc(a.label)}</dd>`:""}${(a.facts||[]).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}<dt>Songs here</dt><dd>${songs.length}</dd></dl></div>
+    ${a.sources.length?`<details class="sources"><summary>Sources for this profile</summary><ul>${a.sources.map(s=>{ const [l,u]=Array.isArray(s)?s:[s.replace(/^https?:\/\/(www\.)?/,"").slice(0,70),s]; return u?`<li><a class="link" href="${u}" target="_blank" rel="noopener">${esc(l)}</a></li>`:`<li>${esc(l)}</li>`; }).join("")}</ul></details>`:""}</div>
+    <aside class="stack" style="gap:28px;align-content:start"><div class="aside-box"><h2>Details</h2><dl class="credits">${a.details?a.details.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join(""):`<dt>Genre</dt><dd>${esc(a.genre)}</dd><dt>Based in</dt><dd>${esc(a.town)}</dd>${a.label?`<dt>Label</dt><dd>${esc(a.label)}</dd>`:""}${(a.facts||[]).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}`}<dt>Songs here</dt><dd>${songs.length}</dd></dl></div>
     <div class="aside-box"><h2>Official links</h2>${a.links.length?`<div class="listen">${a.links.map(([n,u])=>`<a class="btn btn-ghost btn-sm" href="${u}" target="_blank" rel="noopener">${esc(n)}<span aria-hidden="true">↗</span></a>`).join("")}</div>`:`<p class="muted" style="font-size:14px">Official links will be added after confirmation with the artist.</p>`}</div>
-    <div class="aside-box"><h2>Booking</h2><p class="muted" style="font-size:14px">Authorised booking contact to be supplied by the artist’s management.</p></div>
-    ${a.photo?`<div class="aside-box"><h2>Photo</h2>${credit(a.photo)}</div>`:""}
-    ${news.length?`<div class="aside-box"><h2>Stories</h2>${news.map(n=>`<a class="arrow-link" href="#story.${n.slug}" style="display:flex">${esc(n.title)}</a>`).join("")}</div>`:""}</aside></div>`;
+    <div class="aside-box"><h2>Booking</h2><p class="muted" style="font-size:14px">Authorised booking information will be added after confirmation with the artist or management.</p></div>
+    <div class="aside-box"><h2>Photo</h2>${a.photo?credit(a.photo):`<p class="muted" style="font-size:14px">Official artist photograph to be supplied.</p>`}</div>
+    ${news.length||a.storyIdea?`<div class="aside-box"><h2>Stories</h2>${news.map(n=>`<a class="arrow-link" href="#story.${n.slug}" style="display:flex">${esc(n.title)}</a>`).join("")}${a.storyIdea?`<p class="muted" style="font-size:14px">Coming soon: ${esc(a.storyIdea)}</p>`:""}</div>`:""}</aside></div>`;
   if(id==="music") return `<h2 class="display" style="font-size:36px;margin-bottom:16px">Songs</h2>${songs.length?`<ol class="songlist">${songs.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">Songs will be added once confirmed with the artist.</p></div>`}
-    ${rels.length?`<h2 class="display mt-l" style="font-size:36px;margin-bottom:16px">Albums &amp; EPs</h2><div class="rel-grid">${rels.map(r=>`<a class="rel" href="#release.${r.slug}">${ttile(r)}<div><h3>${esc(r.title)}</h3><p>${esc(r.type)} · ${esc(r.year)}</p></div></a>`).join("")}</div>`:""}`;
+    ${rels.length?`<h2 class="display mt-l" style="font-size:36px;margin-bottom:16px">Albums &amp; EPs</h2><div class="rel-grid">${rels.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(r.type)}${r.year?" · "+esc(r.year):""}</p></div></a>`).join("")}</div>`:""}`;
   if(id==="videos") return vids.length?`<div class="vid-grid">${vids.map(vidCard).join("")}</div>`:`<div class="empty"><p class="display">No videos yet</p><p class="muted">Official videos will appear here.</p><a class="btn btn-ghost btn-sm" href="https://www.youtube.com/results?search_query=${encodeURIComponent(a.name+" Sierra Leone")}" target="_blank" rel="noopener">Search YouTube</a></div>`;
-  if(id==="gallery") return a.photo?`<div class="gal-grid">${galItem(a.photo,0)}</div><div class="mt-m">${credit(a.photo)}</div>`:`<div class="empty"><p class="muted">Photos will appear once supplied by the artist.</p></div>`;
+  if(id==="gallery") return a.photo?`<div class="gal-grid">${[a.photo,...(a.morePhotos||[])].map((k,i)=>galItem(k,i)).join("")}</div><div class="mt-m">${credit(a.photo)}</div>`:`<div class="empty"><p class="muted">Photos will appear once supplied by the artist.</p></div>`;
   if(id==="events") return `<div class="empty"><p class="display">No confirmed performances</p><p class="muted">${esc(a.name)}’s upcoming shows will be listed here once confirmed by organisers.</p><a class="btn btn-ghost btn-sm" href="#events">All events</a></div>`;
   return "";
 }
@@ -585,7 +592,7 @@ VIEWS.events = () => {
   return { title:"Events", html:`
   <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Events"]])}<h1 class="display">Events</h1><p>Concerts, launches, workshops and listening sessions across Sierra Leone.</p></div></header>
   <div class="wrap page">
-    <div class="notice notice-warn" style="margin-bottom:24px"><strong>Sample listings</strong><span>These events show how listings, filters and statuses work. Confirmed shows with real lineups replace them at launch.</span></div>
+    <div class="notice notice-info" style="margin-bottom:24px"><strong>Check before you go</strong><span>Venues, times and ticket links are added as organisers confirm them. Details can change, so check with the organiser before you travel.</span></div>
     <div class="filterbar">
       ${sel("ef-when","Date",[["upcoming","All upcoming"],["weekend","This weekend"],["month","Next 30 days"],["past","Past events"]],S.ev.when)}
       ${sel("ef-town","Location",towns.map(t=>[t,t==="All"?"All locations":t]),S.ev.town)}
@@ -601,7 +608,7 @@ VIEWS.events = () => {
       if(S.ev.when==="weekend"&&!inWeekend(e)) return false;
       if(S.ev.when==="month"){ const lim=new Date(TODAY); lim.setDate(lim.getDate()+30); if(d>lim) return false; }
       if(S.ev.town!=="All"&&e.town!==S.ev.town) return false; if(S.ev.type!=="All"&&e.type!==S.ev.type) return false;
-      if(S.ev.fee==="Free"&&e.paid) return false; if(S.ev.fee==="Paid"&&!e.paid) return false; return true; }).sort((a,b)=>S.ev.when==="past"?b.date.localeCompare(a.date):a.date.localeCompare(b.date));
+      if(S.ev.fee==="Free"&&e.paid!==false) return false; if(S.ev.fee==="Paid"&&e.paid!==true) return false; return true; }).sort((a,b)=>S.ev.when==="past"?b.date.localeCompare(a.date):a.date.localeCompare(b.date));
     const draw=()=>{ const list=filtered(); $("#ecount").textContent=`${list.length} event${list.length===1?"":"s"}`;
       $$("[data-view]",main).forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===S.ev.view));
       if(S.ev.view==="list"){ $("#eout").innerHTML=list.length?`<ul class="evlist">${list.map(evRow).join("")}</ul>`:`<div class="empty"><p class="display">No events match</p><p class="muted">Try a different date range or location.</p><button class="btn btn-ghost btn-sm" type="button" id="ereset">Reset filters</button></div>`; const rs=$("#ereset"); if(rs) rs.addEventListener("click",()=>{Object.assign(S.ev,{when:"upcoming",town:"All",type:"All",fee:"All"}); render();}); reveal($("#eout")); }
@@ -620,6 +627,9 @@ VIEWS.events = () => {
   }};
 };
 function icsFor(e){
+  if(!e.time){ const day=iso=>iso.replace(/-/g,""), n=parse(e.endDate||e.date); n.setDate(n.getDate()+1);
+    const s=day(e.date), en=`${n.getFullYear()}${String(n.getMonth()+1).padStart(2,"0")}${String(n.getDate()).padStart(2,"0")}`;
+    return {start:s,end:en,text:["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Salone Lyrics//Events//EN","BEGIN:VEVENT",`UID:${e.slug}@salonelyrics`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").split(".")[0]}Z`,`DTSTART;VALUE=DATE:${s}`,`DTEND;VALUE=DATE:${en}`,`SUMMARY:${e.title}`,`LOCATION:${e.venue}, ${e.address}`,`DESCRIPTION:${e.desc}`,"END:VEVENT","END:VCALENDAR"].join("\r\n")}; }
   const dt=(d,t)=>d.replace(/-/g,"")+"T"+t.replace(":","")+"00";
   let endD=e.date; if(e.end<e.time){ const n=parse(e.date); n.setDate(n.getDate()+1); endD=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`; }
   return {start:dt(e.date,e.time),end:dt(endD,e.end),text:["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Salone Lyrics//Events//EN","BEGIN:VEVENT",`UID:${e.slug}@salonelyrics`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").split(".")[0]}Z`,`DTSTART;TZID=Africa/Freetown:${dt(e.date,e.time)}`,`DTEND;TZID=Africa/Freetown:${dt(endD,e.end)}`,`SUMMARY:${e.title}`,`LOCATION:${e.venue}, ${e.address}`,`DESCRIPTION:${e.desc}`,"END:VEVENT","END:VCALENDAR"].join("\r\n")};
@@ -633,10 +643,10 @@ VIEWS.event = r => {
   return { title:e.title, html:`
   <header class="ev-head grain ${st==="cancelled"||st==="postponed"?"is-off":""}"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">
     <div class="ev-bigdate" aria-hidden="true"><span class="d tnum">${d.getDate()}</span><span class="my">${MONTHS_L[d.getMonth()]}<br>${d.getFullYear()}</span></div>
-    <div class="stack">${crumbs([["Home","#"],["Events","#events"],[e.title]])}<div class="row-wrap" style="gap:8px"><span class="status status-${st}">${STATUS_LABEL[st]}</span><span class="tag">${esc(e.type)}</span><span class="tag tag-amber">Sample listing</span></div><h1 class="display">${esc(e.title)}</h1><p style="font-size:18px">${fmtLong(e.date)} · ${esc(e.time)}–${esc(e.end)} · ${esc(e.town)}</p></div>
+    <div class="stack">${crumbs([["Home","#"],["Events","#events"],[e.title]])}<div class="row-wrap" style="gap:8px"><span class="status status-${st}">${STATUS_LABEL[st]}</span><span class="tag">${esc(e.type)}</span>${e.sample?'<span class="tag tag-amber">Sample listing</span>':""}</div><h1 class="display">${esc(e.title)}</h1><p style="font-size:18px">${evDates(e)}${e.time?" · "+esc(evTime(e)):""} · ${esc(e.town)}</p></div>
   </div></header>
   <div class="wrap page"><div class="two-col"><div class="stack" style="gap:24px">${notice}<div class="prose"><p>${esc(e.desc)}</p></div>
-    <dl class="detail-list"><div><dt>Date</dt><dd>${fmtLong(e.date)}</dd></div><div><dt>Time</dt><dd>${esc(e.time)} to ${esc(e.end)} (Freetown time)</dd></div><div><dt>Venue</dt><dd>${esc(e.venue)}<br><span class="muted">${esc(e.address)}</span></dd></div><div><dt>Lineup</dt><dd>${esc(e.lineup)}</dd></div><div><dt>Organiser</dt><dd>${esc(e.organiser)}</dd></div><div><dt>Tickets</dt><dd>${esc(e.paid?e.price:"Free entry")}</dd></div></dl></div>
+    <dl class="detail-list"><div><dt>Date</dt><dd>${evDates(e)}</dd></div><div><dt>Time</dt><dd>${e.time?`${esc(e.time)}${e.end?" to "+esc(e.end):""} (Freetown time)`:"To be announced"}</dd></div><div><dt>Venue</dt><dd>${esc(e.venue)}<br><span class="muted">${esc(e.address)}</span></dd></div><div><dt>Lineup</dt><dd>${esc(e.lineup)}</dd></div><div><dt>Organiser</dt><dd>${esc(e.organiser)}</dd></div><div><dt>Tickets</dt><dd>${esc(e.paid===false?"Free entry":e.price)}</dd></div></dl></div>
   <aside class="stack" style="align-content:start;gap:16px">
     <div class="aside-box"><h2>Tickets</h2><button class="btn btn-primary" type="button" aria-disabled="true">${st==="cancelled"||st==="completed"?"Tickets unavailable":st==="sold-out"?"Sold out":"Booking link pending"}</button>${st==="upcoming"?'<p class="paid-note">The organiser’s external booking link appears here once supplied.</p>':""}</div>
     <div class="aside-box"><h2>Add to calendar</h2>${canAdd?`<a class="btn btn-ghost btn-sm" href="${g}" target="_blank" rel="noopener">Google Calendar</a><button class="btn btn-ghost btn-sm" type="button" data-ics>Download .ics file</button><p class="paid-note">For Apple Calendar and Outlook. If your browser blocks the download, use Copy details.</p>`:`<p class="muted" style="font-size:14px">Not available for ${STATUS_LABEL[st].toLowerCase()} events.</p>`}<button class="btn btn-ghost btn-sm" type="button" data-copyd>Copy details</button></div>
@@ -645,7 +655,7 @@ VIEWS.event = r => {
   <section class="section" style="padding-bottom:0"><h2 class="display" style="font-size:36px;margin-bottom:16px">More events</h2><ul class="evlist">${D.events.filter(x=>x.slug!==e.slug&&evStatus(x)==="upcoming").slice(0,3).map(evRow).join("")}</ul></section></div>`,
   after(main){
     const ib=$("[data-ics]",main); if(ib) ib.addEventListener("click",()=>{ try{ const u=URL.createObjectURL(new Blob([ics.text],{type:"text/calendar"})); const a=document.createElement("a"); a.href=u; a.download=e.slug+".ics"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),2000); toast("Calendar file prepared"); }catch(err){ toast("Download blocked. Use Copy details instead."); } });
-    $("[data-copyd]",main).addEventListener("click",()=>copyText(`${e.title}\n${fmtLong(e.date)}, ${e.time}–${e.end}\n${e.venue}, ${e.address}`,"Event details copied"));
+    $("[data-copyd]",main).addEventListener("click",()=>copyText(`${e.title}\n${evDates(e)}${e.time?", "+evTime(e):""}\n${e.venue}, ${e.address}`,"Event details copied"));
     $("[data-share]",main).addEventListener("click",()=>share(document.title));
   }};
 };
@@ -668,7 +678,7 @@ let lb={list:[],i:0,opener:null};
 function openLightbox(list,i,opener){ lb={list,i,opener}; $("#lightbox").hidden=false; document.body.classList.add("locked"); drawLB(); $("#lb-close").focus(); }
 function drawLB(){ const k=lb.list[lb.i], p=P[k];
   $("#lb-fig").innerHTML=`<div class="bg panel ${GAL_BG[lb.i%4]}">${pic(k,{sizes:"80vw",eager:true})}</div>`;
-  $("#lb-cap").innerHTML=`<span>${esc(p.alt)}</span><span class="credit">${credSource(k)}: <a href="${p.page}" target="_blank" rel="noopener" style="color:#fff">${esc(p.by)}</a></span>`;
+  $("#lb-cap").innerHTML=`<span>${esc(p.alt)}</span><span class="credit">${credSource(k)}: ${p.page?`<a href="${p.page}" target="_blank" rel="noopener" style="color:#fff">${esc(p.by)}</a>`:esc(p.by)}</span>`;
   $("#lb-count").textContent=`${lb.i+1} of ${lb.list.length}`; $$(".lb-nav").forEach(n=>n.hidden=lb.list.length<2); }
 function closeLB(){ $("#lightbox").hidden=true; document.body.classList.remove("locked"); if(lb.opener) lb.opener.focus(); }
 function lbStep(d){ lb.i=(lb.i+d+lb.list.length)%lb.list.length; drawLB(); }
@@ -787,9 +797,9 @@ VIEWS.contact = () => ({ title:"Contact", html:`
     if(first){first.focus();return;}
     $("#cf-msg").innerHTML=`<div class="notice notice-info"><strong>Message ready</strong><span>This preview isn’t connected to an inbox yet, so your message has not been sent. Please reach Salone Lyrics on Instagram or TikTok for now.</span></div>`; }); } });
 VIEWS.credits = () => ({ title:"Photo credits", html:`
-  <header class="phead paper"><div class="wrap">${crumbs([["Home","#"],["About","#about"],["Photo credits"]])}<h1 class="display">Photo credits</h1><p>Artist photos come from press and profile images, and illustrative photos come from Pexels. Every image was cut out and converted to black and white for this design.</p></div></header>
-  <div class="wrap page"><div class="notice notice-warn" style="margin-bottom:24px"><strong>Permission needed before launch</strong><span>Artist photos are used for this private preview only. Salone Lyrics should obtain approval or official photos from each artist or photographer before the site is public.</span></div>
-  <div class="table-wrap"><table class="creds-table"><thead><tr><th>Image</th><th>Description</th><th>Source</th><th>Type</th><th>Link</th></tr></thead><tbody>${Object.entries(P).map(([k,p])=>`<tr><td><div class="th">${pic(k,{sizes:"56px",alt:""})}</div></td><td>${esc(p.alt)}</td><td>${esc(p.by)}</td><td>${p.press?"Artist press/profile image":"Pexels (illustrative)"}</td><td><a class="link" href="${p.page}" target="_blank" rel="noopener">View source</a></td></tr>`).join("")}</tbody></table></div></div>` });
+  <header class="phead paper"><div class="wrap">${crumbs([["Home","#"],["About","#about"],["Photo credits"]])}<h1 class="display">Photo credits</h1><p>Artist photos were supplied for the site and illustrative photos come from Pexels. Every image was cut out and converted to black and white for this design.</p></div></header>
+  <div class="wrap page"><div class="notice notice-info" style="margin-bottom:24px"><strong>Credits in progress</strong><span>Photographer names for artist photos will be added here once confirmed.</span></div>
+  <div class="table-wrap"><table class="creds-table"><thead><tr><th>Image</th><th>Description</th><th>Source</th><th>Type</th><th>Link</th></tr></thead><tbody>${Object.entries(P).map(([k,p])=>`<tr><td><div class="th">${pic(k,{sizes:"56px",alt:""})}</div></td><td>${esc(p.alt)}</td><td>${esc(p.by)}</td><td>${p.press?"Artist press/profile image":p.artist?"Artist photo":"Pexels (illustrative)"}</td><td>${p.page?`<a class="link" href="${p.page}" target="_blank" rel="noopener">View source</a>`:"—"}</td></tr>`).join("")}</tbody></table></div></div>` });
 VIEWS.notfound = () => ({ title:"Page not found", html:`<div class="wrap page"><div class="empty" style="margin-block:64px"><h1 class="display" style="font-size:48px">Page not found</h1><p class="muted">The page may have moved. Try searching for a song or artist.</p><div class="row-wrap" style="justify-content:center"><button class="btn btn-primary" type="button" data-open-search-btn>Search</button><a class="btn btn-ghost" href="#">Go home</a></div></div></div>` });
 
 /* ================= SEARCH ================= */
