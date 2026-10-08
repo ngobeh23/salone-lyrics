@@ -916,3 +916,26 @@ h1[tabindex="-1"]:focus{outline:none}
 .cover{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:12px;background:var(--charcoal)}
 .rel .cover{transition:transform var(--t) var(--ease),box-shadow var(--t)}
 .rel:hover .cover{transform:translateY(-3px);box-shadow:6px 6px 0 var(--charcoal)}
+
+/* ---------- Release tracklists ---------- */
+.tracklist{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--charcoal)}
+.tracklist li{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:14px 4px;border-bottom:1px solid var(--line)}
+.tracklist .num{font:400 22px/1 var(--f-display);color:var(--blue)}
+.tracklist .tt{font-weight:600}
+.tracklist .tt a{color:inherit}
+.tracklist .ft{font-weight:400;color:var(--muted)}
+.tracklist .go{font-size:13px;font-weight:600;color:var(--blue-deep)}
+
+/* ---------- TikTok lyric videos ---------- */
+.vid.tiktok .vid-frame{aspect-ratio:9/16;width:100%;height:auto;max-height:none;margin-inline:0}
+.vid.tiktok .poster picture{height:auto;width:100%}
+.vid.tiktok .poster img{width:100%;height:auto}
+@media (min-width:640px){.vid-grid:has(.vid.tiktok){grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1024px){.vid-grid:has(.vid.tiktok){grid-template-columns:repeat(4,minmax(0,1fr))}}
+.vid-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.vid-close{position:absolute;top:8px;right:8px;z-index:2;width:40px;height:40px;border-radius:50%;border:0;background:rgba(16,18,20,.85);color:#fff;font-size:24px;line-height:1;cursor:pointer}
+.vid-close:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+/* ---------- Team photos ---------- */
+.team-av.has-photo{width:80px;height:80px;border-radius:50%}
+.team-av.has-photo img{object-position:50% 50%}

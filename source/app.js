@@ -18,7 +18,7 @@ const song = s => D.songs.find(x=>x.slug===s);
 const release = s => D.releases.find(x=>x.slug===s);
 const story = s => D.articles.find(x=>x.slug===s);
 const event = s => D.events.find(x=>x.slug===s);
-const ARTISTS = () => D.artists.filter(a=>!a.hidden);
+const ARTISTS = () => D.artists.filter(a=>!a.hidden&&!a.unlisted);
 const SONGS = () => D.songs.filter(s=>!s.demo);
 const evStatus = e => (e.status==="upcoming"||e.status==="sold-out") && parse(e.endDate||e.date)<TODAY ? "completed" : e.status;
 const evDates = e => e.endDate ? `${fmtLong(e.date)} to ${fmtLong(e.endDate)}` : fmtLong(e.date);
@@ -57,6 +57,12 @@ function ttile(r){
   return `<div class="ttile ${r.colour}" aria-hidden="true"><span class="disc"></span><span class="meta">${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.note?" · "+esc(r.note):""}</span><span class="display">${esc(r.title)}</span><span class="meta">${esc(a.name)}</span></div>`;
 }
 
+const normT = t => String(t).toLowerCase().replace(/[^a-z0-9]/g,"");
+function trackList(rel){
+  const rows=rel.tracklist.map(([t,f],i)=>{ const s=SONGS().find(x=>(x.artist===rel.artist||x.featA===rel.artist)&&normT(x.title)===normT(t));
+    return `<li><span class="num tnum" aria-hidden="true">${String(i+1).padStart(2,"0")}</span><span class="tt">${s?`<a href="#song.${s.slug}">${esc(t)}</a>`:esc(t)}${f?` <span class="ft">feat. ${esc(f)}</span>`:""}</span>${s?`<a class="go" href="#song.${s.slug}" aria-hidden="true" tabindex="-1">View song</a>`:""}</li>`; }).join("");
+  return `<ol class="tracklist">${rows}</ol>${rel.tracklistSource?`<p class="paid-note">${rel.tracklist.length} tracks. Tracklist from <a class="link" href="${rel.tracklistSource}" target="_blank" rel="noopener">Apple Music</a>.</p>`:""}`;
+}
 function relArt(r,alt=""){
   return r.cover?`<img class="cover" src="${IMG}cover-${r.slug}-500.webp" srcset="${IMG}cover-${r.slug}-500.webp 500w, ${IMG}cover-${r.slug}-1000.webp 1000w" sizes="(min-width:900px) 360px, 45vw" width="500" height="500" alt="${esc(alt)}" loading="lazy" decoding="async">`:ttile(r);
 }
@@ -155,8 +161,8 @@ function storyItem(a,i=0){
 }
 const ytSearch = v => `https://www.youtube.com/results?search_query=${encodeURIComponent(artist(v.artist).name+" "+v.title+" official video")}`;
 function vidCard(v,i){
-  const a=artist(v.artist);
-  return `<article class="vid reveal ${v.orient}" data-vid="${v.slug}"><div class="vid-frame"><div class="poster panel ${panelCls(i+1)}"><span class="grooves spin" aria-hidden="true"></span>${pic(v.photo,{sizes:"(min-width:1024px) 30vw, 90vw",alt:""})}</div><span class="ttl" aria-hidden="true">${esc(v.title)}</span><button class="vid-play" type="button" aria-label="Play: ${esc(v.title)} by ${esc(a.name)}"><span>${ICON.play}</span></button></div><h3>${esc(v.title)}</h3><p class="meta">${esc(v.kind)} · ${peekBtn(a.slug)}${v.orient==="portrait"?" · Vertical":""}</p></article>`;
+  const a=v.artist?artist(v.artist):null, who=a?a.name:v.by;
+  return `<article class="vid reveal ${v.orient||""}${v.tiktok?" tiktok":""}" data-vid="${v.slug}"><div class="vid-frame"><div class="poster panel ${panelCls(i+1)}"><span class="grooves spin" aria-hidden="true"></span>${v.photo?pic(v.photo,{sizes:"(min-width:1024px) 22vw, 90vw",alt:""}):""}</div><span class="ttl" aria-hidden="true">${esc(v.title)}</span><button class="vid-play" type="button" aria-label="Play: ${esc(v.title)} by ${esc(who)}"><span>${ICON.play}</span></button></div><h3>${esc(v.title)}</h3><p class="meta">${esc(v.kind)} · ${a?peekBtn(a.slug):esc(who)}${v.tiktok?` · <a class="link" href="https://www.tiktok.com/@salonelyrics/video/${v.tiktok}" target="_blank" rel="noopener">TikTok<span class="sr"> (opens in a new tab)</span></a>`:""}</p></article>`;
 }
 function bindVideos(root){
   let active=null;
@@ -167,6 +173,8 @@ function bindVideos(root){
       const v=D.videos.find(x=>x.slug===card.dataset.vid), a=artist(v.artist);
       const pl=document.createElement("div"); pl.className="vid-player"; pl.setAttribute("role","status"); pl.innerHTML=`<span class="spin" aria-hidden="true"></span><p>Loading player…</p>`;
       frame.appendChild(pl); btn.hidden=true;
+      if(v.tiktok){ pl.innerHTML=`<iframe src="https://www.tiktok.com/player/v1/${v.tiktok}?autoplay=1&rel=0&music_info=1&description=0" title="${esc(v.title)}: lyric video on TikTok" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe><button class="vid-close" type="button" aria-label="Close video">×</button>`;
+        $(".vid-close",pl).addEventListener("click",()=>{stopVid(card);active=null;btn.focus();}); return; }
       setTimeout(()=>{ if(!pl.isConnected) return;
         pl.innerHTML=`<p><strong>${esc(v.title)} · ${esc(a.name)}</strong></p><p>The official video isn’t linked yet. When it is, the player loads here only after you press play, and any other video stops.</p><div class="row-wrap" style="justify-content:center"><a class="btn btn-green btn-sm" href="${ytSearch(v)}" target="_blank" rel="noopener">Find it on YouTube</a><button class="btn btn-ghost btn-sm" type="button" style="color:#fff">Close</button></div>`;
         $("button",pl).addEventListener("click",()=>{stopVid(card);active=null;btn.focus();}); $("a",pl).focus(); },800);
@@ -194,7 +202,7 @@ function svcCarousel(title,intro){
     </div><p class="paid-note">Photos on service cards are illustrative Pexels images.</p></div></section>`;
 }
 function teamGrid(){
-  return `<div class="team-grid">${D.team.map(t=>`<article class="team-card reveal ${t.open?"open":""}"><div class="team-top"><span class="team-av ${t.photo?"has-photo":""}" aria-hidden="true">${t.open?"+":t.photo?pic(t.photo,{sizes:"64px",alt:""}):esc(initials(t.name))}</span><div><h3>${esc(t.name)}</h3><p class="team-role">${esc(t.role)}</p></div></div><p>${esc(t.bio)}</p>${t.photo?'<p class="ph-note">Placeholder photo</p>':""}${t.open?`<a class="pill-btn" href="#contact">Apply to write</a>`:""}</article>`).join("")}</div>`;
+  return `<div class="team-grid">${D.team.map(t=>`<article class="team-card reveal ${t.open?"open":""}"><div class="team-top"><span class="team-av ${t.photo?"has-photo":""}" aria-hidden="true">${t.open?"+":t.photo?pic(t.photo,{sizes:"80px",alt:""}):esc(initials(t.name))}</span><div><h3>${esc(t.name)}</h3><p class="team-role">${esc(t.role)}</p></div></div><p>${esc(t.bio)}</p>${t.open?`<a class="pill-btn" href="#contact">Apply to write</a>`:""}</article>`).join("")}</div>`;
 }
 
 /* ================= HOME ================= */
@@ -285,7 +293,7 @@ VIEWS.home = () => {
 
   <section class="section" aria-labelledby="vid-h"><div class="wrap">
     <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Watch</p><h2 id="vid-h" class="display sec-title">Videos</h2></div><a class="arrow-link" href="#videos">All videos</a></div>
-    <div class="vid-grid">${D.videos.slice(0,3).map(vidCard).join("")}</div>
+    <div class="vid-grid">${D.videos.slice(0,4).map(vidCard).join("")}</div>
   </div></section>
 
   ${svcCarousel("Grow your audience","Placements across the website, Instagram and TikTok. Every paid placement is labelled Promoted.")}
@@ -375,7 +383,7 @@ VIEWS.lyrics = () => {
     </div>
     <p class="count" id="lcount" aria-live="polite"></p>
     <ol class="songlist mt-s" id="llist"></ol>
-    <div class="mt-l"><h2 class="display" style="font-size:clamp(28px,4vw,44px)">Albums &amp; EPs</h2><div class="rel-grid mt-m">${D.releases.map(r=>`<a class="rel reveal" href="#release.${r.slug}">${ttile(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)} · ${esc(r.year)}</p></div></a>`).join("")}</div></div>
+    <div class="mt-l"><h2 class="display" style="font-size:clamp(28px,4vw,44px)">Albums &amp; EPs</h2><div class="rel-grid mt-m">${D.releases.map(r=>`<a class="rel reveal" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}</p></div></a>`).join("")}</div></div>
   </div>`,
   after(main){
     const draw=()=>{ const q=S.lyr.q.trim().toLowerCase();
@@ -479,7 +487,7 @@ VIEWS.release = r => {
     <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}</p><div class="row-wrap"><button class="btn btn-green" type="button" data-share>Share release</button></div></div>
     <div style="max-width:360px;width:100%">${relArt(rel,`Cover of ${rel.title} by ${a.name}`)}<p class="credit" style="color:var(--muted-dark);margin-top:8px">${rel.cover?"Cover artwork.":"Typographic tile. Official artwork will be added when supplied."}</p></div></div>
   </div></header>
-  <div class="wrap page"><h2 class="display" style="font-size:36px;margin-bottom:16px">Songs on Salone Lyrics</h2>${tracks.length?`<ol class="songlist">${tracks.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">The tracklist for ${esc(rel.title)} will be added with the artist.</p></div>`}
+  <div class="wrap page"><h2 class="display" style="font-size:36px;margin-bottom:16px">${rel.tracklist?"Tracklist":"Songs on Salone Lyrics"}</h2>${rel.tracklist?trackList(rel):tracks.length?`<ol class="songlist">${tracks.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">The tracklist for ${esc(rel.title)} will be added with the artist.</p></div>`}
   <div class="mt-l"><a class="arrow-link" href="#artist.${a.slug}.music">More music from ${esc(a.name)}</a></div></div>`,
   after(main){ $("[data-share]",main).addEventListener("click",()=>share(document.title)); }};
 };
@@ -662,8 +670,8 @@ VIEWS.event = r => {
 
 /* ================= VIDEOS ================= */
 VIEWS.videos = () => ({ title:"Videos", html:`
-  <header class="phead charcoal grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Videos"]])}<h1 class="display">Videos</h1><p>Music videos from Sierra Leone’s artists. Players load only when you press play and never start with sound on their own.</p></div></header>
-  <div class="wrap page"><div class="vid-grid" id="vout">${D.videos.map(vidCard).join("")}</div><p class="paid-note mt-m">Official video links will be embedded once confirmed. Until then, each card opens a YouTube search.</p></div>`,
+  <header class="phead charcoal grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Videos"]])}<h1 class="display">Videos</h1><p>Lyric videos created by Salone Lyrics. Each player loads only when you press play.</p></div></header>
+  <div class="wrap page"><div class="vid-grid" id="vout">${D.videos.map(vidCard).join("")}</div><p class="paid-note mt-m">Videos play from TikTok. Once you press play, TikTok may set its own cookies. <a class="link" href="https://www.tiktok.com/@salonelyrics" target="_blank" rel="noopener">Follow Salone Lyrics on TikTok</a>.</p></div>`,
   after(main){ bindVideos(main); } });
 
 /* ================= GALLERY ================= */
@@ -799,7 +807,7 @@ VIEWS.contact = () => ({ title:"Contact", html:`
 VIEWS.credits = () => ({ title:"Photo credits", html:`
   <header class="phead paper"><div class="wrap">${crumbs([["Home","#"],["About","#about"],["Photo credits"]])}<h1 class="display">Photo credits</h1><p>Artist photos were supplied for the site and illustrative photos come from Pexels. Every image was cut out and converted to black and white for this design.</p></div></header>
   <div class="wrap page"><div class="notice notice-info" style="margin-bottom:24px"><strong>Credits in progress</strong><span>Photographer names for artist photos will be added here once confirmed.</span></div>
-  <div class="table-wrap"><table class="creds-table"><thead><tr><th>Image</th><th>Description</th><th>Source</th><th>Type</th><th>Link</th></tr></thead><tbody>${Object.entries(P).map(([k,p])=>`<tr><td><div class="th">${pic(k,{sizes:"56px",alt:""})}</div></td><td>${esc(p.alt)}</td><td>${esc(p.by)}</td><td>${p.press?"Artist press/profile image":p.artist?"Artist photo":"Pexels (illustrative)"}</td><td>${p.page?`<a class="link" href="${p.page}" target="_blank" rel="noopener">View source</a>`:"—"}</td></tr>`).join("")}</tbody></table></div></div>` });
+  <div class="table-wrap"><table class="creds-table"><thead><tr><th>Image</th><th>Description</th><th>Source</th><th>Type</th><th>Link</th></tr></thead><tbody>${Object.entries(P).map(([k,p])=>`<tr><td><div class="th">${pic(k,{sizes:"56px",alt:""})}</div></td><td>${esc(p.alt)}</td><td>${esc(p.by)}</td><td>${p.press?"Artist press/profile image":p.artist?"Artist photo":p.team?"Team photo":"Pexels (illustrative)"}</td><td>${p.page?`<a class="link" href="${p.page}" target="_blank" rel="noopener">View source</a>`:"—"}</td></tr>`).join("")}</tbody></table></div></div>` });
 VIEWS.notfound = () => ({ title:"Page not found", html:`<div class="wrap page"><div class="empty" style="margin-block:64px"><h1 class="display" style="font-size:48px">Page not found</h1><p class="muted">The page may have moved. Try searching for a song or artist.</p><div class="row-wrap" style="justify-content:center"><button class="btn btn-primary" type="button" data-open-search-btn>Search</button><a class="btn btn-ghost" href="#">Go home</a></div></div></div>` });
 
 /* ================= SEARCH ================= */

@@ -930,6 +930,29 @@ h1[tabindex="-1"]:focus{outline:none}
 .rel .cover{transition:transform var(--t) var(--ease),box-shadow var(--t)}
 .rel:hover .cover{transform:translateY(-3px);box-shadow:6px 6px 0 var(--charcoal)}
 
+/* ---------- Release tracklists ---------- */
+.tracklist{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--charcoal)}
+.tracklist li{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:14px 4px;border-bottom:1px solid var(--line)}
+.tracklist .num{font:400 22px/1 var(--f-display);color:var(--blue)}
+.tracklist .tt{font-weight:600}
+.tracklist .tt a{color:inherit}
+.tracklist .ft{font-weight:400;color:var(--muted)}
+.tracklist .go{font-size:13px;font-weight:600;color:var(--blue-deep)}
+
+/* ---------- TikTok lyric videos ---------- */
+.vid.tiktok .vid-frame{aspect-ratio:9/16;width:100%;height:auto;max-height:none;margin-inline:0}
+.vid.tiktok .poster picture{height:auto;width:100%}
+.vid.tiktok .poster img{width:100%;height:auto}
+@media (min-width:640px){.vid-grid:has(.vid.tiktok){grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1024px){.vid-grid:has(.vid.tiktok){grid-template-columns:repeat(4,minmax(0,1fr))}}
+.vid-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.vid-close{position:absolute;top:8px;right:8px;z-index:2;width:40px;height:40px;border-radius:50%;border:0;background:rgba(16,18,20,.85);color:#fff;font-size:24px;line-height:1;cursor:pointer}
+.vid-close:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+/* ---------- Team photos ---------- */
+.team-av.has-photo{width:80px;height:80px;border-radius:50%}
+.team-av.has-photo img{object-position:50% 50%}
+
 
 </style>
 
@@ -1004,7 +1027,7 @@ h1[tabindex="-1"]:focus{outline:none}
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script>window.SL_DIMS={"hero-suit":{"w":1497,"h":1892,"ratio":1.2639},"vocalist-studio":{"w":1201,"h":1069,"ratio":0.8901},"singer-hat":{"w":1170,"h":1095,"ratio":0.9359},"headphones-hoodie":{"w":1800,"h":2504,"ratio":1.3911},"headphones-glasses":{"w":1002,"h":990,"ratio":0.988},"singer-side":{"w":546,"h":1064,"ratio":1.9487},"singer-red":{"w":1032,"h":1119,"ratio":1.0843},"guitarist":{"w":1638,"h":2150,"ratio":1.3126},"djembe":{"w":1034,"h":1718,"ratio":1.6615},"seated-studio":{"w":1260,"h":2011,"ratio":1.596},"trumpet":{"w":1368,"h":2139,"ratio":1.5636},"headwrap":{"w":1634,"h":2469,"ratio":1.511},"r-drizilik":{"w":1206,"h":1909,"ratio":1.5829},"r-kao-denero":{"w":870,"h":1542,"ratio":1.7724},"r-bakitenno":{"w":1500,"h":1488,"ratio":0.992},"r-apreel":{"w":936,"h":1090,"ratio":1.1645},"r-incredible-jj":{"w":1074,"h":1809,"ratio":1.6844},"r-boii":{"w":1170,"h":1444,"ratio":1.2342},"r-emmerson":{"w":720,"h":999,"ratio":1.3875},"r-laj":{"w":1161,"h":1759,"ratio":1.5151},"r-d4nny":{"w":720,"h":885,"ratio":1.2292},"r-samza":{"w":1184,"h":1710,"ratio":1.4443},"r-itribe":{"w":516,"h":1343,"ratio":2.6027},"r-star-zee":{"w":728,"h":1421,"ratio":1.9519},"r-t-ansumana":{"w":900,"h":975,"ratio":1.0833},"r-t-alpha":{"w":775,"h":1012,"ratio":1.3058},"r-t-michael":{"w":598,"h":993,"ratio":1.6605},"r-t-chernor":{"w":900,"h":1154,"ratio":1.2822},"r-t-ahmed":{"w":900,"h":1122,"ratio":1.2467},"r-famous":{"w":1261,"h":1635,"ratio":1.2966},"r-isat":{"w":635,"h":1146,"ratio":1.8047},"r-the-therapist":{"w":1170,"h":1170,"ratio":1},"r-boii-2":{"w":456,"h":469,"ratio":1.0285}};</script>
+<script>window.SL_DIMS={"hero-suit":{"w":1497,"h":1892,"ratio":1.2639},"vocalist-studio":{"w":1201,"h":1069,"ratio":0.8901},"singer-hat":{"w":1170,"h":1095,"ratio":0.9359},"headphones-hoodie":{"w":1800,"h":2504,"ratio":1.3911},"headphones-glasses":{"w":1002,"h":990,"ratio":0.988},"singer-side":{"w":546,"h":1064,"ratio":1.9487},"singer-red":{"w":1032,"h":1119,"ratio":1.0843},"guitarist":{"w":1638,"h":2150,"ratio":1.3126},"djembe":{"w":1034,"h":1718,"ratio":1.6615},"seated-studio":{"w":1260,"h":2011,"ratio":1.596},"trumpet":{"w":1368,"h":2139,"ratio":1.5636},"headwrap":{"w":1634,"h":2469,"ratio":1.511},"r-drizilik":{"w":1000,"h":1250,"ratio":1.25},"r-kao-denero":{"w":1000,"h":1250,"ratio":1.25},"r-bakitenno":{"w":1000,"h":1250,"ratio":1.25},"r-apreel":{"w":1000,"h":1250,"ratio":1.25},"r-incredible-jj":{"w":1000,"h":1250,"ratio":1.25},"r-boii":{"w":1000,"h":1250,"ratio":1.25},"r-emmerson":{"w":1000,"h":1250,"ratio":1.25},"r-laj":{"w":1000,"h":1250,"ratio":1.25},"r-d4nny":{"w":1000,"h":1250,"ratio":1.25},"r-samza":{"w":1000,"h":1250,"ratio":1.25},"r-itribe":{"w":1000,"h":1250,"ratio":1.25},"r-star-zee":{"w":1000,"h":1250,"ratio":1.25},"r-t-ansumana":{"w":600,"h":600,"ratio":1},"r-t-alpha":{"w":600,"h":600,"ratio":1},"r-t-michael":{"w":600,"h":600,"ratio":1},"r-t-chernor":{"w":600,"h":600,"ratio":1},"r-t-ahmed":{"w":600,"h":600,"ratio":1},"r-famous":{"w":1000,"h":1250,"ratio":1.25},"r-isat":{"w":1000,"h":1250,"ratio":1.25},"r-the-therapist":{"w":1000,"h":1250,"ratio":1.25},"r-boii-2":{"w":1000,"h":1250,"ratio":1.25}};</script>
 <script>/* Salone Lyrics — site content.
    Artist profiles follow the researched profile document (display order 1–15); sources are listed per artist.
    Artist photos were supplied for the site; photographer credits are to be added. Pexels images are illustrative only.
@@ -1029,12 +1052,12 @@ window.SL_PHOTOS = {
   "r-star-zee": { page:"", by:"Photographer credit to be added", alt:"Portrait of Star Zee", pos:"50% 20%", artist:true },
   "r-emmerson": { page:"", by:"Photographer credit to be added", alt:"Portrait of Emmerson", pos:"50% 20%", artist:true },
   "r-boii-2": { page:"", by:"Photographer credit to be added", alt:"Portrait of BOII", pos:"50% 20%", artist:true },
-  /* ---- Team placeholder headshots (Pexels stock, NOT the real team members) ---- */
-  "r-t-ansumana": { page:"https://www.pexels.com/photo/a-happy-man-smiling-7562185/", by:"VAZHNIK / Pexels", alt:"Placeholder headshot", pos:"50% 20%", placeholder:true },
-  "r-t-alpha":    { page:"https://www.pexels.com/photo/close-up-photo-of-man-s-face-2743754/", by:"David Kwewum / Pexels", alt:"Placeholder headshot", pos:"50% 20%", placeholder:true },
-  "r-t-michael":  { page:"https://www.pexels.com/photo/confident-african-male-in-red-shirt-portrait-30386124/", by:"Boko Shots / Pexels", alt:"Placeholder headshot", pos:"50% 8%", placeholder:true },
-  "r-t-chernor":  { page:"https://www.pexels.com/photo/cheerful-young-black-man-smiling-at-camera-5984158/", by:"Dapo Abideen / Pexels", alt:"Placeholder headshot", pos:"50% 20%", placeholder:true },
-  "r-t-ahmed":    { page:"https://www.pexels.com/photo/cheerful-black-man-on-gray-background-6999225/", by:"Monstera Production / Pexels", alt:"Placeholder headshot", pos:"50% 20%", placeholder:true },
+  /* ---- Team team photos (Pexels stock, NOT the real team members) ---- */
+  "r-t-ansumana": { page:"", by:"Salone Lyrics", alt:"Portrait of Ansumana Ngobeh", pos:"50% 50%", team:true },
+  "r-t-alpha": { page:"", by:"Salone Lyrics", alt:"Portrait of Alpha Fofanah", pos:"50% 50%", team:true },
+  "r-t-michael": { page:"", by:"Salone Lyrics", alt:"Portrait of Michael Nabieu", pos:"50% 50%", team:true },
+  "r-t-chernor": { page:"", by:"Salone Lyrics", alt:"Portrait of Chernor M. Kamara", pos:"50% 50%", team:true },
+  "r-t-ahmed": { page:"", by:"Salone Lyrics", alt:"Portrait of Ahmed S. Koroma", pos:"50% 50%", team:true },
   /* ---- Pexels illustrative photography (not artists) ---- */
   "hero-suit":         { page:"https://www.pexels.com/photo/black-man-posing-in-suit-17350030/", by:"Andy Coffie / Pexels", alt:"Performer in a blazer striking a pose", pos:"50% 20%" },
   "vocalist-studio":   { page:"https://www.pexels.com/photo/photo-of-woman-singing-in-music-studio-2531728/", by:"Papa Yaw / Pexels", alt:"Vocalist singing into a studio microphone", pos:"50% 25%" },
@@ -1067,20 +1090,20 @@ artists: [
   {"slug":"kao-denero","name":"Kao Denero","photo":"r-kao-denero","genre":"Hip-hop and rap","town":"Sierra Leone","intro":"A rapper associated with the Black Leo movement and a long-running hip-hop career.","bio":["Kao Denero is a Sierra Leonean rapper associated with the Black Leo movement and a long-running hip-hop career. Public biographies identify him as Amara Denis Turay and connect his origins with Lungi. His early catalogue includes Black Leo 4 Life, while later projects and singles developed his reputation as a prominent voice in Sierra Leonean rap.","His music is built around assertive delivery, lyrical competition and commentary on personal and public life. Alongside his recording career, he has held a public entertainment-related ambassadorial role.","He remains relevant to contemporary coverage through continued releases, audience recognition and his place within the country’s rap conversation. His current artist catalogue includes “Brutus & Judas.”"],"awards":["2026 SLeDU: special recognition.","March 2026: released “Brutus & Judas.”","Featured among recognised favourites in 2026 Freetown audience research."],"details":[["Genre","Hip-hop and rap"],["Country / roots","Lungi, Sierra Leone"],["Real name","Amara Denis Turay"],["Label / documented association","Black Leo"],["Featured songs / projects","“African King,” “I Am Sierra Leone,” “Brutus & Judas”; Heroes."]],"links":[["Spotify — artist","https://open.spotify.com/artist/6hhprhD4p991b1uLo5n6t1"],["Audiomack — artist","https://audiomack.com/kao-denero"],["Amazon Music — artist","https://music.amazon.in/artists/B00889S7IM/kao-denero"],["Apple Music — I Am Sierra Leone","https://music.apple.com/us/album/i-am-sierra-leone-single/1530869776"],["Apple Music — Brutus & Judas","https://music.apple.com/us/album/brutus-judas-single/1883535643"],["Fambul — artist/video profile","https://www.fambul.com/directory/kaolastkingdenero"]],"storyIdea":"Kao Denero: the enduring presence of Black Leo rap","sources":[["Linked Fambul biography and artist catalogues"],["Hip Hop African: critical coverage","https://hiphopafrican.com/kao-denero-the-king-of-freetown/"],["SLEMA nominations","https://sle-ma.com/voting/"],["SLeDU 2026 results","https://sierraloaded.sl/entertainment/top-honors-2026-sledu-national-music-awards/"],["SLeDU 2026 nominations","https://sierraloaded.sl/entertainment/sledu-nominees-2026-national-music-awards/"],["Freetown audience survey","https://awokonewspapersl.com/laj-crowned-sierra-leones-all-time-favourite-artist-in-freetown-survey/"]]},
   {"slug":"star-zee","name":"Star Zee","photo":"r-star-zee","genre":"Hip-hop and dancehall","town":"Sierra Leone","intro":"A rapper and singer whose career spans group performance and an energetic solo mix of rap and dancehall.","bio":["Star Zee is a Sierra Leonean rapper and singer whose career spans group performance and a long-running solo catalogue. Public biographies identify her as Linda Samai and describe her early involvement with the group Stress Inc. She later established an individual recording identity characterised by an energetic combination of rap and dancehall.","Her collaborations include “Leader” with Ghanaian artist Stonebwoy, a recording that links her domestic career with the wider West African music scene. Songs such as “Doli” form part of her more recent catalogue.","In 2026, her performance activity and appearance in award nominations demonstrate that she remains active within the contemporary industry, rather than being included solely as a historical figure."],"awards":["Collaborated with Stonebwoy on “Leader.”","Performed at the February 2026 Sulima culture and creativity event, documented by SLENA.","2026 SLEMA: included in the nomination field."],"details":[["Genre","Hip-hop and dancehall"],["Country / roots","Freetown, Sierra Leone"],["Real name","Linda Samai"],["Featured songs / projects","“Leader,” “Na By Fos,” “Doli,” “Life.”"]],"links":[["Audiomack — artist","https://audiomack.com/starzeezee"],["SoundCloud — artist","https://soundcloud.com/starzee"],["Apple Music — Leader","https://music.apple.com/us/album/leader-feat-stonebwoy-single/1435620364"],["Spotify — Na By Fos","https://open.spotify.com/track/4lTNl5f7ufIH7zdEFljKmE"],["Amazon Music — artist","https://music.amazon.ca/artists/B00H7L7ZPI/star-zee"],["ReverbNation — songs","https://www.reverbnation.com/starzee/songs"]],"storyIdea":"Star Zee: a career spanning rap and dancehall","sources":[["Forum biography","https://forumnews-sl.com/star-zee-official-biography-profile/"],["Music In Africa profile","https://musicinafrica.net/directory/star-zee/"],["SLENA: Sulima event","https://www.slena.gov.sl/post/sulima-shines-as-culture-and-creativity-weekend-boosts-tourism-drive"],["SLEMA nominations","https://sle-ma.com/voting/"],["SLeDU 2026 results","https://sierraloaded.sl/entertainment/top-honors-2026-sledu-national-music-awards/"],["SLeDU 2026 nominations","https://sierraloaded.sl/entertainment/sledu-nominees-2026-national-music-awards/"],["Freetown audience survey","https://awokonewspapersl.com/laj-crowned-sierra-leones-all-time-favourite-artist-in-freetown-survey/"]]},
   {"slug":"emmerson","name":"Emmerson","photo":"r-emmerson","genre":"Afropop, R&B and socially conscious popular music","town":"Sierra Leone","intro":"A singer and songwriter whose songs have long linked popular music and public debate.","bio":["Emmerson is a Sierra Leonean singer and songwriter whose catalogue has played a prominent role in the relationship between popular music and public debate. Known publicly as Emmerson Amidu Bockarie, he became widely recognised through songs including “Borbor Bele,” using accessible music to address social and political concerns.","His career also includes romantic and celebratory material, with projects such as Home and Away and Survivor illustrating a broader musical identity. Later international collaborations, including “Strawberry on Ice” with Davido, connect his established career to contemporary African pop.","In June 2025, he announced a move away from political and social-issue music. His earlier work continues to form an important part of his public identity: audience research published in 2026 placed him among Freetown respondents’ leading all-time favourite artists."],"awards":["Global Music Awards Africa 2022: Afrobeat Song of the Year.","2024: released “Strawberry on Ice” with Davido.","2026: among the leading all-time favourites in the cited Freetown audience survey."],"details":[["Genre","Afropop, R&B and socially conscious popular music"],["Country / roots","Freetown, Sierra Leone"],["Real name","Emmerson Amidu Bockarie"],["Debut album","Borbor Bele (2004)"],["Featured songs / projects","“Borbor Bele,” “Tu Tu Party,” “Strawberry on Ice”; Home and Away; Survivor."]],"links":[["Spotify — artist","https://open.spotify.com/artist/43LIP6Udk1ecczsHMGhCvU"],["Amazon Music — artist","https://music.amazon.in/artists/B0012MF6Q8/emmerson"],["Apple Music — Strawberry On Ice video","https://music.apple.com/us/music-video/strawberry-on-ice/1754432173"],["YouTube — Strawberry On Ice video","https://www.youtube.com/watch?v=kW3Y5fMGmvE"],["Official website","https://www.emmbock.com/"]],"storyIdea":"Emmerson: two decades of music and public conversation","sources":[["Patriotic Vanguard: early biography","https://www.thepatrioticvanguard.com/emmerson-amidu-bockarie-a-short-biography"],["Shoutout LA: artist interview","https://shoutoutla.com/meet-emmerson-bockarie-musician/"],["Music In Africa profile","https://musicinafrica.net/directory/emmerson/"],["2025 announcement coverage","https://sierraloaded.sl/news/emmerson-retirement-from-political-music/"],["2022 award report","https://www.premiermedia-sl.com/emmerson-earns-international-award/"],["2022 winners: Daily Guide","https://dailyguidenetwork.com/stonebwoy-don-jazzy-honoured-at-global-music-awards/"],["SLEMA nominations","https://sle-ma.com/voting/"],["SLeDU 2026 results","https://sierraloaded.sl/entertainment/top-honors-2026-sledu-national-music-awards/"],["SLeDU 2026 nominations","https://sierraloaded.sl/entertainment/sledu-nominees-2026-national-music-awards/"],["Freetown audience survey","https://awokonewspapersl.com/laj-crowned-sierra-leones-all-time-favourite-artist-in-freetown-survey/"]]},
-  { slug:"kracktwist", name:"Kracktwist", photo:null, genre:"Hip-hop", town:"Lumley, Freetown", label:"Independent", hot:7,
+  { slug:"kracktwist", unlisted:true, name:"Kracktwist", photo:null, genre:"Hip-hop", town:"Lumley, Freetown", label:"Independent", hot:7,
     intro:"A Lumley rapper known for storytelling verses and social commentary.",
     bio:["Kracktwist, real name Ishmael Kamara, is a rapper from Lumley in Freetown. He signed with Kabaka Multimedia Entertainment in early 2017 and released “Thop” later that year. His second album launched at the Radisson Blu in Freetown in March 2019.","He is known for storytelling lyrics and social commentary and has often worked with Samza. The two reunited on “Mi Paddi” with Nigeria’s Chechii.","Recording as Kracktwist Lamina, he released the independent EP Republicans in May 2025, the EP Aunty Kadie in early 2026, and “Break” with Ghana’s Lyrical Joe in June 2026."],
     facts:[["Real name","Ishmael Kamara"],["From","Lumley, Freetown"],["Latest EP","Aunty Kadie (2026)"]],
     awards:["#7, Sierraloaded 20 Hottest Artistes 2025"],
     links:[],
     sources:["https://fambul.com/kracktwist","https://awokonewspapersl.com/?p=158399","https://sierraloaded.sl/music/kracktwist-lamina-break-lyrical-joe/",HOT25] },
-  { slug:"rozzy-sokota", name:"Rozzy Sokota", photo:null, genre:"R&B", town:"Freetown", label:"Sokota Vybe",
+  { slug:"rozzy-sokota", unlisted:true, name:"Rozzy Sokota", photo:null, genre:"R&B", town:"Freetown", label:"Sokota Vybe",
     intro:"A Freetown R&B and Afropop singer who records under her own Sokota Vybe name.",
     bio:["Rozzy Sokota makes R&B, Afropop and what she calls Afrosounds, recording under the Sokota Vybe name. She released an album titled SokotaVybe.","She has worked with I-Tribe, Markmuday, Blesz, Kracktwist, Samza and Arkman, including “Abandawa” with Arkman.","She has been named among the 50 Most Influential Sierra Leonean Women."],
     facts:[["Label","Sokota Vybe"],["Known for","“Abandawa” ft. Arkman"]], awards:["Named among the 50 Most Influential Sierra Leonean Women"],
     links:[["Audiomack","https://audiomack.com/rozzysokota"],["Instagram","https://www.instagram.com/rozzy_sokota"],["TikTok","https://www.tiktok.com/@rozzysokota"]],
     sources:["https://audiomack.com/rozzysokota","https://www.premiermedia-sl.com/?p=9191"] },
-  { slug:"gemy", name:"Gemy", photo:null, genre:"To be confirmed", town:"Sierra Leone", pending:true,
+  { slug:"gemy", unlisted:true, name:"Gemy", photo:null, genre:"To be confirmed", town:"Sierra Leone", pending:true,
     intro:"Profile in progress. Salone Lyrics is confirming details with the artist’s team.",
     bio:["We could not yet verify Gemy’s biography, releases or official links from published sources.","This profile will be completed once the artist or their management supplies official details and photos."],
     facts:[], awards:[], links:[], sources:[] },
@@ -1140,19 +1163,12 @@ songs: [
 ],
 
 releases: [
-  { slug:"audacity-album", title:"Audacity", artist:"drizilik", type:"Album", year:2026, tracks:["audacity"], colour:"charcoal", cover:true },
-  { slug:"the-maths", title:"The Maths", artist:"incredible-jj", type:"EP", year:2026, tracks:[], colour:"amber", cover:true },
-  { slug:"aunty-kadie", title:"Aunty Kadie", artist:"kracktwist", type:"EP", year:2026, tracks:[], colour:"green", cover:true },
-  { slug:"money-or-honey", title:"Money or Honey", artist:"boii", type:"EP", year:2025, tracks:[], colour:"blue", cover:true },
-  { slug:"wait-and-see", title:"Wait and See", artist:"drizilik", type:"Album", year:2025, tracks:[], colour:"amber", cover:true },
-  { slug:"republicans", title:"Republicans", artist:"kracktwist", type:"EP", year:2025, tracks:[], colour:"charcoal" },
-  { slug:"a-perfect-time", title:"A Perfect Time", artist:"samza", type:"Album", year:null, tracks:[], colour:"blue", cover:true },
-  { slug:"ashobi-album", title:"Ashobi", artist:"drizilik", type:"Album", year:2022, tracks:["ashobi","fana-makit"], colour:"green" },
-  { slug:"9-lives", title:"9 Lives", artist:"emmerson", type:"Album", year:2020, tracks:["kokonat-ed"], colour:"amber" },
-  { slug:"shukubly", title:"Shukubly", artist:"drizilik", type:"Album", year:2018, tracks:[], colour:"blue" },
-  { slug:"money-na-bank", title:"Money Na Bank", artist:"laj", type:"Album", year:2009, tracks:[], colour:"charcoal" },
-  { slug:"borbor-bele", title:"Borbor Bele", artist:"emmerson", type:"Album", year:2004, tracks:["borbor-bele"], colour:"green" },
-  { slug:"black-leo-4-life", title:"Black Leo 4 Life", artist:"kao-denero", type:"Album", year:2003, tracks:[], colour:"blue" }
+  {"slug":"audacity-album","title":"Audacity","artist":"drizilik","type":"Album","year":2026,"tracks":["audacity"],"colour":"charcoal","cover":true,"tracklist":[["NEVER KNOW","Reginald Thompson"],["ALPHA AND OMEGA",""],["SABI ROAD",""],["TOO LATE","Shadow Boxxer"],["NO GAMES","Isat"],["ALCOHOL",""],["REAL FRIENDS","Reginald Thompson"],["BETE PASS ME PAPA","Reginald Thompson"],["AUDACITY","D4nny & Solo’s Beats"],["GO",""]],"tracklistSource":"https://music.apple.com/us/album/audacity/6811765244"},
+  {"slug":"the-maths","title":"The Maths","artist":"incredible-jj","type":"EP","year":2026,"tracks":[],"colour":"amber","cover":true,"tracklist":[["Jakondeh",""],["Mood",""],["Crush","JZyNO"],["Novice",""],["Love Code",""],["Morning Sunlight","King David 1995"],["City Bill","King Boss LA"]],"tracklistSource":"https://music.apple.com/us/album/the-maths/1895028643"},
+  {"slug":"aunty-kadie","title":"Aunty Kadie","artist":"kracktwist","type":"EP","year":2026,"tracks":[],"colour":"green","cover":true,"tracklist":[["Intro",""],["E Don Tay","Arkman"],["Aunty Kadie",""],["Nor Get God","Triple Hardest & Princess H"],["Foolish Activity","AL Dyce"],["Dna","King Ice, Depth & Father"],["Mi Foot",""]],"tracklistSource":"https://music.apple.com/us/album/aunty-kadie/1888240219"},
+  {"slug":"money-or-honey","title":"Money or Honey","artist":"boii","type":"EP","year":2025,"tracks":[],"colour":"blue","cover":true,"tracklist":[["Dollars and Pounds",""],["Hero",""],["Without You","BoyPee"],["Away",""],["Go Low","Ramoni"],["Baby Yeah",""],["Letter to My Ex",""],["Thank You",""]],"tracklistSource":"https://music.apple.com/us/album/money-or-honey/1849716146"},
+  {"slug":"wait-and-see","title":"Wait and See","artist":"drizilik","type":"Album","year":2025,"tracks":[],"colour":"amber","cover":true,"tracklist":[["Nothing Is Free",""],["Pull Up","J Lucia"],["Blame",""],["Smiley Face",""],["Above All",""],["Back At Me","Da Cintra"],["M.I.A","Laïoung"],["Lemonade","The Therapist"]],"tracklistSource":"https://music.apple.com/us/album/wait-and-see/1788321371"},
+  {"slug":"a-perfect-time","title":"A Perfect Time","artist":"samza","type":"Album","year":2025,"tracks":[],"colour":"blue","cover":true,"tracklist":[["A Perfect Time Intro, By: Twavula",""],["A Perfect Time",""],["Table","Marthson Blu, Bakitenno & Krio Mesaya"],["Away",""],["Orbothy","Kracktwist"],["More",""],["Asampete","Lucky Oyem"],["Think",""],["Fire",""],["Feelings","Joey"],["Lesson",""],["Ignore","Wisher"],["Sympathy",""],["God",""],["Somesie","Bakitenno, Apreel & Krio Mesaya"]],"tracklistSource":"https://music.apple.com/us/album/a-perfect-time-album/1857419070"}
 ],
 
 picks: ["crush","feel-alright","bismillah","ashobi","peace","farr-away","break","fun"],
@@ -1226,12 +1242,20 @@ events: [
 ],
 
 videos: [
-  { slug:"ashobi-video", title:"Ashobi", artist:"drizilik", kind:"Music video", orient:"landscape", photo:"r-drizilik" },
-  { slug:"crush-video", title:"Crush", artist:"incredible-jj", kind:"Music video", orient:"landscape", photo:"r-incredible-jj" },
-  { slug:"bismillah-video", title:"Bismillah", artist:"bakitenno", kind:"Music video", orient:"portrait", photo:"r-bakitenno" },
-  { slug:"feel-alright-video", title:"Feel Alright", artist:"boii", kind:"Music video", orient:"landscape", photo:"r-boii" },
-  { slug:"peace-video", title:"Peace", artist:"kao-denero", kind:"Music video", orient:"landscape", photo:"r-kao-denero" },
-  { slug:"break-video", title:"Break", artist:"kracktwist", kind:"Music video", orient:"portrait", photo:"r-kracktwist" }
+  {"slug":"no-pressure-lyrics","title":"No Pressure","artist":"famous","kind":"Lyric video","orient":"vertical","tiktok":"7554531363173502264","photo":"r-famous"},
+  {"slug":"taya-for-see-we-lyrics","title":"Taya For See We","artist":"laj","kind":"Lyric video","orient":"vertical","tiktok":"7556868407552003384","photo":"r-laj"},
+  {"slug":"bismillah-lyrics","title":"Bismillah","artist":"bakitenno","kind":"Lyric video","orient":"vertical","tiktok":"7550468262144888070","photo":"r-bakitenno"},
+  {"slug":"sabi-road-lyrics","title":"Sabi Road","artist":"drizilik","kind":"Lyric video","orient":"vertical","tiktok":"7588064137935113492","photo":"r-drizilik"},
+  {"slug":"aminata-lyrics","title":"Aminata","artist":"incredible-jj","kind":"Lyric video","orient":"vertical","tiktok":"7588491840731614484","photo":"r-incredible-jj"},
+  {"slug":"green-gold-lyrics","title":"Green Gold","artist":"kao-denero","kind":"Lyric video","orient":"vertical","tiktok":"7586437187034467585","photo":"r-kao-denero"},
+  {"slug":"akeh-lyrics","title":"Akeh","artist":"d4nny","kind":"Lyric video","orient":"vertical","tiktok":"7693613005975702791","photo":"r-d4nny"},
+  {"slug":"waytin-lyrics","title":"Waytin (feat. M.I.C)","artist":"bakitenno","kind":"Lyric video","orient":"vertical","tiktok":"7693988927023238418","photo":"r-bakitenno"},
+  {"slug":"compound-lyrics","title":"Compound","artist":null,"by":"Adfega","kind":"Lyric video","orient":"vertical","tiktok":"7561357208328408331","photo":null},
+  {"slug":"honey-waffle-lyrics","title":"Honey Waffle","artist":null,"by":"Keni Lavz","kind":"Lyric video","orient":"vertical","tiktok":"7578299180846796088","photo":null},
+  {"slug":"money-necessary-lyrics","title":"Money Necessary","artist":null,"by":"Legacy Boy","kind":"Lyric video","orient":"vertical","tiktok":"7586767899541490962","photo":null},
+  {"slug":"resurrection-lyrics","title":"Resurrection","artist":null,"by":"Izi Brandon","kind":"Lyric video","orient":"vertical","tiktok":"7589165691408878855","photo":null},
+  {"slug":"extraverted-introvert-lyrics","title":"Extraverted Introvert","artist":null,"by":"Mabsz","kind":"Lyric video","orient":"vertical","tiktok":"7578295685154426168","photo":null},
+  {"slug":"pains-of-a-rapper-lyrics","title":"Pains of a Rapper","artist":null,"by":"Plies MammyBoy","kind":"Lyric video","orient":"vertical","tiktok":"7693295742831578375","photo":null}
 ],
 
 gallery: [
@@ -1245,10 +1269,7 @@ team: [
   { name:"Alpha Fofanah", photo:"r-t-alpha", role:"Co-Creator", bio:"Co-runs the platform, shaping content plans, partnerships and community engagement." },
   { name:"Michael Nabieu", photo:"r-t-michael", role:"Graphic Designer", bio:"Designs lyric cards, artist features and campaign visuals." },
   { name:"Chernor M. Kamara", photo:"r-t-chernor", role:"Video Editor", bio:"Edits lyric videos, interviews and short-form content." },
-  { name:"Ahmed S. Koroma", photo:"r-t-ahmed", role:"Video Editor", bio:"Edits lyric videos, performance clips and social cut-downs." },
-  { id:"writer-1", name:"Article writer", sampleName:"Writer One", role:"Writer · Position open", open:true, bio:"Covers interviews, culture and long-form features." },
-  { id:"writer-2", name:"Article writer", sampleName:"Writer Two", role:"Writer · Position open", open:true, bio:"Covers new releases and music news." },
-  { id:"writer-3", name:"Article writer", sampleName:"Writer Three", role:"Writer · Position open", open:true, bio:"Covers the music business, streaming and industry." }
+  { name:"Ahmed S. Koroma", photo:"r-t-ahmed", role:"Video Editor", bio:"Edits lyric videos, performance clips and social cut-downs." }
 ],
 
 services: [
@@ -1282,7 +1303,7 @@ const song = s => D.songs.find(x=>x.slug===s);
 const release = s => D.releases.find(x=>x.slug===s);
 const story = s => D.articles.find(x=>x.slug===s);
 const event = s => D.events.find(x=>x.slug===s);
-const ARTISTS = () => D.artists.filter(a=>!a.hidden);
+const ARTISTS = () => D.artists.filter(a=>!a.hidden&&!a.unlisted);
 const SONGS = () => D.songs.filter(s=>!s.demo);
 const evStatus = e => (e.status==="upcoming"||e.status==="sold-out") && parse(e.endDate||e.date)<TODAY ? "completed" : e.status;
 const evDates = e => e.endDate ? `${fmtLong(e.date)} to ${fmtLong(e.endDate)}` : fmtLong(e.date);
@@ -1321,6 +1342,12 @@ function ttile(r){
   return `<div class="ttile ${r.colour}" aria-hidden="true"><span class="disc"></span><span class="meta">${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.note?" · "+esc(r.note):""}</span><span class="display">${esc(r.title)}</span><span class="meta">${esc(a.name)}</span></div>`;
 }
 
+const normT = t => String(t).toLowerCase().replace(/[^a-z0-9]/g,"");
+function trackList(rel){
+  const rows=rel.tracklist.map(([t,f],i)=>{ const s=SONGS().find(x=>(x.artist===rel.artist||x.featA===rel.artist)&&normT(x.title)===normT(t));
+    return `<li><span class="num tnum" aria-hidden="true">${String(i+1).padStart(2,"0")}</span><span class="tt">${s?`<a href="#song.${s.slug}">${esc(t)}</a>`:esc(t)}${f?` <span class="ft">feat. ${esc(f)}</span>`:""}</span>${s?`<a class="go" href="#song.${s.slug}" aria-hidden="true" tabindex="-1">View song</a>`:""}</li>`; }).join("");
+  return `<ol class="tracklist">${rows}</ol>${rel.tracklistSource?`<p class="paid-note">${rel.tracklist.length} tracks. Tracklist from <a class="link" href="${rel.tracklistSource}" target="_blank" rel="noopener">Apple Music</a>.</p>`:""}`;
+}
 function relArt(r,alt=""){
   return r.cover?`<img class="cover" src="${IMG}cover-${r.slug}-500.webp" srcset="${IMG}cover-${r.slug}-500.webp 500w, ${IMG}cover-${r.slug}-1000.webp 1000w" sizes="(min-width:900px) 360px, 45vw" width="500" height="500" alt="${esc(alt)}" loading="lazy" decoding="async">`:ttile(r);
 }
@@ -1419,8 +1446,8 @@ function storyItem(a,i=0){
 }
 const ytSearch = v => `https://www.youtube.com/results?search_query=${encodeURIComponent(artist(v.artist).name+" "+v.title+" official video")}`;
 function vidCard(v,i){
-  const a=artist(v.artist);
-  return `<article class="vid reveal ${v.orient}" data-vid="${v.slug}"><div class="vid-frame"><div class="poster panel ${panelCls(i+1)}"><span class="grooves spin" aria-hidden="true"></span>${pic(v.photo,{sizes:"(min-width:1024px) 30vw, 90vw",alt:""})}</div><span class="ttl" aria-hidden="true">${esc(v.title)}</span><button class="vid-play" type="button" aria-label="Play: ${esc(v.title)} by ${esc(a.name)}"><span>${ICON.play}</span></button></div><h3>${esc(v.title)}</h3><p class="meta">${esc(v.kind)} · ${peekBtn(a.slug)}${v.orient==="portrait"?" · Vertical":""}</p></article>`;
+  const a=v.artist?artist(v.artist):null, who=a?a.name:v.by;
+  return `<article class="vid reveal ${v.orient||""}${v.tiktok?" tiktok":""}" data-vid="${v.slug}"><div class="vid-frame"><div class="poster panel ${panelCls(i+1)}"><span class="grooves spin" aria-hidden="true"></span>${v.photo?pic(v.photo,{sizes:"(min-width:1024px) 22vw, 90vw",alt:""}):""}</div><span class="ttl" aria-hidden="true">${esc(v.title)}</span><button class="vid-play" type="button" aria-label="Play: ${esc(v.title)} by ${esc(who)}"><span>${ICON.play}</span></button></div><h3>${esc(v.title)}</h3><p class="meta">${esc(v.kind)} · ${a?peekBtn(a.slug):esc(who)}${v.tiktok?` · <a class="link" href="https://www.tiktok.com/@salonelyrics/video/${v.tiktok}" target="_blank" rel="noopener">TikTok<span class="sr"> (opens in a new tab)</span></a>`:""}</p></article>`;
 }
 function bindVideos(root){
   let active=null;
@@ -1431,6 +1458,8 @@ function bindVideos(root){
       const v=D.videos.find(x=>x.slug===card.dataset.vid), a=artist(v.artist);
       const pl=document.createElement("div"); pl.className="vid-player"; pl.setAttribute("role","status"); pl.innerHTML=`<span class="spin" aria-hidden="true"></span><p>Loading player…</p>`;
       frame.appendChild(pl); btn.hidden=true;
+      if(v.tiktok){ pl.innerHTML=`<iframe src="https://www.tiktok.com/player/v1/${v.tiktok}?autoplay=1&rel=0&music_info=1&description=0" title="${esc(v.title)}: lyric video on TikTok" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe><button class="vid-close" type="button" aria-label="Close video">×</button>`;
+        $(".vid-close",pl).addEventListener("click",()=>{stopVid(card);active=null;btn.focus();}); return; }
       setTimeout(()=>{ if(!pl.isConnected) return;
         pl.innerHTML=`<p><strong>${esc(v.title)} · ${esc(a.name)}</strong></p><p>The official video isn’t linked yet. When it is, the player loads here only after you press play, and any other video stops.</p><div class="row-wrap" style="justify-content:center"><a class="btn btn-green btn-sm" href="${ytSearch(v)}" target="_blank" rel="noopener">Find it on YouTube</a><button class="btn btn-ghost btn-sm" type="button" style="color:#fff">Close</button></div>`;
         $("button",pl).addEventListener("click",()=>{stopVid(card);active=null;btn.focus();}); $("a",pl).focus(); },800);
@@ -1458,7 +1487,7 @@ function svcCarousel(title,intro){
     </div><p class="paid-note">Photos on service cards are illustrative Pexels images.</p></div></section>`;
 }
 function teamGrid(){
-  return `<div class="team-grid">${D.team.map(t=>`<article class="team-card reveal ${t.open?"open":""}"><div class="team-top"><span class="team-av ${t.photo?"has-photo":""}" aria-hidden="true">${t.open?"+":t.photo?pic(t.photo,{sizes:"64px",alt:""}):esc(initials(t.name))}</span><div><h3>${esc(t.name)}</h3><p class="team-role">${esc(t.role)}</p></div></div><p>${esc(t.bio)}</p>${t.photo?'<p class="ph-note">Placeholder photo</p>':""}${t.open?`<a class="pill-btn" href="#contact">Apply to write</a>`:""}</article>`).join("")}</div>`;
+  return `<div class="team-grid">${D.team.map(t=>`<article class="team-card reveal ${t.open?"open":""}"><div class="team-top"><span class="team-av ${t.photo?"has-photo":""}" aria-hidden="true">${t.open?"+":t.photo?pic(t.photo,{sizes:"80px",alt:""}):esc(initials(t.name))}</span><div><h3>${esc(t.name)}</h3><p class="team-role">${esc(t.role)}</p></div></div><p>${esc(t.bio)}</p>${t.open?`<a class="pill-btn" href="#contact">Apply to write</a>`:""}</article>`).join("")}</div>`;
 }
 
 /* ================= HOME ================= */
@@ -1549,7 +1578,7 @@ VIEWS.home = () => {
 
   <section class="section" aria-labelledby="vid-h"><div class="wrap">
     <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Watch</p><h2 id="vid-h" class="display sec-title">Videos</h2></div><a class="arrow-link" href="#videos">All videos</a></div>
-    <div class="vid-grid">${D.videos.slice(0,3).map(vidCard).join("")}</div>
+    <div class="vid-grid">${D.videos.slice(0,4).map(vidCard).join("")}</div>
   </div></section>
 
   ${svcCarousel("Grow your audience","Placements across the website, Instagram and TikTok. Every paid placement is labelled Promoted.")}
@@ -1639,7 +1668,7 @@ VIEWS.lyrics = () => {
     </div>
     <p class="count" id="lcount" aria-live="polite"></p>
     <ol class="songlist mt-s" id="llist"></ol>
-    <div class="mt-l"><h2 class="display" style="font-size:clamp(28px,4vw,44px)">Albums &amp; EPs</h2><div class="rel-grid mt-m">${D.releases.map(r=>`<a class="rel reveal" href="#release.${r.slug}">${ttile(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)} · ${esc(r.year)}</p></div></a>`).join("")}</div></div>
+    <div class="mt-l"><h2 class="display" style="font-size:clamp(28px,4vw,44px)">Albums &amp; EPs</h2><div class="rel-grid mt-m">${D.releases.map(r=>`<a class="rel reveal" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}</p></div></a>`).join("")}</div></div>
   </div>`,
   after(main){
     const draw=()=>{ const q=S.lyr.q.trim().toLowerCase();
@@ -1743,7 +1772,7 @@ VIEWS.release = r => {
     <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}</p><div class="row-wrap"><button class="btn btn-green" type="button" data-share>Share release</button></div></div>
     <div style="max-width:360px;width:100%">${relArt(rel,`Cover of ${rel.title} by ${a.name}`)}<p class="credit" style="color:var(--muted-dark);margin-top:8px">${rel.cover?"Cover artwork.":"Typographic tile. Official artwork will be added when supplied."}</p></div></div>
   </div></header>
-  <div class="wrap page"><h2 class="display" style="font-size:36px;margin-bottom:16px">Songs on Salone Lyrics</h2>${tracks.length?`<ol class="songlist">${tracks.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">The tracklist for ${esc(rel.title)} will be added with the artist.</p></div>`}
+  <div class="wrap page"><h2 class="display" style="font-size:36px;margin-bottom:16px">${rel.tracklist?"Tracklist":"Songs on Salone Lyrics"}</h2>${rel.tracklist?trackList(rel):tracks.length?`<ol class="songlist">${tracks.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">The tracklist for ${esc(rel.title)} will be added with the artist.</p></div>`}
   <div class="mt-l"><a class="arrow-link" href="#artist.${a.slug}.music">More music from ${esc(a.name)}</a></div></div>`,
   after(main){ $("[data-share]",main).addEventListener("click",()=>share(document.title)); }};
 };
@@ -1926,8 +1955,8 @@ VIEWS.event = r => {
 
 /* ================= VIDEOS ================= */
 VIEWS.videos = () => ({ title:"Videos", html:`
-  <header class="phead charcoal grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Videos"]])}<h1 class="display">Videos</h1><p>Music videos from Sierra Leone’s artists. Players load only when you press play and never start with sound on their own.</p></div></header>
-  <div class="wrap page"><div class="vid-grid" id="vout">${D.videos.map(vidCard).join("")}</div><p class="paid-note mt-m">Official video links will be embedded once confirmed. Until then, each card opens a YouTube search.</p></div>`,
+  <header class="phead charcoal grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Videos"]])}<h1 class="display">Videos</h1><p>Lyric videos created by Salone Lyrics. Each player loads only when you press play.</p></div></header>
+  <div class="wrap page"><div class="vid-grid" id="vout">${D.videos.map(vidCard).join("")}</div><p class="paid-note mt-m">Videos play from TikTok. Once you press play, TikTok may set its own cookies. <a class="link" href="https://www.tiktok.com/@salonelyrics" target="_blank" rel="noopener">Follow Salone Lyrics on TikTok</a>.</p></div>`,
   after(main){ bindVideos(main); } });
 
 /* ================= GALLERY ================= */
@@ -2063,7 +2092,7 @@ VIEWS.contact = () => ({ title:"Contact", html:`
 VIEWS.credits = () => ({ title:"Photo credits", html:`
   <header class="phead paper"><div class="wrap">${crumbs([["Home","#"],["About","#about"],["Photo credits"]])}<h1 class="display">Photo credits</h1><p>Artist photos were supplied for the site and illustrative photos come from Pexels. Every image was cut out and converted to black and white for this design.</p></div></header>
   <div class="wrap page"><div class="notice notice-info" style="margin-bottom:24px"><strong>Credits in progress</strong><span>Photographer names for artist photos will be added here once confirmed.</span></div>
-  <div class="table-wrap"><table class="creds-table"><thead><tr><th>Image</th><th>Description</th><th>Source</th><th>Type</th><th>Link</th></tr></thead><tbody>${Object.entries(P).map(([k,p])=>`<tr><td><div class="th">${pic(k,{sizes:"56px",alt:""})}</div></td><td>${esc(p.alt)}</td><td>${esc(p.by)}</td><td>${p.press?"Artist press/profile image":p.artist?"Artist photo":"Pexels (illustrative)"}</td><td>${p.page?`<a class="link" href="${p.page}" target="_blank" rel="noopener">View source</a>`:"—"}</td></tr>`).join("")}</tbody></table></div></div>` });
+  <div class="table-wrap"><table class="creds-table"><thead><tr><th>Image</th><th>Description</th><th>Source</th><th>Type</th><th>Link</th></tr></thead><tbody>${Object.entries(P).map(([k,p])=>`<tr><td><div class="th">${pic(k,{sizes:"56px",alt:""})}</div></td><td>${esc(p.alt)}</td><td>${esc(p.by)}</td><td>${p.press?"Artist press/profile image":p.artist?"Artist photo":p.team?"Team photo":"Pexels (illustrative)"}</td><td>${p.page?`<a class="link" href="${p.page}" target="_blank" rel="noopener">View source</a>`:"—"}</td></tr>`).join("")}</tbody></table></div></div>` });
 VIEWS.notfound = () => ({ title:"Page not found", html:`<div class="wrap page"><div class="empty" style="margin-block:64px"><h1 class="display" style="font-size:48px">Page not found</h1><p class="muted">The page may have moved. Try searching for a song or artist.</p><div class="row-wrap" style="justify-content:center"><button class="btn btn-primary" type="button" data-open-search-btn>Search</button><a class="btn btn-ghost" href="#">Go home</a></div></div></div>` });
 
 /* ================= SEARCH ================= */

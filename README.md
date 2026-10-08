@@ -13,8 +13,11 @@ Live site: https://salonelyrics.vercel.app
 
 ## Photos and permissions
 - **Artist photos** (`assets/img/r-*`, except team `r-t-*`) were supplied for the site and processed to match the design: background removed, black and white. In `window.SL_PHOTOS` they carry `artist:true` and the credit reads "Photographer credit to be added" until names are confirmed.
-- Kracktwist and Rozzy Sokota have no supplied photo yet (`photo:null`), so their profiles show "Official artist photograph to be supplied".
+- Every portrait is framed the same way on a 1000×1250 canvas: same eye line and head size, body running off the bottom edge. Team photos are square close-ups for the round badges.
+- Kracktwist, Rozzy Sokota and Gemy are `unlisted:true`: they are left out of every artist list, but their profiles still open from song and release links.
 - To add or replace an artist photo: replace the `r-<artist>` image files, update that artist's entry in `window.SL_PHOTOS` (in `source/data.js` and `index.html`), and its size in `window.SL_DIMS` (in `index.html`).
+- **Releases** only list projects with cover art. Each has a full `tracklist` from Apple Music (checked against Deezer); tracks that have a song page on the site link to it.
+- **Videos** are Salone Lyrics' own lyric videos on TikTok (`tiktok:` video id). The TikTok player loads only after the visitor presses play.
 - **Release covers** live in `assets/img/cover-<release>-[500|1000].webp`; a release with `cover:true` shows its cover instead of a typographic tile.
 - Team cards use labelled Pexels placeholder headshots until real team photos are supplied.
 
