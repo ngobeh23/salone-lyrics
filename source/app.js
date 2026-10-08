@@ -305,7 +305,7 @@ VIEWS.home = () => {
       <p>Profiles, featured releases, Weekly Spotlight, event listings and social campaigns across the website, Instagram and TikTok.</p>
       <div class="row-wrap"><a class="btn btn-green" href="#promote">Explore Promotion Options</a></div>
     </div>
-    <div class="promo-art panel"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${pic("singer-hat",{cls:"cut cut-outline",sizes:"(min-width:900px) 40vw, 90vw"})}</div></div>
+    <div class="promo-art panel"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${pic("p-ansumana",{cls:"cut cut-outline",sizes:"(min-width:900px) 40vw, 90vw"})}</div></div>
   </section>
 
   <section class="section" aria-labelledby="team-h"><div class="wrap">
@@ -692,12 +692,12 @@ function lbStep(d){ lb.i=(lb.i+d+lb.list.length)%lb.list.length; drawLB(); }
 /* ================= PROMOTE ================= */
 VIEWS.promote = () => ({ title:"Promote With Us", html:`
   <section class="promo grain on-dark"><div class="promo-copy">${crumbs([["Home","#"],["Promote With Us"]])}<h1 class="display" style="font-size:clamp(44px,8vw,96px);line-height:.9">Promote <em style="font-style:normal;color:var(--green)">with us</em></h1><p>Put your music, profile or event in front of fans who come to Salone Lyrics to read, watch and discover. Every paid placement is clearly labelled Promoted.</p><div class="row-wrap"><a class="btn btn-green" href="#promote" data-jump="#enquiry">Request a Quote</a><a class="arrow-link" style="color:#fff" href="#promote" data-jump="#services">Compare services</a></div></div>
-  <div class="promo-art panel"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${pic("seated-studio",{cls:"cut cut-shadow",eager:true,sizes:"(min-width:900px) 40vw, 80vw"})}</div></div></section>
+  <div class="promo-art panel"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${pic("p-alpha",{cls:"cut cut-shadow",eager:true,sizes:"(min-width:900px) 40vw, 80vw"})}</div></div></section>
   ${marquee(["Profiles","Releases","Spotlight","Events","Social","Campaigns"])}
   <section class="section" aria-labelledby="ours-h"><div class="wrap"><div class="numsvc">
     <div class="stack reveal" style="align-content:start;gap:16px"><span class="side-tag">What we do</span><h2 id="ours-h" class="display sec-title">Our <span class="hl">services</span></h2><p class="muted" style="max-width:44ch">Choose one placement or combine them into a campaign. The team replies with options and timing.</p>
       <ol class="num-list">${D.services.map((s,i)=>`<li><a href="#promote" data-pick="${s.id}"><span class="no tnum">${String(i+1).padStart(2,"0")}</span><span class="nm">${esc(s.name)}</span><span class="ar" aria-hidden="true">${ICON.arrow}</span></a></li>`).join("")}</ol></div>
-    <div class="numsvc-art reveal"><div class="panel panel-charcoal grain numsvc-photo"><span class="grooves spin" aria-hidden="true"></span>${pic("vocalist-studio",{sizes:"(min-width:900px) 40vw, 90vw",alt:""})}</div>
+    <div class="numsvc-art reveal"><div class="panel panel-charcoal grain numsvc-photo"><span class="grooves spin" aria-hidden="true"></span>${pic("p-chernor",{sizes:"(min-width:900px) 40vw, 90vw",alt:""})}</div>
       <div class="numsvc-cards"><a class="mini-card" href="#promote" data-jump="#services"><span>Ever wondered how a feature comes together?</span><strong>See how it works ${ICON.arrow}</strong></a><a class="mini-card green" href="#promote" data-jump="#enquiry"><span>Ready to bring your release to more fans?</span><strong>Talk to the team ${ICON.arrow}</strong></a></div></div>
   </div></div></section>
   ${svcCarousel("Every placement","Swipe or use the arrows. Cards move on their own; hover or focus to pause.")}

@@ -28,19 +28,12 @@ window.SL_PHOTOS = {
   "r-t-michael": { page:"", by:"Salone Lyrics", alt:"Portrait of Michael Nabieu", pos:"50% 50%", team:true },
   "r-t-chernor": { page:"", by:"Salone Lyrics", alt:"Portrait of Chernor M. Kamara", pos:"50% 50%", team:true },
   "r-t-ahmed": { page:"", by:"Salone Lyrics", alt:"Portrait of Ahmed S. Koroma", pos:"50% 50%", team:true },
-  /* ---- Pexels illustrative photography (not artists) ---- */
-  "hero-suit":         { page:"https://www.pexels.com/photo/black-man-posing-in-suit-17350030/", by:"Andy Coffie / Pexels", alt:"Performer in a blazer striking a pose", pos:"50% 20%" },
-  "vocalist-studio":   { page:"https://www.pexels.com/photo/photo-of-woman-singing-in-music-studio-2531728/", by:"Papa Yaw / Pexels", alt:"Vocalist singing into a studio microphone", pos:"50% 25%" },
-  "singer-hat":        { page:"https://www.pexels.com/photo/smiling-man-singing-while-holding-his-black-hat-8043759/", by:"ANTONI SHKRABA production / Pexels", alt:"Singer tipping his hat at a vintage microphone", pos:"45% 25%" },
-  "headphones-hoodie": { page:"https://www.pexels.com/photo/man-in-black-hoodie-wearing-headphones-11975320/", by:"Emmanuel Jason Eliphalet / Pexels", alt:"Listener in headphones giving a thumbs up", pos:"50% 15%" },
-  "headphones-glasses":{ page:"https://www.pexels.com/photo/portrait-photo-of-smiling-woman-in-black-top-and-glasses-wearing-white-headphones-3765147/", by:"Andrea Piacquadio / Pexels", alt:"Listener with curly hair on white headphones", pos:"50% 30%" },
-  "singer-side":       { page:"https://www.pexels.com/photo/side-view-of-a-man-singing-while-holding-a-microphone-8043715/", by:"ANTONI SHKRABA production / Pexels", alt:"Singer performing into a vintage microphone", pos:"50% 20%" },
-  "singer-red":        { page:"https://www.pexels.com/photo/a-woman-holding-a-microphone-8043840/", by:"ANTONI SHKRABA production / Pexels", alt:"Singer laughing as she holds a microphone", pos:"45% 25%" },
-  "guitarist":         { page:"https://www.pexels.com/photo/man-playing-acoustic-guitar-20576428/", by:"Nduwa Siachaba / Pexels", alt:"Guitarist seated with an acoustic guitar", pos:"50% 20%" },
-  "djembe":            { page:"https://www.pexels.com/photo/a-man-playing-a-djembe-on-a-field-10433635/", by:"cottonbro studio / Pexels", alt:"Drummer holding a djembe", pos:"50% 15%" },
-  "seated-studio":     { page:"https://www.pexels.com/photo/casual-studio-portrait-of-a-man-in-black-30069255/", by:"josh_ dago__ / Pexels", alt:"Man in a bucket hat seated on a stool", pos:"50% 15%" },
-  "trumpet":           { page:"https://www.pexels.com/photo/grayscale-photo-of-a-man-playing-trumpet-11662074/", by:"Alfo Medeiros / Pexels", alt:"Trumpeter playing into a microphone", pos:"50% 20%" },
-  "headwrap":          { page:"https://www.pexels.com/photo/portrait-of-beautiful-african-woman-11440539/", by:"Ottun Abdulmalik / Pexels", alt:"Woman in a white head wrap and beads", pos:"50% 20%" }
+  /* ---- Team photos for promotional sections ---- */
+  "p-ansumana": { page:"", by:"Salone Lyrics", alt:"Ansumana Ngobeh, Lead Creator of Salone Lyrics", pos:"50% 20%", team:true },
+  "p-alpha": { page:"", by:"Salone Lyrics", alt:"Alpha Fofanah, Co-Creator of Salone Lyrics", pos:"50% 20%", team:true },
+  "p-michael": { page:"", by:"Salone Lyrics", alt:"Michael Nabieu, Graphic Designer at Salone Lyrics", pos:"50% 20%", team:true },
+  "p-chernor": { page:"", by:"Salone Lyrics", alt:"Chernor M. Kamara, Video Editor at Salone Lyrics", pos:"50% 20%", team:true },
+  "p-ahmed": { page:"", by:"Salone Lyrics", alt:"Ahmed S. Koroma, Video Editor at Salone Lyrics", pos:"50% 20%", team:true }
 };
 
 window.SL = {
@@ -261,12 +254,12 @@ team: [
 ],
 
 services: [
-  { id:"profile", name:"Artist Profile", tag:"Your story, told right", photo:"vocalist-studio", what:"A written profile page with biography, music, videos and events, listed in the artist directory.", gets:["Edited biography","Profile page with music, video and event tabs","Directory listing"], duration:"Ongoing listing" },
-  { id:"release", name:"Featured Release", tag:"New music, front and centre", photo:"headphones-hoodie", what:"Your single, EP or album highlighted in Latest Releases with a dedicated lyrics page.", gets:["Release page with tracklist and credits","Latest Releases placement","Lyrics page for one track"], duration:"Agreed with the team" },
-  { id:"spotlight", name:"Weekly Spotlight", tag:"One week on the homepage", photo:"singer-red", what:"The homepage feature with a large portrait, introduction and links to your music.", gets:["Homepage Weekly Spotlight","Short interview or introduction","Announcement post on social media"], duration:"One week" },
-  { id:"event", name:"Event Promotion", tag:"Fill the room", photo:"singer-side", what:"Your show listed and highlighted across the Events section, with add-to-calendar for fans.", gets:["Event page with ticket link","Homepage event row","Add-to-calendar"], duration:"Until the event date" },
-  { id:"social", name:"Social Media Promotion", tag:"Lyric cards and short videos", photo:"headphones-glasses", what:"Lyric cards and short videos on Salone Lyrics Instagram and TikTok.", gets:["Lyric or feature post","Short video edit","Caption and tagging"], duration:"Agreed with the team" },
-  { id:"banner", name:"Banner Placement", tag:"Seen, never in the lyrics", photo:"trumpet", what:"A clearly labelled banner placed outside reading areas.", gets:["Banner design check","Placement outside lyric text","Link to your page or tickets"], duration:"Agreed with the team" },
-  { id:"combined", name:"Combined Campaign", tag:"Launch everything together", photo:"singer-hat", what:"A planned mix of website and social placements for a release or tour.", gets:["Campaign plan","Website and social placements","Wrap-up summary"], duration:"Agreed per campaign" }
+  { id:"profile", name:"Artist Profile", tag:"Your story, told right", photo:"p-ansumana", what:"A written profile page with biography, music, videos and events, listed in the artist directory.", gets:["Edited biography","Profile page with music, video and event tabs","Directory listing"], duration:"Ongoing listing" },
+  { id:"release", name:"Featured Release", tag:"New music, front and centre", photo:"p-michael", what:"Your single, EP or album highlighted in Latest Releases with a dedicated lyrics page.", gets:["Release page with tracklist and credits","Latest Releases placement","Lyrics page for one track"], duration:"Agreed with the team" },
+  { id:"spotlight", name:"Weekly Spotlight", tag:"One week on the homepage", photo:"p-alpha", what:"The homepage feature with a large portrait, introduction and links to your music.", gets:["Homepage Weekly Spotlight","Short interview or introduction","Announcement post on social media"], duration:"One week" },
+  { id:"event", name:"Event Promotion", tag:"Fill the room", photo:"p-chernor", what:"Your show listed and highlighted across the Events section, with add-to-calendar for fans.", gets:["Event page with ticket link","Homepage event row","Add-to-calendar"], duration:"Until the event date" },
+  { id:"social", name:"Social Media Promotion", tag:"Lyric cards and short videos", photo:"p-ahmed", what:"Lyric cards and short videos on Salone Lyrics Instagram and TikTok.", gets:["Lyric or feature post","Short video edit","Caption and tagging"], duration:"Agreed with the team" },
+  { id:"banner", name:"Banner Placement", tag:"Seen, never in the lyrics", photo:"p-michael", what:"A clearly labelled banner placed outside reading areas.", gets:["Banner design check","Placement outside lyric text","Link to your page or tickets"], duration:"Agreed with the team" },
+  { id:"combined", name:"Combined Campaign", tag:"Launch everything together", photo:"p-alpha", what:"A planned mix of website and social placements for a release or tour.", gets:["Campaign plan","Website and social placements","Wrap-up summary"], duration:"Agreed per campaign" }
 ]
 };
