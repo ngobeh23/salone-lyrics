@@ -64,7 +64,7 @@ function trackList(rel){
   return `<ol class="tracklist">${rows}</ol>${rel.tracklistSource?`<p class="paid-note">${rel.tracklist.length} tracks. Tracklist from <a class="link" href="${rel.tracklistSource}" target="_blank" rel="noopener">Apple Music</a>.</p>`:""}`;
 }
 function relArt(r,alt=""){
-  return r.cover?`<img class="cover" src="${IMG}cover-${r.slug}-500.webp" srcset="${IMG}cover-${r.slug}-500.webp 500w, ${IMG}cover-${r.slug}-1000.webp 1000w" sizes="(min-width:900px) 360px, 45vw" width="500" height="500" alt="${esc(alt)}" loading="lazy" decoding="async">`:ttile(r);
+  return r.cover?`<span class="vinyl-wrap"><span class="vinyl" aria-hidden="true" style="--label:url('${IMG}cover-${r.slug}-500.webp')"></span><img class="cover" src="${IMG}cover-${r.slug}-500.webp" srcset="${IMG}cover-${r.slug}-500.webp 500w, ${IMG}cover-${r.slug}-1000.webp 1000w" sizes="(min-width:900px) 360px, 45vw" width="500" height="500" alt="${esc(alt)}" loading="lazy" decoding="async"></span>`:ttile(r);
 }
 
 /* ---------- State ---------- */
@@ -152,6 +152,22 @@ function songRow(s,i){
 function artistCard(a,i,tag="h3"){
   return `<a class="acard reveal" href="#artist.${a.slug}"><div class="portrait panel ${panelCls(i)} grain"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"(min-width:1200px) 16vw, (min-width:768px) 24vw, 45vw",alt:""})}</div><div class="row"><${tag}>${esc(a.name)}</${tag}></div><p>${esc(a.genre)} · ${esc(a.town)}</p>${a.pending?`<div class="row"><span class="tag tag-example">Profile in progress</span></div>`:""}</a>`;
 }
+function evGroups(list){
+  const g=[]; list.forEach(e=>{ const d=parse(e.date), k=`${MONTHS_L[d.getMonth()]} ${d.getFullYear()}`; const last=g[g.length-1]; if(last&&last.k===k) last.items.push(e); else g.push({k,items:[e]}); });
+  return g.map(x=>`<section class="ev-group"><h3 class="ev-month"><span>${esc(x.k)}</span><span class="count">${x.items.length} event${x.items.length===1?"":"s"}</span></h3><ul class="evlist">${x.items.map(evRow).join("")}</ul></section>`).join("");
+}
+function nextUp(list){
+  const e=list.find(x=>evStatus(x)==="upcoming"); if(!e) return "";
+  const at=new Date(`${e.date}T${e.time||"00:00"}:00Z`).getTime(); // Freetown is on GMT
+  return `<a class="ev-next grain reveal" href="#event.${e.slug}" data-countdown="${at}"><span class="grooves spin" aria-hidden="true"></span><span class="ev-next-txt"><span class="eyebrow">Next up</span><span class="ev-next-title">${esc(e.title)}</span><span class="ev-next-meta">${evDates(e)} · ${esc(e.town)}</span></span><span class="ev-clock" aria-hidden="true"><span><b data-cd="d">0</b>days</span><span><b data-cd="h">0</b>hours</span><span><b data-cd="m">0</b>mins</span></span><span class="sr" data-cd-sr></span></a>`;
+}
+function bindCountdown(root){
+  const el=$("[data-countdown]",root); if(!el) return; const at=+el.dataset.countdown;
+  const tick=()=>{ const ms=Math.max(0,at-Date.now()), d=Math.floor(ms/864e5), h=Math.floor(ms%864e5/36e5), m=Math.floor(ms%36e5/6e4);
+    $("[data-cd=d]",el).textContent=d; $("[data-cd=h]",el).textContent=String(h).padStart(2,"0"); $("[data-cd=m]",el).textContent=String(m).padStart(2,"0");
+    $("[data-cd-sr]",el).textContent=`Starts in ${d} days, ${h} hours and ${m} minutes.`; };
+  tick(); const t=setInterval(tick,30000); cleanup.push(()=>clearInterval(t));
+}
 function evRow(e){
   const d=parse(e.date), st=evStatus(e), off=st==="cancelled"||st==="postponed";
   return `<li class="evrow reveal ${off?"is-off":""} ${st==="completed"?"is-past":""}"><div class="evdate" aria-hidden="true"><span class="d tnum">${d.getDate()}</span><span class="m">${MONTHS[d.getMonth()]}</span></div><div class="evinfo"><div class="row-wrap" style="gap:8px"><span class="status status-${st}">${STATUS_LABEL[st]}</span><span class="tag">${esc(e.type)}</span>${e.paid===false?'<span class="tag tag-green">Free</span>':""}${e.sample?SAMPLE:""}</div><h3><a href="#event.${e.slug}" style="text-decoration:none">${esc(e.title)}</a></h3><p class="where"><span class="sr">Date: ${evDates(e)}. </span>${esc(e.venue)}, ${esc(e.town)}${e.endDate?" · Until "+fmt(e.endDate):""}${e.time?" · "+esc(e.time):""}</p><p class="who">${esc(e.lineup)}</p></div><a class="btn btn-ghost btn-sm ev-cta" href="#event.${e.slug}" aria-label="View event: ${esc(e.title)}">View event</a></li>`;
@@ -206,6 +222,12 @@ function teamGrid(){
 }
 
 /* ================= HOME ================= */
+// Figures for the Spotlight band, all counted from the site's own records
+function spotlightStats(a){
+  const songs=SONGS().filter(s=>s.artist===a.slug||s.featA===a.slug);
+  const collab=new Set(songs.map(s=>s.artist===a.slug?s.featA:s.artist).filter(x=>x&&x!==a.slug));
+  return [[songs.length,"Lyrics pages"],[D.videos.filter(v=>v.artist===a.slug).length,"Lyric videos"],[(a.awards||[]).length,"Recognitions"],[collab.size,collab.size===1?"Collaborator on the site":"Collaborators on the site"]].filter(([n])=>n>0);
+}
 VIEWS.home = () => {
   const heroes=["drizilik","laj","incredible-jj","bakitenno","famous","apreel","isat","samza"].map(artist), hero=heroes[0], spot=D.artists.find(a=>a.spotlight);
   const picks=D.picks.map(song);
@@ -213,6 +235,7 @@ VIEWS.home = () => {
   const weekend=upcoming.filter(inWeekend);
   const feat=D.articles[0], rest=D.articles.slice(1,4);
   const spotSongs=SONGS().filter(s=>s.artist===spot.slug).slice(0,3);
+  const spotStats=spotlightStats(spot);
   return { title:"", html:`
   <section class="hero-shell" aria-labelledby="hero-h"><div class="hero">
     <div class="hero-copy">
@@ -247,23 +270,29 @@ VIEWS.home = () => {
     <ol class="songlist">${picks.map(songRow).join("")}</ol>
   </div></section>
 
-  <section class="spotlight grain" aria-labelledby="spot-h">
-    <div class="spot-art"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${portrait(spot,{cls:"cut cut-shadow",sizes:"(min-width:900px) 45vw, 90vw"})}</div></div>
-    <div class="spot-copy">
-      <div class="spot-label"><span class="tag tag-amber">Weekly Spotlight</span></div>
-      <h2 id="spot-h" class="display spot-name reveal">${esc(spot.name)}</h2>
-      <p class="lede">${esc(spot.intro)}</p>
-      <dl class="spot-facts"><div><dt>Genre</dt><dd>${esc(spot.genre)}</dd></div><div><dt>Based in</dt><dd>${esc(spot.town)}</dd></div>${spot.label?`<div><dt>Label</dt><dd>${esc(spot.label)}</dd></div>`:""}</dl>
-      <div class="row-wrap"><a class="btn btn-primary" href="#artist.${spot.slug}">Meet the Artist</a>${spotSongs[0]?`<a class="arrow-link" href="#song.${spotSongs[0].slug}">“${esc(spotSongs[0].title)}”</a>`:""}</div>
-      
-    </div>
+  <section class="spotlight-bio" aria-labelledby="spot-h">
+    <div class="sb-banner grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">
+      <p class="sb-kicker"><span class="tag tag-dark">Weekly Spotlight</span><span>The story so far</span></p>
+      <h2 id="spot-h" class="display sb-name reveal">${esc(spot.name)}</h2>
+      <p class="sb-meta">${esc(spot.genre)} · ${esc(spot.town)}</p>
+    </div></div>
+    <div class="sb-story"><div class="wrap sb-grid">
+      <div class="sb-art panel panel-blue grain reveal"><span class="grooves spin" aria-hidden="true"></span>${portrait(spot,{cls:"cut",sizes:"(min-width:900px) 40vw, 90vw"})}</div>
+      <div class="sb-copy">
+        <p class="eyebrow sb-eyebrow">Biography</p>
+        <p class="sb-lead reveal">${esc(spot.intro)}</p>
+        ${spot.bio.slice(0,2).map(p=>`<p class="reveal">${linkArtists(p)}</p>`).join("")}
+        <div class="row-wrap sb-actions"><a class="btn btn-green" href="#artist.${spot.slug}">Read the full biography</a>${spotSongs.length?`<a class="btn btn-ghost sb-ghost" href="#artist.${spot.slug}.music">View lyrics</a>`:""}</div>
+      </div>
+    </div></div>
+    ${spotStats.length?`<div class="sb-stats grain"><div class="wrap"><ul class="sb-stat-list" aria-label="${esc(spot.name)} on Salone Lyrics">${spotStats.map(([n,l])=>`<li class="reveal"><span class="n tnum" data-count="${n}">${n}</span><span class="rule" aria-hidden="true"></span><span class="l">${esc(l)}</span></li>`).join("")}</ul></div></div>`:""}
   </section>
 
   <section class="section" aria-labelledby="rel-h"><div class="wrap">
-    <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Albums &amp; EPs</p><h2 id="rel-h" class="display sec-title">Releases</h2></div>
+    <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Albums &amp; EPs</p><h2 id="rel-h" class="display sec-title">Releases</h2><p class="muted sec-sub">Pick a record, then read the lyrics track by track.</p></div>
       <div class="chips" role="group" aria-label="Filter releases">${["All","EPs","Albums"].map(f=>`<button type="button" class="chip" data-rel="${f}" aria-pressed="${S.rel===f}">${f}</button>`).join("")}</div></div>
     <div class="rel-grid" id="rel-grid" aria-live="polite"></div>
-    <p class="paid-note">Typographic tiles stand in where cover artwork has not been supplied yet.</p>
+    
   </div></section>
 
   <section class="section" style="background:#fff" aria-labelledby="art-h"><div class="wrap">
@@ -279,7 +308,7 @@ VIEWS.home = () => {
   <section class="section" aria-labelledby="ev-h"><div class="wrap">
     <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Events</p><h2 id="ev-h" class="display sec-title">Upcoming events</h2></div><a class="btn btn-ghost btn-sm" href="#events">View all events</a></div>
     ${weekend.length?`<div class="notice notice-info reveal" style="margin-bottom:24px"><strong>This weekend</strong><span>${weekend.map(e=>`<a class="link" href="#event.${e.slug}">${esc(e.title)}</a> (${DOW[parse(e.date).getDay()]}, ${esc(e.town)})`).join(" · ")}</span></div>`:""}
-    <ul class="evlist">${upcoming.slice(0,4).map(evRow).join("")}</ul>
+    ${nextUp(upcoming)}${evGroups(upcoming.slice(0,4))}
     <p class="paid-note">Venues, times and ticket links are added as organisers confirm them.</p>
   </div></section>
 
@@ -315,11 +344,11 @@ VIEWS.home = () => {
   after(main){
     const grid=$("#rel-grid",main);
     const draw=()=>{ const map={EPs:"EP",Albums:"Album"}; const list=D.releases.filter(r=>S.rel==="All"||r.type===map[S.rel]).slice(0,8);
-      grid.innerHTML=list.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}</p></div></a>`).join(""); };
+      grid.innerHTML=list.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.tracklist?` · ${r.tracklist.length} tracks`:""}</p></div></a>`).join(""); };
     draw();
     $$("[data-rel]",main).forEach(b=>b.addEventListener("click",()=>{S.rel=b.dataset.rel; $$("[data-rel]",main).forEach(x=>x.setAttribute("aria-pressed",x===b)); draw();}));
     $("[data-hero-search]",main).addEventListener("submit",e=>{e.preventDefault(); openSearch($("#hero-q").value);});
-    railControls(main); bindVideos(main); bindSvcLinks(main); heroCycle(main, heroes); artistMarquee(main); newsCycle(main);
+    railControls(main); bindVideos(main); bindSvcLinks(main); heroCycle(main, heroes); artistMarquee(main); newsCycle(main); bindCountdown(main);
   }};
 };
 function heroTitle(lines){
@@ -383,7 +412,7 @@ VIEWS.lyrics = () => {
     </div>
     <p class="count" id="lcount" aria-live="polite"></p>
     <ol class="songlist mt-s" id="llist"></ol>
-    <div class="mt-l"><h2 class="display" style="font-size:clamp(28px,4vw,44px)">Albums &amp; EPs</h2><div class="rel-grid mt-m">${D.releases.map(r=>`<a class="rel reveal" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}</p></div></a>`).join("")}</div></div>
+    <div class="mt-l"><h2 class="display" style="font-size:clamp(28px,4vw,44px)">Albums &amp; EPs</h2><div class="rel-grid mt-m">${D.releases.map(r=>`<a class="rel reveal" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.tracklist?` · ${r.tracklist.length} tracks`:""}</p></div></a>`).join("")}</div></div>
   </div>`,
   after(main){
     const draw=()=>{ const q=S.lyr.q.trim().toLowerCase();
@@ -596,9 +625,9 @@ VIEWS.events = () => {
   const towns=["All",...new Set(D.events.map(e=>e.town))], types=["All",...new Set(D.events.map(e=>e.type))];
   const sel=(id,label,opts,val)=>`<div class="field-inline"><label for="${id}">${label}</label><select id="${id}" class="select">${opts.map(o=>`<option value="${esc(o[0])}" ${val===o[0]?"selected":""}>${esc(o[1])}</option>`).join("")}</select></div>`;
   return { title:"Events", html:`
-  <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Events"]])}<h1 class="display">Events</h1><p>Concerts, launches, workshops and listening sessions across Sierra Leone.</p></div></header>
+  <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Events"]])}<h1 class="display">Events</h1><p>See you at the show. Concerts, festivals and launches across Sierra Leone.</p></div></header>
   <div class="wrap page">
-    <div class="notice notice-info" style="margin-bottom:24px"><strong>Check before you go</strong><span>Venues, times and ticket links are added as organisers confirm them. Details can change, so check with the organiser before you travel.</span></div>
+    ${nextUp(D.events.filter(e=>evStatus(e)==="upcoming").sort((a,b)=>a.date.localeCompare(b.date)))}<div class="notice notice-info" style="margin-bottom:24px"><strong>Check before you go</strong><span>Venues, times and ticket links are added as organisers confirm them. Details can change, so check with the organiser before you travel.</span></div>
     <div class="filterbar">
       ${sel("ef-when","Date",[["upcoming","All upcoming"],["weekend","This weekend"],["month","Next 30 days"],["past","Past events"]],S.ev.when)}
       ${sel("ef-town","Location",towns.map(t=>[t,t==="All"?"All locations":t]),S.ev.town)}
@@ -609,6 +638,7 @@ VIEWS.events = () => {
     <p class="count" id="ecount" aria-live="polite"></p><div id="eout" class="mt-s"></div>
   </div>`,
   after(main){
+    bindCountdown(main);
     const filtered=()=>D.events.filter(e=>{ const st=evStatus(e), d=parse(e.date);
       if(S.ev.when==="past"){ if(st!=="completed") return false; } else if(st==="completed") return false;
       if(S.ev.when==="weekend"&&!inWeekend(e)) return false;
@@ -617,7 +647,7 @@ VIEWS.events = () => {
       if(S.ev.fee==="Free"&&e.paid!==false) return false; if(S.ev.fee==="Paid"&&e.paid!==true) return false; return true; }).sort((a,b)=>S.ev.when==="past"?b.date.localeCompare(a.date):a.date.localeCompare(b.date));
     const draw=()=>{ const list=filtered(); $("#ecount").textContent=`${list.length} event${list.length===1?"":"s"}`;
       $$("[data-view]",main).forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===S.ev.view));
-      if(S.ev.view==="list"){ $("#eout").innerHTML=list.length?`<ul class="evlist">${list.map(evRow).join("")}</ul>`:`<div class="empty"><p class="display">No events match</p><p class="muted">Try a different date range or location.</p><button class="btn btn-ghost btn-sm" type="button" id="ereset">Reset filters</button></div>`; const rs=$("#ereset"); if(rs) rs.addEventListener("click",()=>{Object.assign(S.ev,{when:"upcoming",town:"All",type:"All",fee:"All"}); render();}); reveal($("#eout")); }
+      if(S.ev.view==="list"){ $("#eout").innerHTML=list.length?evGroups(list):`<div class="empty"><p class="display">No events match</p><p class="muted">Try a different date range or location.</p><button class="btn btn-ghost btn-sm" type="button" id="ereset">Reset filters</button></div>`; const rs=$("#ereset"); if(rs) rs.addEventListener("click",()=>{Object.assign(S.ev,{when:"upcoming",town:"All",type:"All",fee:"All"}); render();}); reveal($("#eout")); }
       else drawCal(list); };
     const drawCal=list=>{
       if(!S.ev.month){ const f=list[0]?parse(list[0].date):TODAY; S.ev.month=[f.getFullYear(),f.getMonth()]; }
