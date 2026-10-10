@@ -970,36 +970,7 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 .gal-name{font:400 20px/1 var(--f-display);text-transform:uppercase;color:inherit;text-decoration:none}
 .gal-card .arrow-link{font-size:13px}
 
-/* ---------- Weekly Spotlight as a biography ---------- */
-.spotlight-bio{position:relative;isolation:isolate}
-.sb-banner{position:relative;overflow:hidden;background:var(--green);color:var(--charcoal);padding:var(--s8) 0 var(--s7)}
-.sb-banner .grooves{width:70%;right:-18%;left:auto;top:-30%;opacity:.5}
-.sb-kicker{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font:700 12px/1 var(--f-body);letter-spacing:.16em;text-transform:uppercase}
-.sb-name{font-size:clamp(56px,12vw,160px);line-height:.85;margin-top:14px;overflow-wrap:anywhere}
-.sb-meta{margin-top:14px;font-weight:600}
-.sb-story{background:var(--charcoal);color:#E9EEF2;padding:var(--s7) 0}
-.sb-grid{display:grid;gap:var(--s6);align-items:center}
-.sb-art{position:relative;aspect-ratio:4/5;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border-radius:18px;max-width:520px;width:100%;margin-inline:auto}
-.sb-art picture{width:100%;height:100%}
-.sb-art img{width:100%;height:100%;object-fit:cover}
-.sb-copy{display:grid;gap:18px;max-width:62ch}
-.sb-eyebrow{color:var(--green)}
-.sb-lead{font-size:clamp(19px,2vw,23px);line-height:1.45;font-style:italic;color:#fff;border-left:4px solid var(--green);padding:4px 0 4px 20px}
-.sb-copy>p:not(.sb-lead):not(.sb-eyebrow){color:#C9D3DA}
-.sb-copy .peek{color:#fff}
-.sb-actions{margin-top:6px}
-.sb-ghost{color:#fff;border-color:#fff}
-.sb-ghost:hover{background:#fff;color:var(--charcoal)}
-.sb-stats{position:relative;overflow:hidden;background:var(--amber);color:var(--charcoal);padding:var(--s7) 0}
-.sb-stat-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s6) var(--s5)}
-.sb-stat-list li{display:grid;justify-items:center;text-align:center;gap:12px}
-.sb-stat-list .n{font:400 clamp(56px,9vw,112px)/.9 var(--f-display)}
-.sb-stat-list .rule{width:2px;height:28px;background:var(--charcoal);opacity:.6}
-.sb-stat-list .l{font:700 12px/1.3 var(--f-body);letter-spacing:.14em;text-transform:uppercase}
-@media (min-width:900px){.sb-grid{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:var(--s8)}.sb-stat-list{grid-template-columns:repeat(4,minmax(0,1fr))}}
-
-/* ---------- Releases: vinyl sleeves ---------- */
-.sec-sub{margin-top:6px;max-width:46ch}
+/* ---------- Releases: vinyl sleeves and write-ups ---------- */
 .vinyl-wrap{position:relative;display:block;padding-right:16%;isolation:isolate}
 .vinyl-wrap .cover{position:relative;z-index:1;width:100%}
 .vinyl{position:absolute;z-index:0;top:3%;left:22%;width:76%;aspect-ratio:1;border-radius:50%;transition:transform 600ms var(--ease);
@@ -1010,11 +981,10 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 .rel:hover .vinyl,.rel:focus-visible .vinyl{transform:translateX(16%) rotate(40deg)}
 .rel:hover .vinyl-wrap .cover{transform:none;box-shadow:6px 6px 0 var(--charcoal)}
 @media (prefers-reduced-motion:reduce){.vinyl{transition:none}.rel:hover .vinyl{transform:none}}
+.rel .rel-about{font-size:14px;line-height:1.5;color:var(--muted);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.rel-intro{max-width:52ch;color:#D9E1E7;font-size:16px;line-height:1.55}
 
-/* ---------- Events: month groups and countdown ---------- */
-.ev-group+.ev-group{margin-top:var(--s6)}
-.ev-month{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font:400 clamp(24px,3vw,32px)/1 var(--f-display);text-transform:uppercase;margin-bottom:12px}
-.ev-month .count{font:600 13px/1 var(--f-body);text-transform:none;letter-spacing:0}
+/* ---------- Events: countdown to the next event ---------- */
 .ev-next{position:relative;overflow:hidden;isolation:isolate;display:grid;gap:18px;align-items:center;background:var(--charcoal);color:#fff;border-radius:18px;padding:24px;margin-bottom:var(--s6);text-decoration:none;transition:transform var(--t) var(--ease)}
 .ev-next:hover{transform:translateY(-3px)}
 .ev-next .grooves{width:60%;right:-15%;left:auto;top:-40%;opacity:.35}
@@ -1273,12 +1243,12 @@ songs: [
 ],
 
 releases: [
-  {"slug":"audacity-album","title":"Audacity","artist":"drizilik","type":"Album","year":2026,"tracks":["never-know","alpha-and-omega","sabi-road","too-late","no-games","alcohol","real-friends","bete-pass-me-papa","audacity","go"],"colour":"charcoal","cover":true,"tracklist":[["NEVER KNOW","Reginald Thompson"],["ALPHA AND OMEGA",""],["SABI ROAD",""],["TOO LATE","Shadow Boxxer"],["NO GAMES","Isat"],["ALCOHOL",""],["REAL FRIENDS","Reginald Thompson"],["BETE PASS ME PAPA","Reginald Thompson"],["AUDACITY","D4nny & Solo’s Beats"],["GO",""]],"tracklistSource":"https://music.apple.com/us/album/audacity/6811765244"},
-  {"slug":"the-maths","title":"The Maths","artist":"incredible-jj","type":"EP","year":2026,"tracks":["jakondeh","mood","crush","novice","love-code","morning-sunlight","city-bill"],"colour":"amber","cover":true,"tracklist":[["Jakondeh",""],["Mood",""],["Crush","JZyNO"],["Novice",""],["Love Code",""],["Morning Sunlight","King David 1995"],["City Bill","King Boss LA"]],"tracklistSource":"https://music.apple.com/us/album/the-maths/1895028643"},
-  {"slug":"aunty-kadie","title":"Aunty Kadie","artist":"kracktwist","type":"EP","year":2026,"tracks":["intro","e-don-tay","aunty-kadie","nor-get-god","foolish-activity","dna","mi-foot"],"colour":"green","cover":true,"tracklist":[["Intro",""],["E Don Tay","Arkman"],["Aunty Kadie",""],["Nor Get God","Triple Hardest & Princess H"],["Foolish Activity","AL Dyce"],["Dna","King Ice, Depth & Father"],["Mi Foot",""]],"tracklistSource":"https://music.apple.com/us/album/aunty-kadie/1888240219"},
-  {"slug":"money-or-honey","title":"Money or Honey","artist":"boii","type":"EP","year":2025,"tracks":["dollars-and-pounds","hero","without-you","away","go-low","baby-yeah","letter-to-my-ex","thank-you"],"colour":"blue","cover":true,"tracklist":[["Dollars and Pounds",""],["Hero",""],["Without You","BoyPee"],["Away",""],["Go Low","Ramoni"],["Baby Yeah",""],["Letter to My Ex",""],["Thank You",""]],"tracklistSource":"https://music.apple.com/us/album/money-or-honey/1849716146"},
-  {"slug":"wait-and-see","title":"Wait and See","artist":"drizilik","type":"Album","year":2025,"tracks":["nothing-is-free","pull-up","blame","smiley-face","above-all","back-at-me","m-i-a","lemonade"],"colour":"amber","cover":true,"tracklist":[["Nothing Is Free",""],["Pull Up","J Lucia"],["Blame",""],["Smiley Face",""],["Above All",""],["Back At Me","Da Cintra"],["M.I.A","Laïoung"],["Lemonade","The Therapist"]],"tracklistSource":"https://music.apple.com/us/album/wait-and-see/1788321371"},
-  {"slug":"a-perfect-time","title":"A Perfect Time","artist":"samza","type":"Album","year":2025,"tracks":["a-perfect-time-intro-by-twavula","a-perfect-time","table","away-samza","orbothy","more","asampete","think","fire","feelings","lesson","ignore","sympathy","god","somesie"],"colour":"blue","cover":true,"tracklist":[["A Perfect Time Intro, By: Twavula",""],["A Perfect Time",""],["Table","Marthson Blu, Bakitenno & Krio Mesaya"],["Away",""],["Orbothy","Kracktwist"],["More",""],["Asampete","Lucky Oyem"],["Think",""],["Fire",""],["Feelings","Joey"],["Lesson",""],["Ignore","Wisher"],["Sympathy",""],["God",""],["Somesie","Bakitenno, Apreel & Krio Mesaya"]],"tracklistSource":"https://music.apple.com/us/album/a-perfect-time-album/1857419070"}
+  {"slug":"audacity-album","title":"Audacity","artist":"drizilik","type":"Album","year":2026,"tracks":["never-know","alpha-and-omega","sabi-road","too-late","no-games","alcohol","real-friends","bete-pass-me-papa","audacity","go"],"colour":"charcoal","cover":true,"about":"Drizilik’s ten-track album, released on 30 September 2026, with Isat on “NO GAMES” and D4nny and Solo’s Beats on the title track. Its launch was supported by a partnership with Africell.","tracklist":[["NEVER KNOW","Reginald Thompson"],["ALPHA AND OMEGA",""],["SABI ROAD",""],["TOO LATE","Shadow Boxxer"],["NO GAMES","Isat"],["ALCOHOL",""],["REAL FRIENDS","Reginald Thompson"],["BETE PASS ME PAPA","Reginald Thompson"],["AUDACITY","D4nny & Solo’s Beats"],["GO",""]],"tracklistSource":"https://music.apple.com/us/album/audacity/6811765244"},
+  {"slug":"the-maths","title":"The Maths","artist":"incredible-jj","type":"EP","year":2026,"tracks":["jakondeh","mood","crush","novice","love-code","morning-sunlight","city-bill"],"colour":"amber","cover":true,"about":"Incredible JJ’s seven-track project from May 2026, produced by Nashito Kulala, with JZyNO on “Crush” and King Boss LA on the closing track, “City Bill.”","tracklist":[["Jakondeh",""],["Mood",""],["Crush","JZyNO"],["Novice",""],["Love Code",""],["Morning Sunlight","King David 1995"],["City Bill","King Boss LA"]],"tracklistSource":"https://music.apple.com/us/album/the-maths/1895028643"},
+  {"slug":"aunty-kadie","title":"Aunty Kadie","artist":"kracktwist","type":"EP","year":2026,"tracks":["intro","e-don-tay","aunty-kadie","nor-get-god","foolish-activity","dna","mi-foot"],"colour":"green","cover":true,"about":"Kracktwist’s seven-track EP from March 2026, recorded as Kracktwist Lamina, with Arkman on “E Don Tay” and AL Dyce on “Foolish Activity.”","tracklist":[["Intro",""],["E Don Tay","Arkman"],["Aunty Kadie",""],["Nor Get God","Triple Hardest & Princess H"],["Foolish Activity","AL Dyce"],["Dna","King Ice, Depth & Father"],["Mi Foot",""]],"tracklistSource":"https://music.apple.com/us/album/aunty-kadie/1888240219"},
+  {"slug":"money-or-honey","title":"Money or Honey","artist":"boii","type":"EP","year":2025,"tracks":["dollars-and-pounds","hero","without-you","away","go-low","baby-yeah","letter-to-my-ex","thank-you"],"colour":"blue","cover":true,"about":"BOII’s debut EP on Cribs International, released in November 2025: eight tracks, including “Without You” with BoyPee and “Go Low” with Ramoni.","tracklist":[["Dollars and Pounds",""],["Hero",""],["Without You","BoyPee"],["Away",""],["Go Low","Ramoni"],["Baby Yeah",""],["Letter to My Ex",""],["Thank You",""]],"tracklistSource":"https://music.apple.com/us/album/money-or-honey/1849716146"},
+  {"slug":"wait-and-see","title":"Wait and See","artist":"drizilik","type":"Album","year":2025,"tracks":["nothing-is-free","pull-up","blame","smiley-face","above-all","back-at-me","m-i-a","lemonade"],"colour":"amber","cover":true,"about":"Drizilik’s eight-track album from January 2025, with guests J Lucia, Da Cintra, Laïoung and The Therapist, who joins him on “Lemonade.”","tracklist":[["Nothing Is Free",""],["Pull Up","J Lucia"],["Blame",""],["Smiley Face",""],["Above All",""],["Back At Me","Da Cintra"],["M.I.A","Laïoung"],["Lemonade","The Therapist"]],"tracklistSource":"https://music.apple.com/us/album/wait-and-see/1788321371"},
+  {"slug":"a-perfect-time","title":"A Perfect Time","artist":"samza","type":"Album","year":2025,"tracks":["a-perfect-time-intro-by-twavula","a-perfect-time","table","away-samza","orbothy","more","asampete","think","fire","feelings","lesson","ignore","sympathy","god","somesie"],"colour":"blue","cover":true,"about":"Samza’s 15-track album from November 2025, nominated for album/EP at the 2026 SLeDU awards, with Kracktwist on “Orbothy” and Bakitenno on “Table” and “Somesie.”","tracklist":[["A Perfect Time Intro, By: Twavula",""],["A Perfect Time",""],["Table","Marthson Blu, Bakitenno & Krio Mesaya"],["Away",""],["Orbothy","Kracktwist"],["More",""],["Asampete","Lucky Oyem"],["Think",""],["Fire",""],["Feelings","Joey"],["Lesson",""],["Ignore","Wisher"],["Sympathy",""],["God",""],["Somesie","Bakitenno, Apreel & Krio Mesaya"]],"tracklistSource":"https://music.apple.com/us/album/a-perfect-time-album/1857419070"}
 ],
 
 picks: ["crush","feel-alright","bismillah","ashobi","peace","farr-away","break","fun"],
@@ -1522,10 +1492,6 @@ function songRow(s,i){
 function artistCard(a,i,tag="h3"){
   return `<a class="acard reveal" href="#artist.${a.slug}"><div class="portrait panel ${panelCls(i)} grain"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"(min-width:1200px) 16vw, (min-width:768px) 24vw, 45vw",alt:""})}</div><div class="row"><${tag}>${esc(a.name)}</${tag}></div><p>${esc(a.genre)} · ${esc(a.town)}</p>${a.pending?`<div class="row"><span class="tag tag-example">Profile in progress</span></div>`:""}</a>`;
 }
-function evGroups(list){
-  const g=[]; list.forEach(e=>{ const d=parse(e.date), k=`${MONTHS_L[d.getMonth()]} ${d.getFullYear()}`; const last=g[g.length-1]; if(last&&last.k===k) last.items.push(e); else g.push({k,items:[e]}); });
-  return g.map(x=>`<section class="ev-group"><h3 class="ev-month"><span>${esc(x.k)}</span><span class="count">${x.items.length} event${x.items.length===1?"":"s"}</span></h3><ul class="evlist">${x.items.map(evRow).join("")}</ul></section>`).join("");
-}
 function nextUp(list){
   const e=list.find(x=>evStatus(x)==="upcoming"); if(!e) return "";
   const at=new Date(`${e.date}T${e.time||"00:00"}:00Z`).getTime(); // Freetown is on GMT
@@ -1592,12 +1558,6 @@ function teamGrid(){
 }
 
 /* ================= HOME ================= */
-// Figures for the Spotlight band, all counted from the site's own records
-function spotlightStats(a){
-  const songs=SONGS().filter(s=>s.artist===a.slug||s.featA===a.slug);
-  const collab=new Set(songs.map(s=>s.artist===a.slug?s.featA:s.artist).filter(x=>x&&x!==a.slug));
-  return [[songs.length,"Lyrics pages"],[D.videos.filter(v=>v.artist===a.slug).length,"Lyric videos"],[(a.awards||[]).length,"Recognitions"],[collab.size,collab.size===1?"Collaborator on the site":"Collaborators on the site"]].filter(([n])=>n>0);
-}
 VIEWS.home = () => {
   const heroes=["drizilik","laj","incredible-jj","bakitenno","famous","apreel","isat","samza"].map(artist), hero=heroes[0], spot=D.artists.find(a=>a.spotlight);
   const picks=D.picks.map(song);
@@ -1605,7 +1565,6 @@ VIEWS.home = () => {
   const weekend=upcoming.filter(inWeekend);
   const feat=D.articles[0], rest=D.articles.slice(1,4);
   const spotSongs=SONGS().filter(s=>s.artist===spot.slug).slice(0,3);
-  const spotStats=spotlightStats(spot);
   return { title:"", html:`
   <section class="hero-shell" aria-labelledby="hero-h"><div class="hero">
     <div class="hero-copy">
@@ -1640,29 +1599,23 @@ VIEWS.home = () => {
     <ol class="songlist">${picks.map(songRow).join("")}</ol>
   </div></section>
 
-  <section class="spotlight-bio" aria-labelledby="spot-h">
-    <div class="sb-banner grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">
-      <p class="sb-kicker"><span class="tag tag-dark">Weekly Spotlight</span><span>The story so far</span></p>
-      <h2 id="spot-h" class="display sb-name reveal">${esc(spot.name)}</h2>
-      <p class="sb-meta">${esc(spot.genre)} · ${esc(spot.town)}</p>
-    </div></div>
-    <div class="sb-story"><div class="wrap sb-grid">
-      <div class="sb-art panel panel-blue grain reveal"><span class="grooves spin" aria-hidden="true"></span>${portrait(spot,{cls:"cut",sizes:"(min-width:900px) 40vw, 90vw"})}</div>
-      <div class="sb-copy">
-        <p class="eyebrow sb-eyebrow">Biography</p>
-        <p class="sb-lead reveal">${esc(spot.intro)}</p>
-        ${spot.bio.slice(0,2).map(p=>`<p class="reveal">${linkArtists(p)}</p>`).join("")}
-        <div class="row-wrap sb-actions"><a class="btn btn-green" href="#artist.${spot.slug}">Read the full biography</a>${spotSongs.length?`<a class="btn btn-ghost sb-ghost" href="#artist.${spot.slug}.music">View lyrics</a>`:""}</div>
-      </div>
-    </div></div>
-    ${spotStats.length?`<div class="sb-stats grain"><div class="wrap"><ul class="sb-stat-list" aria-label="${esc(spot.name)} on Salone Lyrics">${spotStats.map(([n,l])=>`<li class="reveal"><span class="n tnum" data-count="${n}">${n}</span><span class="rule" aria-hidden="true"></span><span class="l">${esc(l)}</span></li>`).join("")}</ul></div></div>`:""}
+  <section class="spotlight grain" aria-labelledby="spot-h">
+    <div class="spot-art"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${portrait(spot,{cls:"cut cut-shadow",sizes:"(min-width:900px) 45vw, 90vw"})}</div></div>
+    <div class="spot-copy">
+      <div class="spot-label"><span class="tag tag-amber">Weekly Spotlight</span></div>
+      <h2 id="spot-h" class="display spot-name reveal">${esc(spot.name)}</h2>
+      <p class="lede">${esc(spot.intro)}</p>
+      <dl class="spot-facts"><div><dt>Genre</dt><dd>${esc(spot.genre)}</dd></div><div><dt>Based in</dt><dd>${esc(spot.town)}</dd></div>${spot.label?`<div><dt>Label</dt><dd>${esc(spot.label)}</dd></div>`:""}</dl>
+      <div class="row-wrap"><a class="btn btn-primary" href="#artist.${spot.slug}" aria-label="Read more: ${esc(spot.name)}’s full biography">Read more</a>${spotSongs[0]?`<a class="arrow-link" href="#song.${spotSongs[0].slug}">“${esc(spotSongs[0].title)}”</a>`:""}</div>
+      
+    </div>
   </section>
 
   <section class="section" aria-labelledby="rel-h"><div class="wrap">
-    <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Albums &amp; EPs</p><h2 id="rel-h" class="display sec-title">Releases</h2><p class="muted sec-sub">Pick a record, then read the lyrics track by track.</p></div>
+    <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Albums &amp; EPs</p><h2 id="rel-h" class="display sec-title">Releases</h2></div>
       <div class="chips" role="group" aria-label="Filter releases">${["All","EPs","Albums"].map(f=>`<button type="button" class="chip" data-rel="${f}" aria-pressed="${S.rel===f}">${f}</button>`).join("")}</div></div>
     <div class="rel-grid" id="rel-grid" aria-live="polite"></div>
-    
+    <p class="paid-note">Typographic tiles stand in where cover artwork has not been supplied yet.</p>
   </div></section>
 
   <section class="section" style="background:#fff" aria-labelledby="art-h"><div class="wrap">
@@ -1678,7 +1631,7 @@ VIEWS.home = () => {
   <section class="section" aria-labelledby="ev-h"><div class="wrap">
     <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Events</p><h2 id="ev-h" class="display sec-title">Upcoming events</h2></div><a class="btn btn-ghost btn-sm" href="#events">View all events</a></div>
     ${weekend.length?`<div class="notice notice-info reveal" style="margin-bottom:24px"><strong>This weekend</strong><span>${weekend.map(e=>`<a class="link" href="#event.${e.slug}">${esc(e.title)}</a> (${DOW[parse(e.date).getDay()]}, ${esc(e.town)})`).join(" · ")}</span></div>`:""}
-    ${nextUp(upcoming)}${evGroups(upcoming.slice(0,4))}
+    ${nextUp(upcoming)}<ul class="evlist">${upcoming.slice(0,4).map(evRow).join("")}</ul>
     <p class="paid-note">Venues, times and ticket links are added as organisers confirm them.</p>
   </div></section>
 
@@ -1714,7 +1667,7 @@ VIEWS.home = () => {
   after(main){
     const grid=$("#rel-grid",main);
     const draw=()=>{ const map={EPs:"EP",Albums:"Album"}; const list=D.releases.filter(r=>S.rel==="All"||r.type===map[S.rel]).slice(0,8);
-      grid.innerHTML=list.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.tracklist?` · ${r.tracklist.length} tracks`:""}</p></div></a>`).join(""); };
+      grid.innerHTML=list.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.tracklist?` · ${r.tracklist.length} tracks`:""}</p>${r.about?`<p class="rel-about">${esc(r.about)}</p>`:""}</div></a>`).join(""); };
     draw();
     $$("[data-rel]",main).forEach(b=>b.addEventListener("click",()=>{S.rel=b.dataset.rel; $$("[data-rel]",main).forEach(x=>x.setAttribute("aria-pressed",x===b)); draw();}));
     $("[data-hero-search]",main).addEventListener("submit",e=>{e.preventDefault(); openSearch($("#hero-q").value);});
@@ -1782,7 +1735,7 @@ VIEWS.lyrics = () => {
     </div>
     <p class="count" id="lcount" aria-live="polite"></p>
     <ol class="songlist mt-s" id="llist"></ol>
-    <div class="mt-l"><h2 class="display" style="font-size:clamp(28px,4vw,44px)">Albums &amp; EPs</h2><div class="rel-grid mt-m">${D.releases.map(r=>`<a class="rel reveal" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.tracklist?` · ${r.tracklist.length} tracks`:""}</p></div></a>`).join("")}</div></div>
+    <div class="mt-l"><h2 class="display" style="font-size:clamp(28px,4vw,44px)">Albums &amp; EPs</h2><div class="rel-grid mt-m">${D.releases.map(r=>`<a class="rel reveal" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.tracklist?` · ${r.tracklist.length} tracks`:""}</p>${r.about?`<p class="rel-about">${esc(r.about)}</p>`:""}</div></a>`).join("")}</div></div>
   </div>`,
   after(main){
     const draw=()=>{ const q=S.lyr.q.trim().toLowerCase();
@@ -1880,7 +1833,7 @@ VIEWS.release = r => {
   const a=artist(rel.artist); const tracks=SONGS().filter(s=>s.release===rel.slug||rel.tracks.includes(s.slug));
   return { title:`${rel.title} by ${a.name}`, html:`
   <header class="phead charcoal"><div class="wrap">${crumbs([["Home","#"],["Lyrics","#lyrics"],[rel.title]])}
-    <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}</p><div class="row-wrap"><button class="btn btn-green" type="button" data-share>Share release</button></div></div>
+    <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}${rel.tracklist?` · ${rel.tracklist.length} tracks`:""}</p>${rel.about?`<p class="rel-intro">${esc(rel.about)}</p>`:""}<div class="row-wrap"><button class="btn btn-green" type="button" data-share>Share release</button></div></div>
     <div style="max-width:360px;width:100%">${relArt(rel,`Cover of ${rel.title} by ${a.name}`)}<p class="credit" style="color:var(--muted-dark);margin-top:8px">${rel.cover?"Cover artwork.":"Typographic tile. Official artwork will be added when supplied."}</p></div></div>
   </div></header>
   <div class="wrap page"><h2 class="display" style="font-size:36px;margin-bottom:16px">${rel.tracklist?"Tracklist":"Songs on Salone Lyrics"}</h2>${rel.tracklist?trackList(rel):tracks.length?`<ol class="songlist">${tracks.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">The tracklist for ${esc(rel.title)} will be added with the artist.</p></div>`}
@@ -1947,7 +1900,7 @@ function artistPanel(a,id){
     
     ${news.length||a.storyIdea?`<div class="aside-box"><h2>Stories</h2>${news.map(n=>`<a class="arrow-link" href="#story.${n.slug}" style="display:flex">${esc(n.title)}</a>`).join("")}${a.storyIdea?`<p class="muted" style="font-size:14px">Coming soon: ${esc(a.storyIdea)}</p>`:""}</div>`:""}</aside></div>`;
   if(id==="music") return `<h2 class="display" style="font-size:36px;margin-bottom:16px">Lyrics</h2>${songs.length?`<ol class="songlist">${songs.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">Songs will be added once confirmed with the artist.</p></div>`}
-    ${rels.length?`<h2 class="display mt-l" style="font-size:36px;margin-bottom:16px">Albums &amp; EPs</h2><div class="rel-grid">${rels.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(r.type)}${r.year?" · "+esc(r.year):""}</p></div></a>`).join("")}</div>`:""}`;
+    ${rels.length?`<h2 class="display mt-l" style="font-size:36px;margin-bottom:16px">Albums &amp; EPs</h2><div class="rel-grid">${rels.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.tracklist?` · ${r.tracklist.length} tracks`:""}</p>${r.about?`<p class="rel-about">${esc(r.about)}</p>`:""}</div></a>`).join("")}</div>`:""}`;
   if(id==="videos") return vids.length?`<div class="vid-grid">${vids.map(vidCard).join("")}</div>`:`<div class="empty"><p class="display">No videos yet</p><p class="muted">Official videos will appear here.</p><a class="btn btn-ghost btn-sm" href="https://www.youtube.com/results?search_query=${encodeURIComponent(a.name+" Sierra Leone")}" target="_blank" rel="noopener">Search YouTube</a></div>`;
   if(id==="gallery") return a.photo?`<div class="gal-grid">${[a.photo,...(a.morePhotos||[])].map((k,i)=>galItem(k,i)).join("")}</div>`:`<div class="empty"><p class="muted">Photos will appear once supplied by the artist.</p></div>`;
   if(id==="events") return `<div class="empty"><p class="display">No confirmed performances</p><p class="muted">${esc(a.name)}’s upcoming shows will be listed here once confirmed by organisers.</p><a class="btn btn-ghost btn-sm" href="#events">All events</a></div>`;
@@ -1995,7 +1948,7 @@ VIEWS.events = () => {
   const towns=["All",...new Set(D.events.map(e=>e.town))], types=["All",...new Set(D.events.map(e=>e.type))];
   const sel=(id,label,opts,val)=>`<div class="field-inline"><label for="${id}">${label}</label><select id="${id}" class="select">${opts.map(o=>`<option value="${esc(o[0])}" ${val===o[0]?"selected":""}>${esc(o[1])}</option>`).join("")}</select></div>`;
   return { title:"Events", html:`
-  <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Events"]])}<h1 class="display">Events</h1><p>See you at the show. Concerts, festivals and launches across Sierra Leone.</p></div></header>
+  <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Events"]])}<h1 class="display">Events</h1><p>Concerts, launches, workshops and listening sessions across Sierra Leone.</p></div></header>
   <div class="wrap page">
     ${nextUp(D.events.filter(e=>evStatus(e)==="upcoming").sort((a,b)=>a.date.localeCompare(b.date)))}<div class="notice notice-info" style="margin-bottom:24px"><strong>Check before you go</strong><span>Venues, times and ticket links are added as organisers confirm them. Details can change, so check with the organiser before you travel.</span></div>
     <div class="filterbar">
@@ -2017,7 +1970,7 @@ VIEWS.events = () => {
       if(S.ev.fee==="Free"&&e.paid!==false) return false; if(S.ev.fee==="Paid"&&e.paid!==true) return false; return true; }).sort((a,b)=>S.ev.when==="past"?b.date.localeCompare(a.date):a.date.localeCompare(b.date));
     const draw=()=>{ const list=filtered(); $("#ecount").textContent=`${list.length} event${list.length===1?"":"s"}`;
       $$("[data-view]",main).forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===S.ev.view));
-      if(S.ev.view==="list"){ $("#eout").innerHTML=list.length?evGroups(list):`<div class="empty"><p class="display">No events match</p><p class="muted">Try a different date range or location.</p><button class="btn btn-ghost btn-sm" type="button" id="ereset">Reset filters</button></div>`; const rs=$("#ereset"); if(rs) rs.addEventListener("click",()=>{Object.assign(S.ev,{when:"upcoming",town:"All",type:"All",fee:"All"}); render();}); reveal($("#eout")); }
+      if(S.ev.view==="list"){ $("#eout").innerHTML=list.length?`<ul class="evlist">${list.map(evRow).join("")}</ul>`:`<div class="empty"><p class="display">No events match</p><p class="muted">Try a different date range or location.</p><button class="btn btn-ghost btn-sm" type="button" id="ereset">Reset filters</button></div>`; const rs=$("#ereset"); if(rs) rs.addEventListener("click",()=>{Object.assign(S.ev,{when:"upcoming",town:"All",type:"All",fee:"All"}); render();}); reveal($("#eout")); }
       else drawCal(list); };
     const drawCal=list=>{
       if(!S.ev.month){ const f=list[0]?parse(list[0].date):TODAY; S.ev.month=[f.getFullYear(),f.getMonth()]; }
