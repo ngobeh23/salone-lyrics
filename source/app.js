@@ -64,7 +64,7 @@ function trackList(rel){
   return `<ol class="tracklist">${rows}</ol>${rel.tracklistSource?`<p class="paid-note">${rel.tracklist.length} tracks. Tracklist from <a class="link" href="${rel.tracklistSource}" target="_blank" rel="noopener">Apple Music</a>.</p>`:""}`;
 }
 function relArt(r,alt=""){
-  return r.cover?`<span class="vinyl-wrap"><span class="vinyl" aria-hidden="true" style="--label:url('${IMG}cover-${r.slug}-500.webp')"></span><img class="cover" src="${IMG}cover-${r.slug}-500.webp" srcset="${IMG}cover-${r.slug}-500.webp 500w, ${IMG}cover-${r.slug}-1000.webp 1000w" sizes="(min-width:900px) 360px, 45vw" width="500" height="500" alt="${esc(alt)}" loading="lazy" decoding="async"></span>`:ttile(r);
+  return r.cover?`<img class="cover" src="${IMG}cover-${r.slug}-500.webp" srcset="${IMG}cover-${r.slug}-500.webp 500w, ${IMG}cover-${r.slug}-1000.webp 1000w" sizes="(min-width:900px) 360px, 45vw" width="500" height="500" alt="${esc(alt)}" loading="lazy" decoding="async">`:ttile(r);
 }
 
 /* ---------- State ---------- */
@@ -151,18 +151,6 @@ function songRow(s,i){
 }
 function artistCard(a,i,tag="h3"){
   return `<a class="acard reveal" href="#artist.${a.slug}"><div class="portrait panel ${panelCls(i)} grain"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"(min-width:1200px) 16vw, (min-width:768px) 24vw, 45vw",alt:""})}</div><div class="row"><${tag}>${esc(a.name)}</${tag}></div><p>${esc(a.genre)} · ${esc(a.town)}</p>${a.pending?`<div class="row"><span class="tag tag-example">Profile in progress</span></div>`:""}</a>`;
-}
-function nextUp(list){
-  const e=list.find(x=>evStatus(x)==="upcoming"); if(!e) return "";
-  const at=new Date(`${e.date}T${e.time||"00:00"}:00Z`).getTime(); // Freetown is on GMT
-  return `<a class="ev-next grain reveal" href="#event.${e.slug}" data-countdown="${at}"><span class="grooves spin" aria-hidden="true"></span><span class="ev-next-txt"><span class="eyebrow">Next up</span><span class="ev-next-title">${esc(e.title)}</span><span class="ev-next-meta">${evDates(e)} · ${esc(e.town)}</span></span><span class="ev-clock" aria-hidden="true"><span><b data-cd="d">0</b>days</span><span><b data-cd="h">0</b>hours</span><span><b data-cd="m">0</b>mins</span></span><span class="sr" data-cd-sr></span></a>`;
-}
-function bindCountdown(root){
-  const el=$("[data-countdown]",root); if(!el) return; const at=+el.dataset.countdown;
-  const tick=()=>{ const ms=Math.max(0,at-Date.now()), d=Math.floor(ms/864e5), h=Math.floor(ms%864e5/36e5), m=Math.floor(ms%36e5/6e4);
-    $("[data-cd=d]",el).textContent=d; $("[data-cd=h]",el).textContent=String(h).padStart(2,"0"); $("[data-cd=m]",el).textContent=String(m).padStart(2,"0");
-    $("[data-cd-sr]",el).textContent=`Starts in ${d} days, ${h} hours and ${m} minutes.`; };
-  tick(); const t=setInterval(tick,30000); cleanup.push(()=>clearInterval(t));
 }
 function evRow(e){
   const d=parse(e.date), st=evStatus(e), off=st==="cancelled"||st==="postponed";
@@ -266,7 +254,7 @@ VIEWS.home = () => {
       <h2 id="spot-h" class="display spot-name reveal">${esc(spot.name)}</h2>
       <p class="lede">${esc(spot.intro)}</p>
       <dl class="spot-facts"><div><dt>Genre</dt><dd>${esc(spot.genre)}</dd></div><div><dt>Based in</dt><dd>${esc(spot.town)}</dd></div>${spot.label?`<div><dt>Label</dt><dd>${esc(spot.label)}</dd></div>`:""}</dl>
-      <div class="row-wrap"><a class="btn btn-primary" href="#artist.${spot.slug}" aria-label="Read more: ${esc(spot.name)}’s full biography">Read more</a>${spotSongs[0]?`<a class="arrow-link" href="#song.${spotSongs[0].slug}">“${esc(spotSongs[0].title)}”</a>`:""}</div>
+      <div class="row-wrap"><a class="btn btn-primary" href="#artist.${spot.slug}">Meet the Artist</a>${spotSongs[0]?`<a class="arrow-link" href="#song.${spotSongs[0].slug}">“${esc(spotSongs[0].title)}”</a>`:""}</div>
       
     </div>
   </section>
@@ -291,7 +279,7 @@ VIEWS.home = () => {
   <section class="section" aria-labelledby="ev-h"><div class="wrap">
     <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Events</p><h2 id="ev-h" class="display sec-title">Upcoming events</h2></div><a class="btn btn-ghost btn-sm" href="#events">View all events</a></div>
     ${weekend.length?`<div class="notice notice-info reveal" style="margin-bottom:24px"><strong>This weekend</strong><span>${weekend.map(e=>`<a class="link" href="#event.${e.slug}">${esc(e.title)}</a> (${DOW[parse(e.date).getDay()]}, ${esc(e.town)})`).join(" · ")}</span></div>`:""}
-    ${nextUp(upcoming)}<ul class="evlist">${upcoming.slice(0,4).map(evRow).join("")}</ul>
+    <ul class="evlist">${upcoming.slice(0,4).map(evRow).join("")}</ul>
     <p class="paid-note">Venues, times and ticket links are added as organisers confirm them.</p>
   </div></section>
 
@@ -327,11 +315,11 @@ VIEWS.home = () => {
   after(main){
     const grid=$("#rel-grid",main);
     const draw=()=>{ const map={EPs:"EP",Albums:"Album"}; const list=D.releases.filter(r=>S.rel==="All"||r.type===map[S.rel]).slice(0,8);
-      grid.innerHTML=list.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.tracklist?` · ${r.tracklist.length} tracks`:""}</p>${r.about?`<p class="rel-about">${esc(r.about)}</p>`:""}</div></a>`).join(""); };
+      grid.innerHTML=list.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}</p></div></a>`).join(""); };
     draw();
     $$("[data-rel]",main).forEach(b=>b.addEventListener("click",()=>{S.rel=b.dataset.rel; $$("[data-rel]",main).forEach(x=>x.setAttribute("aria-pressed",x===b)); draw();}));
     $("[data-hero-search]",main).addEventListener("submit",e=>{e.preventDefault(); openSearch($("#hero-q").value);});
-    railControls(main); bindVideos(main); bindSvcLinks(main); heroCycle(main, heroes); artistMarquee(main); newsCycle(main); bindCountdown(main);
+    railControls(main); bindVideos(main); bindSvcLinks(main); heroCycle(main, heroes); artistMarquee(main); newsCycle(main);
   }};
 };
 function heroTitle(lines){
@@ -395,7 +383,7 @@ VIEWS.lyrics = () => {
     </div>
     <p class="count" id="lcount" aria-live="polite"></p>
     <ol class="songlist mt-s" id="llist"></ol>
-    <div class="mt-l"><h2 class="display" style="font-size:clamp(28px,4vw,44px)">Albums &amp; EPs</h2><div class="rel-grid mt-m">${D.releases.map(r=>`<a class="rel reveal" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.tracklist?` · ${r.tracklist.length} tracks`:""}</p>${r.about?`<p class="rel-about">${esc(r.about)}</p>`:""}</div></a>`).join("")}</div></div>
+    <div class="mt-l"><h2 class="display" style="font-size:clamp(28px,4vw,44px)">Albums &amp; EPs</h2><div class="rel-grid mt-m">${D.releases.map(r=>`<a class="rel reveal" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(artist(r.artist).name)} · ${esc(r.type)}${r.year?" · "+esc(r.year):""}</p></div></a>`).join("")}</div></div>
   </div>`,
   after(main){
     const draw=()=>{ const q=S.lyr.q.trim().toLowerCase();
@@ -493,7 +481,7 @@ VIEWS.release = r => {
   const a=artist(rel.artist); const tracks=SONGS().filter(s=>s.release===rel.slug||rel.tracks.includes(s.slug));
   return { title:`${rel.title} by ${a.name}`, html:`
   <header class="phead charcoal"><div class="wrap">${crumbs([["Home","#"],["Lyrics","#lyrics"],[rel.title]])}
-    <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}${rel.tracklist?` · ${rel.tracklist.length} tracks`:""}</p>${rel.about?`<p class="rel-intro">${esc(rel.about)}</p>`:""}<div class="row-wrap"><button class="btn btn-green" type="button" data-share>Share release</button></div></div>
+    <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}</p><div class="row-wrap"><button class="btn btn-green" type="button" data-share>Share release</button></div></div>
     <div style="max-width:360px;width:100%">${relArt(rel,`Cover of ${rel.title} by ${a.name}`)}<p class="credit" style="color:var(--muted-dark);margin-top:8px">${rel.cover?"Cover artwork.":"Typographic tile. Official artwork will be added when supplied."}</p></div></div>
   </div></header>
   <div class="wrap page"><h2 class="display" style="font-size:36px;margin-bottom:16px">${rel.tracklist?"Tracklist":"Songs on Salone Lyrics"}</h2>${rel.tracklist?trackList(rel):tracks.length?`<ol class="songlist">${tracks.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">The tracklist for ${esc(rel.title)} will be added with the artist.</p></div>`}
@@ -560,7 +548,7 @@ function artistPanel(a,id){
     
     ${news.length||a.storyIdea?`<div class="aside-box"><h2>Stories</h2>${news.map(n=>`<a class="arrow-link" href="#story.${n.slug}" style="display:flex">${esc(n.title)}</a>`).join("")}${a.storyIdea?`<p class="muted" style="font-size:14px">Coming soon: ${esc(a.storyIdea)}</p>`:""}</div>`:""}</aside></div>`;
   if(id==="music") return `<h2 class="display" style="font-size:36px;margin-bottom:16px">Lyrics</h2>${songs.length?`<ol class="songlist">${songs.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">Songs will be added once confirmed with the artist.</p></div>`}
-    ${rels.length?`<h2 class="display mt-l" style="font-size:36px;margin-bottom:16px">Albums &amp; EPs</h2><div class="rel-grid">${rels.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(r.type)}${r.year?" · "+esc(r.year):""}${r.tracklist?` · ${r.tracklist.length} tracks`:""}</p>${r.about?`<p class="rel-about">${esc(r.about)}</p>`:""}</div></a>`).join("")}</div>`:""}`;
+    ${rels.length?`<h2 class="display mt-l" style="font-size:36px;margin-bottom:16px">Albums &amp; EPs</h2><div class="rel-grid">${rels.map(r=>`<a class="rel" href="#release.${r.slug}">${relArt(r)}<div><h3>${esc(r.title)}</h3><p>${esc(r.type)}${r.year?" · "+esc(r.year):""}</p></div></a>`).join("")}</div>`:""}`;
   if(id==="videos") return vids.length?`<div class="vid-grid">${vids.map(vidCard).join("")}</div>`:`<div class="empty"><p class="display">No videos yet</p><p class="muted">Official videos will appear here.</p><a class="btn btn-ghost btn-sm" href="https://www.youtube.com/results?search_query=${encodeURIComponent(a.name+" Sierra Leone")}" target="_blank" rel="noopener">Search YouTube</a></div>`;
   if(id==="gallery") return a.photo?`<div class="gal-grid">${[a.photo,...(a.morePhotos||[])].map((k,i)=>galItem(k,i)).join("")}</div>`:`<div class="empty"><p class="muted">Photos will appear once supplied by the artist.</p></div>`;
   if(id==="events") return `<div class="empty"><p class="display">No confirmed performances</p><p class="muted">${esc(a.name)}’s upcoming shows will be listed here once confirmed by organisers.</p><a class="btn btn-ghost btn-sm" href="#events">All events</a></div>`;
@@ -610,7 +598,7 @@ VIEWS.events = () => {
   return { title:"Events", html:`
   <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Events"]])}<h1 class="display">Events</h1><p>Concerts, launches, workshops and listening sessions across Sierra Leone.</p></div></header>
   <div class="wrap page">
-    ${nextUp(D.events.filter(e=>evStatus(e)==="upcoming").sort((a,b)=>a.date.localeCompare(b.date)))}<div class="notice notice-info" style="margin-bottom:24px"><strong>Check before you go</strong><span>Venues, times and ticket links are added as organisers confirm them. Details can change, so check with the organiser before you travel.</span></div>
+    <div class="notice notice-info" style="margin-bottom:24px"><strong>Check before you go</strong><span>Venues, times and ticket links are added as organisers confirm them. Details can change, so check with the organiser before you travel.</span></div>
     <div class="filterbar">
       ${sel("ef-when","Date",[["upcoming","All upcoming"],["weekend","This weekend"],["month","Next 30 days"],["past","Past events"]],S.ev.when)}
       ${sel("ef-town","Location",towns.map(t=>[t,t==="All"?"All locations":t]),S.ev.town)}
@@ -621,7 +609,6 @@ VIEWS.events = () => {
     <p class="count" id="ecount" aria-live="polite"></p><div id="eout" class="mt-s"></div>
   </div>`,
   after(main){
-    bindCountdown(main);
     const filtered=()=>D.events.filter(e=>{ const st=evStatus(e), d=parse(e.date);
       if(S.ev.when==="past"){ if(st!=="completed") return false; } else if(st==="completed") return false;
       if(S.ev.when==="weekend"&&!inWeekend(e)) return false;
