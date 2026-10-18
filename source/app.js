@@ -146,7 +146,7 @@ const crumbs = items => `<nav class="crumbs" aria-label="Breadcrumb">${items.map
 function byline(s){ const a=artist(s.artist); return `${esc(a.name)}${s.feat?` feat. ${esc(s.feat)}`:""}`; }
 const peekBtn = (slug,label) => { const a=artist(slug); return a&&!a.hidden?`<button type="button" class="peek" data-peek="${a.slug}" aria-haspopup="dialog">${esc(label||a.name)}</button>`:esc(label||""); };
 function songRow(s,i){
-  const who = s.demo ? "Salone Lyrics demo" : `${peekBtn(s.artist)}${s.feat?` feat. ${s.featA?peekBtn(s.featA,s.feat):esc(s.feat)}`:""}`;
+  const who = s.demo ? "Salone Lyrics demo" : s.lead ? `${esc(s.lead)} feat. ${esc(s.feat).replace(esc(artist(s.artist).name),peekBtn(s.artist))}` : `${peekBtn(s.artist)}${s.feat?` feat. ${s.featA?peekBtn(s.featA,s.feat):esc(s.feat)}`:""}`;
   return `<li class="songrow"><span class="num tnum" aria-hidden="true">${String(i+1).padStart(2,"0")}</span><span class="sr-main"><a class="t stretch" href="#song.${s.slug}">${esc(s.title)}</a><br><span class="a">${who}</span></span><span class="meta">${esc(s.genre)} · ${esc(s.type)} · ${esc(s.year||"—")}</span><span class="go" aria-hidden="true">${s.demo?"Read demo":"View Lyrics"}</span></li>`;
 }
 function artistCard(a,i,tag="h3"){
@@ -399,7 +399,7 @@ VIEWS.lyrics = () => {
 const PLAT=[["youtube","YouTube"],["youtubeMusic","YouTube Music"],["spotify","Spotify"],["appleMusic","Apple Music"],["audiomack","Audiomack"],["boomplay","Boomplay"],["amazonMusic","Amazon Music"],["deezer","Deezer"],["tidal","Tidal"]];
 function artistProfiles(a){ const m={}; (a.links||[]).forEach(([l,u])=>{ const [p,rest]=l.split(" — "); const hit=PLAT.find(([,n])=>n===p); if(hit&&rest&&/artist/i.test(rest)&&!m[hit[0]]) m[hit[0]]=u; }); return m; }
 function listenBlock(s,a){
-  const L=(s.listen&&s.listen.links)||{}, prof=artistProfiles(a), e=s.listen&&s.listen.embed;
+  const L=(s.listen&&s.listen.links)||{}, prof=s.lead?{}:artistProfiles(a), e=s.listen&&s.listen.embed; // guest appearances: song links only
   // direct song links first, then artist profiles for platforms without a verified song link
   const btns=PLAT.map(([k,n])=>L[k]?`<a class="btn btn-ghost btn-sm" href="${L[k]}" target="_blank" rel="noopener">Listen on ${n}<span class="sr"> (opens in a new tab)</span></a>`:"").join("")+PLAT.map(([k,n])=>!L[k]&&prof[k]?`<a class="btn btn-ghost btn-sm" href="${prof[k]}" target="_blank" rel="noopener">Visit Artist on ${n}<span class="sr"> (opens in a new tab)</span></a>`:"").join("");
   const player=e?`<div class="player" data-src="${e.src}" data-h="${e.h}" data-title="${esc(s.title)} on ${esc(e.name)}"><button class="btn btn-primary btn-sm" type="button" data-play-embed>${ICON.play}<span>Play while you read</span></button><span class="player-note">Official recording on ${esc(e.name)}. Without an ${esc(e.name)} sign-in, it may play a preview.</span></div>`:"";
@@ -412,7 +412,7 @@ VIEWS.song = r => {
   const related=SONGS().filter(x=>x.slug!==s.slug&&(x.artist===s.artist||x.featA===s.artist)).slice(0,5);
   const more=related.length?related:SONGS().filter(x=>x.slug!==s.slug&&x.genre===s.genre).slice(0,5);
   const rel=s.release?release(s.release):null;
-  const credits=Object.assign({}, s.credits||{}, s.feat?{"Featuring":s.feat}:{}, s.label?{"Label":s.label}:{});
+  const credits=Object.assign({}, s.credits||{}, s.feat?{"Featuring":s.feat}:{}, s.album?{"Album":s.album}:{}, s.label?{"Label":s.label}:{});
   const lyricBlock = s.lyrics ? `
         <div class="toolbar" role="toolbar" aria-label="Reading tools">
           <div class="grp" role="group" aria-label="Text size"><button type="button" data-size="-1" aria-label="Smaller text">A−</button><button type="button" data-size="1" aria-label="Larger text">A+</button></div>
@@ -427,12 +427,12 @@ VIEWS.song = r => {
         <div class="toolbar" role="toolbar" aria-label="Song tools"><div class="grp"><button type="button" id="sharebtn">Share</button></div></div>
         <div class="lyrics-pending reveal"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><h2 class="display">Lyrics coming soon</h2><p>We publish lyrics only when ${esc(a.name)} or their team has approved them, so every word is right.</p></div>
         ${listenBlock(s,a)}`;
-  return { title:`${s.title} by ${a.name}`, html:`
+  return { title:`${s.title} by ${s.lead||a.name}`, html:`
   <header class="song-head"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">
     <div class="stack">${crumbs([["Home","#"],["Lyrics","#lyrics"],[s.title]])}
       <div class="row-wrap" style="gap:8px"><span class="tag tag-dark">${esc(s.genre)}</span><span class="tag tag-dark">${esc(s.type)}</span>${s.demo?'<span class="tag tag-amber">Demo</span>':""}</div>
       <h1 class="display">${esc(s.title)}</h1>
-      <p class="by">${s.demo?"Sample text by Salone Lyrics":`By <a href="#artist.${a.slug}">${esc(a.name)}</a>${s.feat?` feat. ${fa?`<a href="#artist.${fa.slug}">${esc(s.feat)}</a>`:esc(s.feat)}`:""}`} · ${esc(yr(s.year))}${rel?` · From <a href="#release.${rel.slug}">${esc(rel.title)}</a>`:""}</p>
+      <p class="by">${s.demo?"Sample text by Salone Lyrics":s.lead?`By ${esc(s.lead)} feat. ${esc(s.feat).replace(esc(a.name),`<a href="#artist.${a.slug}">${esc(a.name)}</a>`)}`:`By <a href="#artist.${a.slug}">${esc(a.name)}</a>${s.feat?` feat. ${fa?`<a href="#artist.${fa.slug}">${esc(s.feat)}</a>`:esc(s.feat)}`:""}`} · ${esc(yr(s.year))}${rel?` · From <a href="#release.${rel.slug}">${esc(rel.title)}</a>`:""}</p>
     </div>
     ${a.photo?`<div class="portrait panel panel-blue" aria-hidden="true">${pic(a.photo,{sizes:"300px",alt:""})}</div>`:""}
   </div></header>
@@ -441,7 +441,7 @@ VIEWS.song = r => {
     <div class="song-layout"><div style="min-width:0">${lyricBlock}
       </div>
       <aside class="song-aside stack" style="gap:32px;align-content:start">
-        <div class="aside-box"><h2>Credits</h2><dl class="credits"><dt>Artist</dt><dd>${esc(s.demo?"Sample":a.name)}</dd>${Object.entries(credits).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}<dt>Year</dt><dd>${esc(yr(s.year))}</dd></dl><p class="paid-note">Full writer and producer credits are added with the lyrics.</p></div>
+        <div class="aside-box"><h2>Credits</h2><dl class="credits"><dt>Artist</dt><dd>${esc(s.demo?"Sample":s.lead||a.name)}</dd>${Object.entries(credits).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}<dt>Year</dt><dd>${esc(yr(s.year))}</dd></dl><p class="paid-note">Full writer and producer credits are added with the lyrics.</p></div>
         ${s.demo?"":`${s.lyrics?listenBlock(s,a):""}
         <div class="aside-box"><h2>About the artist</h2><a href="#artist.${a.slug}" class="acard"><div class="portrait panel panel-green" style="aspect-ratio:16/10">${portrait(a,{sizes:"320px",alt:""})}</div><h3>${esc(a.name)}</h3><p>${esc(a.intro)}</p></a><a class="arrow-link" href="#artist.${a.slug}">View ${esc(a.name)}’s profile</a></div>`}
       </aside>
