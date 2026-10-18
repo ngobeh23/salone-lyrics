@@ -422,7 +422,7 @@ VIEWS.song = r => {
         </div>
         ${s.translation?`<div class="lang-tabs" role="tablist" aria-label="Lyrics language"><button class="chip" role="tab" id="lt-o" aria-selected="true" aria-controls="lyrics">Original (Krio &amp; English)</button><button class="chip" role="tab" id="lt-t" aria-selected="false" aria-controls="lyrics">${esc(s.translation.label)}</button></div>`:""}
         <article class="lyrics" id="lyrics" role="tabpanel" style="--lsize:${S.lsize}px" aria-label="Lyrics"></article>
-        ${s.demo?'<p class="paid-note">Demo text written for this preview to show the lyric reader. It is not a real song.</p>':""}`
+        ${s.demo?'<p class="paid-note">Demo text written for this preview to show the lyric reader. It is not a real song.</p>':s.lyricsBy?`<p class="paid-note">Lyrics published with the approval of ${esc(s.lyricsBy)}. Lyrics remain the property of their writers.</p>`:""}`
     : `
         <div class="toolbar" role="toolbar" aria-label="Song tools"><div class="grp"><button type="button" id="sharebtn">Share</button></div></div>
         <div class="lyrics-pending reveal"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><h2 class="display">Lyrics coming soon</h2><p>We publish lyrics only when ${esc(a.name)} or their team has approved them, so every word is right.</p></div>
@@ -453,7 +453,7 @@ VIEWS.song = r => {
     bindPlayer(main);
     if(!s.lyrics) return;
     const ly=$("#lyrics",main);
-    const drawLy=tr=>{ ly.innerHTML=s.lyrics.map(([h,lines])=>`<section><h2>${esc(h)}</h2>${lines.map(l=>`<p>${esc(l)}${tr&&s.translation&&s.translation.lines[l]?`<span class="tr" lang="en">${esc(s.translation.lines[l])}</span>`:""}</p>`).join("")}</section>`).join(""); };
+    const drawLy=tr=>{ ly.innerHTML=s.lyrics.map(([h,lines])=>`<section>${h?`<h2>${esc(h)}</h2>`:""}${lines.map(l=>`<p>${esc(l)}${tr&&s.translation&&s.translation.lines[l]?`<span class="tr" lang="en">${esc(s.translation.lines[l])}</span>`:""}</p>`).join("")}</section>`).join(""); };
     drawLy(false);
     $$("[data-size]",main).forEach(b=>b.addEventListener("click",()=>{ S.lsize=Math.max(15,Math.min(28,S.lsize+(+b.dataset.size)*2)); ly.style.setProperty("--lsize",S.lsize+"px"); try{localStorage.setItem("sl-lsize",S.lsize)}catch(e){} toast(`Text size ${S.lsize}px`); }));
     const fb=$("#focusbtn",main);
@@ -817,7 +817,7 @@ function searchIndex(q){
   const hit=s=>(s||"").toLowerCase().includes(q);
   D.songs.forEach(s=>{ const a=artist(s.artist); const score=hit(s.title)?3:(hit(a.name)||hit(s.feat))?2:0;
     if(score){ out.Songs.push({score,kind:"song",slug:s.slug,t:s.title+(s.demo?" (demo)":""),s:`${s.demo?"Lyric reader demo":a.name+(s.feat?" feat. "+s.feat:"")} · ${s.genre}`,photo:a.photo,an:a}); return; }
-    if(s.lyrics){ for(const [,lines] of s.lyrics){ const l=lines.find(hit); if(l){ out.Songs.push({score:1,kind:"song",slug:s.slug,t:s.title+" (demo)",s:`“${l}”`,photo:a.photo,an:a}); break; } } } });
+    if(s.lyrics){ for(const [,lines] of s.lyrics){ const l=lines.find(hit); if(l){ out.Songs.push({score:1,kind:"song",slug:s.slug,t:s.title+(s.demo?" (demo)":""),s:`“${l}”`,photo:a.photo,an:a}); break; } } } });
   ARTISTS().forEach(a=>{ if(hit(a.name)||hit(a.aka)||hit(a.genre)||hit(a.town)) out.Artists.push({score:hit(a.name)?3:1,kind:"artist",slug:a.slug,t:a.name,s:`${a.genre} · ${a.town}`,photo:a.photo,an:a}); });
   D.articles.forEach(n=>{ if(hit(n.title)||hit(n.summary)||hit(n.cat)) out.Stories.push({score:hit(n.title)?2:1,kind:"story",slug:n.slug,t:n.title,s:`${n.cat} · ${fmt(n.date)}`,photo:n.photo}); });
   D.events.forEach(e=>{ if(hit(e.title)||hit(e.town)||hit(e.type)) out.Events.push({score:hit(e.title)?2:1,kind:"event",slug:e.slug,t:e.title,s:`${fmt(e.date)} · ${e.town} · ${STATUS_LABEL[evStatus(e)]}`,date:e.date}); });
