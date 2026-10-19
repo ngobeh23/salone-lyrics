@@ -4,6 +4,7 @@ const D = window.SL, P = window.SL_PHOTOS, DIMS = window.SL_DIMS || {};
 const $ = (s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const IMG = "assets/img/";
+const SUBMIT_TO = "ngobehansumana@gmail.com"; // where lyric submissions and edits are sent: change it here
 const REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const TODAY = (()=>{const d=new Date();d.setHours(0,0,0,0);return d;})();
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -396,6 +397,64 @@ VIEWS.lyrics = () => {
 };
 
 /* ================= SONG ================= */
+// ---- Add / edit lyrics: fans submit, the team checks with the artist, contributors get credited
+function lyricsMailto(s,a,has){
+  const sub=`Salone Lyrics: ${has?"lyrics edit":"new lyrics"} for “${s.title}” by ${s.lead||a.name}`;
+  const body=`Song: ${s.title}\nArtist: ${s.lead||a.name}\nPage: ${pageUrl()}\n\n${has?"Line or section:\n\nCorrection:\n":"Lyrics:\n"}\n\nMy name (for the credit):\n\nI typed this myself and agree that Salone Lyrics may publish it after checking with the artist, and credit me.`;
+  return `mailto:${SUBMIT_TO}?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(body)}`;
+}
+function contribBlock(s,a){
+  const has=!!s.lyrics, what=has?"edit":"lyrics", who=esc(s.lead||a.name);
+  return `<section class="contrib" aria-labelledby="contrib-h">
+    <h2 id="contrib-h" class="display">${has?"Edit lyrics":"Add lyrics"}</h2>
+    <p>${has?`Spotted a mistake in “${esc(s.title)}”? Tell us the line and the correction.`:`Know the words to “${esc(s.title)}”? Type them in for everyone to read.`} We check every ${has?"edit":"submission"} with ${who} or their team before publishing, and credit you by name.</p>
+    <div><button class="btn btn-primary btn-sm" type="button" data-contrib-open aria-expanded="false" aria-controls="contrib-form">${has?"Suggest an edit":"Add the lyrics"}</button></div>
+    <form id="contrib-form" class="stack contrib-form" novalidate hidden>
+      ${has?`<div class="field"><label for="cb-line">Which line or section? <span class="req">*</span></label><input id="cb-line" class="input" placeholder="For example: Chorus, line 2"><p class="err" id="cb-line-e" hidden></p></div>
+      <div class="field"><label for="cb-text">Your correction <span class="req">*</span></label><textarea id="cb-text" class="input"></textarea><p class="err" id="cb-text-e" hidden></p></div>`
+      :`<div class="field"><label for="cb-text">Lyrics <span class="req">*</span></label><textarea id="cb-text" class="input lyr-input" aria-describedby="cb-text-h"></textarea><p class="hint" id="cb-text-h">Put each line on its own line and leave a blank line between verses. Mark sections like [Chorus] if you can. Krio spellings are welcome.</p><p class="err" id="cb-text-e" hidden></p></div>`}
+      <div class="fgrid">
+        <div class="field"><label for="cb-name">Your name, for the credit <span class="req">*</span></label><input id="cb-name" class="input" autocomplete="name"><p class="err" id="cb-name-e" hidden></p></div>
+        <div class="field"><label for="cb-email">Email (optional)</label><input id="cb-email" class="input" type="email" autocomplete="email" aria-describedby="cb-email-h"><p class="hint" id="cb-email-h">Only used to ask you about this ${has?"edit":"submission"}. Never shown on the site.</p><p class="err" id="cb-email-e" hidden></p></div>
+      </div>
+      <label class="check"><input type="checkbox" id="cb-own"> ${has?"This correction is my own work":"I typed these lyrics myself and did not copy them from another website"}</label>
+      <label class="check"><input type="checkbox" id="cb-ok"> Salone Lyrics may publish my ${what} after checking with the artist, and credit me by the name above</label>
+      <p class="err" id="cb-check-e" hidden></p>
+      <input type="text" id="cb-honey" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="row-wrap"><button class="btn btn-primary" type="submit">Send ${what}</button><a class="link" href="${lyricsMailto(s,a,has)}">Or email us instead</a></div>
+      <p class="paid-note">Your ${what} reach the Salone Lyrics team by email through FormSubmit, a free form service.</p>
+      <div id="cb-msg" aria-live="polite"></div>
+    </form>
+  </section>`;
+}
+function bindContrib(root,s,a){
+  const box=$(".contrib",root); if(!box) return;
+  const has=!!s.lyrics, what=has?"edit":"lyrics", f=$("#contrib-form",box), open=$("[data-contrib-open]",box);
+  open.addEventListener("click",()=>{ f.hidden=!f.hidden; open.setAttribute("aria-expanded",!f.hidden); if(!f.hidden) $(has?"#cb-line":"#cb-text",f).focus(); });
+  const flag=(id,bad,m)=>{ const el=$("#"+id,f), e=$("#"+id+"-e",f); el.setAttribute("aria-invalid",!!bad); e.hidden=!bad; e.textContent=m; return bad?el:null; };
+  f.addEventListener("submit",async ev=>{ ev.preventDefault();
+    const em=$("#cb-email",f).value.trim(), checks=$("#cb-own",f).checked&&$("#cb-ok",f).checked;
+    const bad=[ has?flag("cb-line",!$("#cb-line",f).value.trim(),"Tell us which line or section."):null,
+      flag("cb-text",!$("#cb-text",f).value.trim(),has?"Write your correction.":"Add the lyrics."),
+      flag("cb-name",!$("#cb-name",f).value.trim(),"Enter the name we should credit."),
+      flag("cb-email",em&&!/^\S+@\S+\.\S+$/.test(em),"Enter an email address like name@example.com, or leave it empty.") ].filter(Boolean);
+    const ce=$("#cb-check-e",f); ce.hidden=checks; ce.textContent="Please tick both boxes to send.";
+    if(bad.length||!checks){ (bad[0]||$("#cb-own",f)).focus(); return; }
+    if($("#cb-honey",f).value) return; // filled in by spam bots only
+    const btn=$("button[type=submit]",f), msg=$("#cb-msg",f); btn.disabled=true; btn.textContent="Sending…";
+    const data={ _subject:`Salone Lyrics: ${has?"lyrics edit":"new lyrics"} for “${s.title}” by ${s.lead||a.name}`, _template:"box",
+      Type:has?"Edit to published lyrics":"New lyrics", Song:s.title, Artist:s.lead||a.name, Page:pageUrl(),
+      ...(has?{"Line or section":$("#cb-line",f).value.trim()}:{}), [has?"Correction":"Lyrics"]:$("#cb-text",f).value.trim(),
+      "Credit name":$("#cb-name",f).value.trim(), Email:em||"(not given)", "Typed it themselves":"Yes", "Agreed to review and credit":"Yes" };
+    try{
+      const r=await fetch(`https://formsubmit.co/ajax/${SUBMIT_TO}`,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(data)});
+      const j=await r.json().catch(()=>({})); if(!r.ok||String(j.success)!=="true") throw new Error(j.message||"Not sent");
+      msg.innerHTML=`<div class="notice notice-ok"><strong>Thank you, ${esc(data["Credit name"])}!</strong><span>Your ${what} reached the Salone Lyrics team. We’ll check with ${esc(data.Artist)} or their team and credit you when it’s published.</span></div>`; f.reset();
+    }catch(err){
+      msg.innerHTML=`<div class="notice notice-warn"><strong>That didn’t send</strong><span>Please try again in a moment, or <a class="link" href="${lyricsMailto(s,a,has)}">email us instead</a>.</span></div>`;
+    }
+    btn.disabled=false; btn.textContent=`Send ${what}`; });
+}
 const PLAT=[["youtube","YouTube"],["youtubeMusic","YouTube Music"],["spotify","Spotify"],["appleMusic","Apple Music"],["audiomack","Audiomack"],["boomplay","Boomplay"],["amazonMusic","Amazon Music"],["deezer","Deezer"],["tidal","Tidal"]];
 function artistProfiles(a){ const m={}; (a.links||[]).forEach(([l,u])=>{ const [p,rest]=l.split(" — "); const hit=PLAT.find(([,n])=>n===p); if(hit&&rest&&/artist/i.test(rest)&&!m[hit[0]]) m[hit[0]]=u; }); return m; }
 function listenBlock(s,a){
@@ -422,7 +481,7 @@ VIEWS.song = r => {
         </div>
         ${s.translation?`<div class="lang-tabs" role="tablist" aria-label="Lyrics language"><button class="chip" role="tab" id="lt-o" aria-selected="true" aria-controls="lyrics">Original (Krio &amp; English)</button><button class="chip" role="tab" id="lt-t" aria-selected="false" aria-controls="lyrics">${esc(s.translation.label)}</button></div>`:""}
         <article class="lyrics" id="lyrics" role="tabpanel" style="--lsize:${S.lsize}px" aria-label="Lyrics"></article>
-        ${s.demo?'<p class="paid-note">Demo text written for this preview to show the lyric reader. It is not a real song.</p>':s.lyricsBy?`<p class="paid-note">Lyrics published with the approval of ${esc(s.lyricsBy)}. Lyrics remain the property of their writers.</p>`:""}`
+        ${s.demo?'<p class="paid-note">Demo text written for this preview to show the lyric reader. It is not a real song.</p>':s.lyricsBy?`<p class="paid-note">${s.contributors&&s.contributors.length?`Lyrics contributed by ${esc(s.contributors.join(", "))}. `:""}Lyrics published with the approval of ${esc(s.lyricsBy)}. Lyrics remain the property of their writers.</p>`:""}`
     : `
         <div class="toolbar" role="toolbar" aria-label="Song tools"><div class="grp"><button type="button" id="sharebtn">Share</button></div></div>
         <div class="lyrics-pending reveal"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><h2 class="display">Lyrics coming soon</h2><p>We publish lyrics only when ${esc(a.name)} or their team has approved them, so every word is right.</p></div>
@@ -438,7 +497,8 @@ VIEWS.song = r => {
   </div></header>
   <div class="wrap">
     <p class="focus-title display" style="font-size:40px">${esc(s.title)}</p>
-    <div class="song-layout"><div style="min-width:0">${lyricBlock}
+    <div class="song-layout"><div style="min-width:0"><div>${lyricBlock}</div>
+        ${s.demo?"":contribBlock(s,a)}
       </div>
       <aside class="song-aside stack" style="gap:32px;align-content:start">
         <div class="aside-box"><h2>Credits</h2><dl class="credits"><dt>Artist</dt><dd>${esc(s.demo?"Sample":s.lead||a.name)}</dd>${Object.entries(credits).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}<dt>Year</dt><dd>${esc(yr(s.year))}</dd></dl><p class="paid-note">Full writer and producer credits are added with the lyrics.</p></div>
@@ -450,7 +510,7 @@ VIEWS.song = r => {
   </div><div style="height:64px"></div>`,
   after(main){
     $("#sharebtn",main).addEventListener("click",()=>share(document.title));
-    bindPlayer(main);
+    bindPlayer(main); bindContrib(main,s,a);
     if(!s.lyrics) return;
     const ly=$("#lyrics",main);
     const drawLy=tr=>{ ly.innerHTML=s.lyrics.map(([h,lines])=>`<section>${h?`<h2>${esc(h)}</h2>`:""}${lines.map(l=>`<p>${esc(l)}${tr&&s.translation&&s.translation.lines[l]?`<span class="tr" lang="en">${esc(s.translation.lines[l])}</span>`:""}</p>`).join("")}</section>`).join(""); };
