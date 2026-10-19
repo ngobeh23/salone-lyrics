@@ -207,37 +207,34 @@ function teamGrid(){
 
 /* ================= HOME ================= */
 VIEWS.home = () => {
-  const spot=D.artists.find(a=>a.spotlight);
+  const heroes=["drizilik","laj","incredible-jj","bakitenno","famous","apreel","isat","samza"].map(artist), hero=heroes[0], spot=D.artists.find(a=>a.spotlight);
   const picks=D.picks.map(song);
   const upcoming=D.events.filter(e=>evStatus(e)!=="completed").sort((a,b)=>a.date.localeCompare(b.date));
   const weekend=upcoming.filter(inWeekend);
   const feat=D.articles[0], rest=D.articles.slice(1,4);
   const spotSongs=SONGS().filter(s=>s.artist===spot.slug).slice(0,3);
-  const slides=homeSlides(spot,upcoming,feat);
   return { title:"", html:`
 <div class="home">
-  <section class="sz" aria-labelledby="hero-h" style="--tone:${slides[0].tone}">
-    <div class="sz-head">
-      <p class="eyebrow">Kushe! Welcome to Salone Lyrics</p>
-      <h1 id="hero-h" class="display hero-title sz-title"><span class="sr">Salone music. Every word.</span>${heroTitle(["Salone music.","Every word."])}</h1>
-    </div>
-    <div class="sz-flow" data-sz aria-roledescription="carousel" aria-label="What’s on Salone Lyrics">
-      <div class="sz-track">${slides.map((s,i)=>szSlide(s,i,slides.length)).join("")}</div>
-      <div class="sz-ctrl"><button type="button" class="sz-btn" data-sz-prev aria-label="Previous slide">${ICON.left}</button><span class="sz-dots">${slides.map((s,i)=>`<button type="button" data-sz-go="${i}" aria-label="Show ${esc(s.label)}"></button>`).join("")}</span><button type="button" class="sz-btn" data-sz-next aria-label="Next slide">${ICON.right}</button><button type="button" class="sz-pp" data-sz-pp aria-pressed="false" aria-label="Pause slideshow">Pause</button></div>
-    </div>
-    <div class="sz-foot">
-      <p class="sz-lede">Discover the lyrics, artists and stories shaping Sierra Leone’s sound.</p>
+  <section class="hero-shell" aria-labelledby="hero-h"><div class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow" style="color:var(--blue-deep)">Kushe! Welcome to Salone Lyrics</p>
+      <h1 id="hero-h" class="display hero-title"><span class="sr">Salone music. Every word.</span>${heroTitle(["Salone","music.","Every word."])}</h1>
+      <p class="hero-lede">Discover the lyrics, artists and stories shaping Sierra Leone’s sound.</p>
       <form class="hero-search" role="search" data-hero-search><label for="hero-q" class="sr">Search songs, lyrics, artists or events</label><input id="hero-q" type="search" placeholder="Search songs, lyrics, artists or events…" autocomplete="off"><button type="submit">Search</button></form>
       <div class="hero-actions"><a class="btn btn-primary" href="#lyrics">Explore Lyrics</a><a class="btn btn-ghost" href="#artists">Discover Artists</a></div>
     </div>
-  </section>
-  <div class="sz-stats">
+    <div class="hero-art panel grain" data-hero data-c="0" aria-roledescription="carousel" aria-label="Featured artists">
+      <span class="grooves spin" aria-hidden="true"></span>
+      <div class="hero-stack floaty">${heroes.map((a,i)=>`<div class="hero-slide ${i===0?"on":""}" aria-hidden="${i!==0}">${portrait(a,{eager:i<2,cls:"cut cut-shadow",sizes:"(min-width:900px) 45vw, 80vw",alt:a.name})}</div>`).join("")}</div>
+      <div class="hero-ctrl"><button type="button" class="hero-pp" data-hero-pp aria-pressed="false" aria-label="Pause artist slideshow">Pause</button><span class="hero-dots">${heroes.map((a,i)=>`<button type="button" data-hero-go="${i}" aria-label="Show ${esc(a.name)}" aria-current="${i===0}"></button>`).join("")}</span></div>
+    </div>
+  </div>
   <div class="stats wrap" aria-label="On Salone Lyrics">
     <div class="stat"><span class="n tnum" data-count="${ARTISTS().length}">${ARTISTS().length}</span><span class="l">Artists profiled</span></div>
     <div class="stat"><span class="n tnum" data-count="${SONGS().length}">${SONGS().length}</span><span class="l">Songs listed</span></div>
     <div class="stat"><span class="n tnum" data-count="${D.releases.length}">${D.releases.length}</span><span class="l">Releases</span></div>
     <div class="stat"><span class="n tnum" data-count="${D.articles.length}">${D.articles.length}</span><span class="l">Stories</span></div>
-  </div></div>
+  </div></section>
 
   ${marquee(["Lyrics","Artists","Culture","Salone","Releases","Stories"])}
 
@@ -323,7 +320,7 @@ VIEWS.home = () => {
     draw();
     $$("[data-rel]",main).forEach(b=>b.addEventListener("click",()=>{S.rel=b.dataset.rel; $$("[data-rel]",main).forEach(x=>x.setAttribute("aria-pressed",x===b)); draw();}));
     $("[data-hero-search]",main).addEventListener("submit",e=>{e.preventDefault(); openSearch($("#hero-q").value);});
-    railControls(main); bindVideos(main); bindSvcLinks(main); szFlow(main); artistMarquee(main); newsCycle(main);
+    railControls(main); bindVideos(main); bindSvcLinks(main); heroCycle(main, heroes); artistMarquee(main); newsCycle(main);
   }};
 };
 function heroTitle(lines){
@@ -351,53 +348,20 @@ function newsCycle(root){
   if(paused){ pp.setAttribute("aria-pressed","true"); pp.textContent="Play"; }
   cleanup.push(()=>clearInterval(timer)); start();
 }
-// Homepage cover-flow: one card per thing the site offers; the hero takes the active card's colour
-const SZ_TONES=["#0A5FA8","#2F6B00","#172126","#8A5A00"];
-function homeSlides(spot,upcoming,feat){
-  const fig=(a,i)=>`<span class="sz-art panel ${panelCls(i)}"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"320px",alt:"",eager:i<3})}</span>`;
-  const lyr=SONGS().filter(s=>s.lyrics), fresh=lyr[lyr.length-1], pick=song(D.picks[0]), rel=D.releases.find(r=>r.cover)||D.releases[0], ev=upcoming[0];
-  const vid=D.videos.find(v=>v.artist&&artist(v.artist).photo), gap=SONGS().find(s=>!s.lyrics&&!s.lead&&artist(s.artist).photo&&!D.picks.includes(s.slug));
-  return [
-    fresh&&{label:"Fresh lyrics",sub:"Newly approved by the artists",href:`#song.${fresh.slug}`,a:artist(fresh.artist),title:fresh.title,meta:artist(fresh.artist).name},
-    pick&&{label:"Editor’s picks",sub:"Songs our editors are playing",href:`#song.${pick.slug}`,a:artist(pick.artist),title:pick.title,meta:artist(pick.artist).name},
-    rel&&{label:"New releases",sub:"Albums and EPs out now",href:`#release.${rel.slug}`,art:`<span class="sz-art">${relArt(rel)}</span>`,title:rel.title,meta:`${artist(rel.artist).name} · ${rel.type}`},
-    spot&&{label:"Weekly Spotlight",sub:"One artist, up close",href:`#artist.${spot.slug}`,a:spot,title:spot.name,meta:spot.genre},
-    ev&&{label:"Coming up",sub:"Shows and events to catch",href:`#event.${ev.slug}`,art:`<span class="sz-art sz-date"><span class="d">${parse(ev.date).getDate()}</span><span class="m">${MONTHS_L[parse(ev.date).getMonth()]}</span></span>`,title:ev.title,meta:`${ev.venue}, ${ev.town}`},
-    feat&&{label:"Stories",sub:"Features on Salone’s artists",href:`#story.${feat.slug}`,art:`<span class="sz-art panel panel-blue"><span class="grooves" aria-hidden="true"></span>${pic(feat.photo,{sizes:"320px",alt:""})}</span>`,title:feat.title,meta:feat.cat},
-    vid&&{label:"Lyric videos",sub:"Watch the words come alive",href:"#videos",a:artist(vid.artist),title:vid.title,meta:artist(vid.artist).name},
-    gap&&{label:"Add lyrics",sub:"Know the words? Help fill the gaps",href:`#song.${gap.slug}`,a:artist(gap.artist),title:gap.title,meta:"Lyrics wanted"}
-  ].filter(Boolean).map((s,i)=>Object.assign(s,{tone:SZ_TONES[i%SZ_TONES.length],art:s.art||fig(s.a,i)}));
-}
-function szSlide(s,i,n){
-  return `<div class="sz-slide" data-tone="${s.tone}" role="group" aria-roledescription="slide" aria-label="${i+1} of ${n}: ${esc(s.label)}"><div class="sz-cap"><p class="sz-label">${esc(s.label)}</p><p class="sz-sub">${esc(s.sub)}</p></div><a class="sz-card" href="${s.href}">${s.art}<span class="sz-meta"><span class="sz-go" aria-hidden="true">${ICON.arrow}</span><span class="sz-txt"><strong>${esc(s.title)}</strong><small>${esc(s.meta)}</small></span></span></a></div>`;
-}
-function szFlow(root){
-  const box=$("[data-sz]",root); if(!box) return;
-  const hero=box.closest(".sz"), slides=$$(".sz-slide",box), dots=$$("[data-sz-go]",box), pp=$("[data-sz-pp]",box), n=slides.length;
-  let i=0, timer=null, paused=false, held=false;
-  const show=k=>{ i=(k+n)%n;
-    slides.forEach((s,j)=>{ let d=j-i; if(d>n/2) d-=n; else if(d<=-n/2) d+=n; const ad=Math.abs(d), on=d===0;
-      s.style.setProperty("--d",d); s.style.setProperty("--ad",ad); s.style.zIndex=10-ad;
-      s.classList.toggle("on",on); s.classList.toggle("far",ad>2); s.setAttribute("aria-hidden",!on);
-      $$("a",s).forEach(x=>x.tabIndex=on?0:-1); });
-    dots.forEach((b,j)=>b.setAttribute("aria-current",j===i));
-    hero.style.setProperty("--tone",slides[i].dataset.tone); };
-  // moves on by itself every 4.5 seconds; Pause stops it, and it waits while a keyboard user is inside it
-  const start=()=>{ clearInterval(timer); if(!paused&&!held) timer=setInterval(()=>show(i+1),4500); };
-  const go=k=>{ show(k); start(); };
-  slides.forEach((s,j)=>s.addEventListener("click",e=>{ if(j!==i){ e.preventDefault(); go(j); } }));
-  $("[data-sz-prev]",box).addEventListener("click",()=>go(i-1));
-  $("[data-sz-next]",box).addEventListener("click",()=>go(i+1));
-  dots.forEach((b,j)=>b.addEventListener("click",()=>go(j)));
-  pp.addEventListener("click",()=>{ paused=!paused; pp.setAttribute("aria-pressed",paused); pp.textContent=paused?"Play":"Pause"; pp.setAttribute("aria-label",(paused?"Play":"Pause")+" slideshow"); start(); });
-  box.addEventListener("focusin",e=>{ let kb=false; try{ kb=e.target.matches(":focus-visible"); }catch(_){} if(kb){ held=true; start(); } });
-  box.addEventListener("focusout",e=>{ if(!box.contains(e.relatedTarget)){ held=false; start(); } });
-  const trk=$(".sz-track",box); let x0=null, y0=0;
-  trk.addEventListener("touchstart",e=>{ x0=e.touches[0].clientX; y0=e.touches[0].clientY; },{passive:true});
-  trk.addEventListener("touchend",e=>{ if(x0==null) return; const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0; x0=null; if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)) go(i+(dx<0?1:-1)); },{passive:true});
-  const vis=()=>{ if(document.hidden) clearInterval(timer); else start(); }; document.addEventListener("visibilitychange",vis);
-  cleanup.push(()=>{ clearInterval(timer); document.removeEventListener("visibilitychange",vis); });
-  show(0); start();
+function heroCycle(root, heroes){
+  const box=$("[data-hero]",root); if(!box) return;
+  const slides=$$(".hero-slide",box), dots=$$("[data-hero-go]",box), pp=$("[data-hero-pp]",box);
+  let i=0, timer=null, paused=false;
+  const show=n=>{ i=(n+slides.length)%slides.length; const a=heroes[i];
+    slides.forEach((s,k)=>{ s.classList.toggle("on",k===i); s.setAttribute("aria-hidden",k!==i); });
+    dots.forEach((d,k)=>d.setAttribute("aria-current",k===i));
+    box.dataset.c=i%4; };
+  const start=()=>{ clearInterval(timer); if(!paused) timer=setInterval(()=>show(i+1),4200); };
+  dots.forEach((d,k)=>d.addEventListener("click",()=>{ show(k); start(); }));
+  pp.addEventListener("click",()=>{ paused=!paused; box.closest(".hero").classList.toggle("still",paused); pp.setAttribute("aria-pressed",paused); pp.textContent=paused?"Play":"Pause"; pp.setAttribute("aria-label",(paused?"Play":"Pause")+" artist slideshow"); start(); });
+  if(paused){ pp.setAttribute("aria-pressed","true"); pp.textContent="Play"; }
+  box.addEventListener("focusin",()=>clearInterval(timer)); box.addEventListener("focusout",start);
+  cleanup.push(()=>clearInterval(timer)); start();
 }
 function artistMarquee(root){
   const w=$("[data-amq]",root); if(!w) return; const pp=$("[data-amq-pp]",root);
