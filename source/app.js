@@ -514,6 +514,22 @@ const PICON={
   deezer:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 16.5h3.2v2.8H3zm4.6 0h3.2v2.8H7.6zm4.6 0h3.2v2.8h-3.2zm4.6 0H20v2.8h-3.2zM7.6 12.6h3.2v2.8H7.6zm4.6 0h3.2v2.8h-3.2zm4.6 0H20v2.8h-3.2zm-4.6-3.9h3.2v2.8h-3.2zm4.6 0H20v2.8h-3.2zm0-3.9H20v2.8h-3.2z"/></svg>',
   amazonMusic:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="#25D1DA" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" d="M4 12.8c4.6 3.3 11.2 3.3 16 0M16.9 11.6l3.1 1.2-1 3.1"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M6.5 9.2V6.5l2.2 2.4 2.2-2.4v2.7"/></svg>'
 };
+Object.assign(PCOLOR,{soundcloud:"#FF5500",instagram:"#D6246E",tiktok:"#111111",facebook:"#1877F2",x:"#111111",web:"#3D4A53"});
+Object.assign(PICON,{
+  soundcloud:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2.5 14.8a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0zm3-2a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0zm3-1.6a1 1 0 0 1 2 0v5.6a1 1 0 0 1-2 0zm3.3-2.5c.7-.4 1.4-.6 2.2-.6 2.5 0 4.6 1.9 4.8 4.3a2.6 2.6 0 0 1 .7 5.1c-.2.1-.5.1-.7.1h-6.3a.7.7 0 0 1-.7-.7z"/></svg>',
+  instagram:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4.6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16.6" cy="7.4" r="1.1" fill="currentColor"/></svg>',
+  tiktok:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.6 5.8a4.3 4.3 0 0 1-1-2.8h-3.2v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.6a5.9 5.9 0 0 0-.8-.1 5.8 5.8 0 1 0 5.8 5.8V9a7.4 7.4 0 0 0 4.3 1.4V7.2a4.3 4.3 0 0 1-3.3-1.4z"/></svg>',
+  facebook:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.6 1.6-1.6h1.7V4.4c-.3 0-1.3-.1-2.4-.1-2.4 0-4.1 1.5-4.1 4.2v2.3H7.6V14h2.7v8z"/></svg>',
+  x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h4.4l4 5.6L17.3 4H20l-6.3 7.3L20.5 20h-4.4l-4.4-6.1L6.4 20H3.6l6.8-7.8z"/></svg>',
+  web:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.6" d="M4 12h16M12 4c2.4 2.3 3.6 5 3.6 8s-1.2 5.7-3.6 8c-2.4-2.3-3.6-5-3.6-8s1.2-5.7 3.6-8z"/></svg>'
+});
+// Which platform a web address belongs to (for the icon on official links)
+const LINKPLAT=[[/music\.youtube\.com/,"youtubeMusic"],[/spotify\.com/,"spotify"],[/music\.apple\.com/,"appleMusic"],[/youtube\.com|youtu\.be/,"youtube"],[/audiomack\.com/,"audiomack"],[/boomplay/,"boomplay"],[/deezer\.com/,"deezer"],[/music\.amazon|amazon\./,"amazonMusic"],[/soundcloud\.com/,"soundcloud"],[/instagram\.com/,"instagram"],[/tiktok\.com/,"tiktok"],[/facebook\.com|fb\.com/,"facebook"],[/(^|\.)(x|twitter)\.com/,"x"]];
+function linkTile(name,url){
+  let host=""; try{ host=new URL(url).hostname.replace(/^www\./,""); }catch(e){}
+  const hit=LINKPLAT.find(([re])=>re.test(host)), k=hit?hit[1]:"web", [main,rest]=String(name).split(" — ");
+  return `<a class="plat" href="${url}" target="_blank" rel="noopener"><span class="plat-ic" style="background:${PCOLOR[k]}">${PICON[k]}</span><span class="plat-t"><strong>${esc(main)}</strong><small>${esc(rest||host)}</small></span><span class="sr"> (opens in a new tab)</span></a>`;
+}
 function listenBlock(s,a){
   const L=(s.listen&&s.listen.links)||{}, e=s.listen&&s.listen.embed, q=`${s.lead||a.name} ${s.title}`;
   const tiles=LISTEN.map(([k,n])=>({k,n,url:L[k]||PSEARCH[k](q),direct:!!L[k]})).sort((x,y)=>y.direct-x.direct)
@@ -671,7 +687,7 @@ function artistPanel(a,id){
     ${a.awards.length?`<h3 class="eyebrow mt-s">Recognition</h3><ul class="awards">${a.awards.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
     ${a.sources.length?`<details class="sources"><summary>Sources for this profile</summary><ul>${a.sources.map(s=>{ const [l,u]=Array.isArray(s)?s:[s.replace(/^https?:\/\/(www\.)?/,"").slice(0,70),s]; return u?`<li><a class="link" href="${u}" target="_blank" rel="noopener">${esc(l)}</a></li>`:`<li>${esc(l)}</li>`; }).join("")}</ul></details>`:""}</div>
     <aside class="stack" style="gap:28px;align-content:start"><div class="aside-box"><h2>Details</h2><dl class="credits">${a.details?a.details.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join(""):`<dt>Genre</dt><dd>${esc(a.genre)}</dd><dt>Based in</dt><dd>${esc(a.town)}</dd>${a.label?`<dt>Label</dt><dd>${esc(a.label)}</dd>`:""}${(a.facts||[]).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}`}<dt>Songs here</dt><dd>${songs.length}</dd></dl></div>
-    <div class="aside-box"><h2>Official links</h2>${a.links.length?`<div class="listen">${a.links.map(([n,u])=>`<a class="btn btn-ghost btn-sm" href="${u}" target="_blank" rel="noopener">${esc(n)}<span aria-hidden="true">↗</span></a>`).join("")}</div>`:`<p class="muted" style="font-size:14px">Official links will be added after confirmation with the artist.</p>`}</div>
+    <div class="aside-box"><h2>Official links</h2>${a.links.length?`<div class="plat-grid plat-list">${a.links.map(([n,u])=>linkTile(n,u)).join("")}</div>`:`<p class="muted" style="font-size:14px">Official links will be added after confirmation with the artist.</p>`}</div>
     <div class="aside-box"><h2>Booking</h2><p class="muted" style="font-size:14px">Authorised booking information will be added after confirmation with the artist or management.</p></div>
     
     ${news.length||a.storyIdea?`<div class="aside-box"><h2>Stories</h2>${news.map(n=>`<a class="arrow-link" href="#story.${n.slug}" style="display:flex">${esc(n.title)}</a>`).join("")}${a.storyIdea?`<p class="muted" style="font-size:14px">Coming soon: ${esc(a.storyIdea)}</p>`:""}</div>`:""}</aside></div>`;
