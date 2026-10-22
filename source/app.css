@@ -976,7 +976,7 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 .sz-title{margin:0;font:400 clamp(44px,11vw,92px)/.92 var(--f-display);letter-spacing:.01em;text-transform:uppercase;color:#fff;text-wrap:balance}
 .sz-title .ln{display:block}
 .sz .hero-title .ch,.sz .hero-title .accent .ch{animation:ch-rise .6s var(--ease) both;animation-delay:calc(var(--k) * 25ms + 80ms)}
-.sz-flow{--cw:clamp(196px,54vw,280px);--step:calc(var(--cw) * .92);margin-top:36px}
+.sz-flow{--cw:clamp(212px,58vw,300px);--step:calc(var(--cw) * .92);margin-top:36px}
 .sz-track{display:grid;justify-content:center;perspective:1000px;touch-action:pan-y}
 .sz-slide{grid-area:1/1;width:var(--cw);cursor:pointer;transform:translateX(calc(var(--d,0) * var(--step))) rotateY(calc(var(--d,0) * 28deg)) scale(calc(1 - var(--ad,0) * .14));opacity:calc(1 - var(--ad,0) * .42)}
 .sz.ready .sz-slide{transition:transform 650ms var(--ease),opacity 650ms var(--ease),visibility 650ms}
@@ -1027,8 +1027,8 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 .sz .btn-ghost:hover{background:rgba(255,255,255,.14)}
 .sz-stats{position:relative;z-index:1;margin-top:-28px;padding-top:28px;background:var(--paper);border-radius:28px 28px 0 0}
 .sz-stats .stats{margin-top:0}
-@media (min-width:768px){.sz{padding-top:48px}.sz-flow{--cw:250px;--step:calc(var(--cw) * 1.02);margin-top:48px}.sz-foot{margin-top:44px}}
-@media (min-width:1100px){.sz-flow{--cw:270px;--step:calc(var(--cw) * 1.05)}}
+@media (min-width:768px){.sz{padding-top:48px}.sz-flow{--cw:270px;--step:calc(var(--cw) * 1.02);margin-top:48px}.sz-foot{margin-top:44px}}
+@media (min-width:1100px){.sz-flow{--cw:290px;--step:calc(var(--cw) * 1.05)}}
 /* header wears the hero colour on the homepage until the hero scrolls away */
 .site-header{transition:border-color var(--t),box-shadow var(--t),background-color 300ms var(--ease),color 300ms}
 .site-header.on-hero{background-color:var(--tone,#1466C8);background-image:linear-gradient(rgba(16,18,20,.55),rgba(16,18,20,.55));border-bottom-color:transparent;box-shadow:none;color:#fff;transition:background-color 900ms var(--ease),color 300ms}
@@ -1123,3 +1123,11 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 .spot-why{font-size:16px;line-height:1.5;max-width:44ch;margin:0;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,.4);color:var(--charcoal)}
 .home .spot-why{margin-inline:auto}
 .spot-src{font-size:12px;margin:-8px 0 0;color:var(--charcoal);opacity:.8}
+
+/* ---------- Event posters & programme ---------- */
+.sz-poster{background:#111}
+.ev-poster{margin:0;border-radius:16px;overflow:hidden;border:1.5px solid var(--line);background:#fff}
+.ev-poster img{width:100%;height:auto;display:block}
+.ev-prog{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ev-prog li{display:flex;gap:14px;align-items:baseline;padding:12px 16px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
+.ev-prog span{flex:none;min-width:88px;font:600 13px/1.2 var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}

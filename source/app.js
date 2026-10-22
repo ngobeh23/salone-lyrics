@@ -362,18 +362,18 @@ function newsCycle(root){
 const SZ_TONES=["#1466C8","#2F7D12","#2E3A46","#A35F00"];
 function homeSlides(spot,upcoming,feat){
   const fig=(a,i)=>`<span class="sz-art panel ${panelCls(i)}"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"280px",alt:"",eager:i<2})}</span>`;
-  const lyr=SONGS().filter(s=>s.lyrics), fresh=lyr[lyr.length-1], pick=song(D.picks[0]), rel=D.releases.find(r=>r.cover)||D.releases[0], ev=upcoming[0];
+  const lyr=SONGS().filter(s=>s.lyrics), fresh=lyr[lyr.length-1], pick=song(D.picks[0]), rel=D.releases.find(r=>r.cover)||D.releases[0], ev=upcoming[0], evs=upcoming.filter(e=>e.poster).slice(0,3);
   const vid=D.videos.find(v=>v.artist&&artist(v.artist).photo), gap=SONGS().find(s=>!s.lyrics&&!s.lead&&artist(s.artist).photo&&!D.picks.includes(s.slug));
   return [
     fresh&&{label:"Fresh lyrics",sub:"Newly approved by the artists",href:`#song.${fresh.slug}`,a:artist(fresh.artist),title:fresh.title,meta:artist(fresh.artist).name},
     pick&&{label:"Editor’s picks",sub:"Songs our editors are playing",href:`#song.${pick.slug}`,a:artist(pick.artist),title:pick.title,meta:artist(pick.artist).name},
     rel&&{label:"New releases",sub:"Albums and EPs out now",href:`#release.${rel.slug}`,art:`<span class="sz-art">${relArt(rel)}</span>`,title:rel.title,meta:`${artist(rel.artist).name} · ${rel.type}`},
     spot&&{label:"Weekly Spotlight",sub:"One artist, up close",href:`#artist.${spot.slug}`,a:spot,title:spot.name,meta:spot.genre},
-    ev&&{label:"Coming up",sub:"Shows and events to catch",href:`#event.${ev.slug}`,art:`<span class="sz-art sz-date"><span class="d">${parse(ev.date).getDate()}</span><span class="m">${MONTHS_L[parse(ev.date).getMonth()]}</span></span>`,title:ev.title,meta:`${ev.venue}, ${ev.town}`},
+    ...(evs.length?evs.map(x=>({label:"Coming up",sub:`${parse(x.date).getDate()} ${MONTHS_L[parse(x.date).getMonth()]}${x.venue&&!/announced/i.test(x.venue)?" · "+x.venue:""}`,href:`#event.${x.slug}`,art:`<span class="sz-art sz-poster">${evPoster(x,"300px","cover")}</span>`,title:x.title,meta:x.price,tone:x.tone})):[ev&&{label:"Coming up",sub:"Shows and events to catch",href:`#event.${ev.slug}`,art:`<span class="sz-art sz-date"><span class="d">${parse(ev.date).getDate()}</span><span class="m">${MONTHS_L[parse(ev.date).getMonth()]}</span></span>`,title:ev.title,meta:`${ev.venue}, ${ev.town}`}]),
     feat&&{label:"Stories",sub:"Features on Salone’s artists",href:`#story.${feat.slug}`,art:`<span class="sz-art panel panel-blue"><span class="grooves" aria-hidden="true"></span>${pic(feat.photo,{sizes:"280px",alt:""})}</span>`,title:feat.title,meta:feat.cat},
     vid&&{label:"Lyric videos",sub:"Watch the words come alive",href:"#videos",a:artist(vid.artist),title:vid.title,meta:artist(vid.artist).name},
     gap&&{label:"Add lyrics",sub:"Know the words? Help fill the gaps",href:`#song.${gap.slug}`,a:artist(gap.artist),title:gap.title,meta:"Lyrics wanted"}
-  ].filter(Boolean).map((s,i)=>Object.assign(s,{tone:SZ_TONES[i%SZ_TONES.length],art:(s.art||fig(s.a,i)).replace('loading="lazy"','loading="eager"')}));
+  ].filter(Boolean).map((s,i)=>Object.assign(s,{tone:s.tone||SZ_TONES[i%SZ_TONES.length],art:(s.art||fig(s.a,i)).replace('loading="lazy"','loading="eager"')}));
 }
 function szSlide(s,i,n){
   return `<div class="sz-slide" data-tone="${s.tone}" role="group" aria-roledescription="slide" aria-label="${i+1} of ${n}: ${esc(s.label)}"><div class="sz-cap"><p class="sz-label">${esc(s.label)}</p><p class="sz-sub">${esc(s.sub)}</p></div><a class="sz-card" href="${s.href}"><span class="sz-pic">${s.art}<span class="sz-go" aria-hidden="true">${ICON.arrow}</span></span><span class="sz-txt"><strong>${esc(s.title)}</strong><small>${esc(s.meta)}</small></span></a></div>`;
@@ -767,11 +767,13 @@ VIEWS.events = () => {
     $$("[data-view]",main).forEach(b=>b.addEventListener("click",()=>{S.ev.view=b.dataset.view; draw();})); draw();
   }};
 };
+const evPoster=(e,sizes="(min-width:900px) 360px, 90vw",cls="")=>e.poster?`<img class="${cls}" src="${IMG}ev-${e.poster}-900.webp" srcset="${IMG}ev-${e.poster}-480.webp 480w, ${IMG}ev-${e.poster}-900.webp 900w" sizes="${sizes}" width="${(e.posterDims||[900,900])[0]}" height="${(e.posterDims||[900,900])[1]}" alt="Event poster: ${esc(e.title)}" loading="lazy" decoding="async"${e.posterPos?` style="object-position:${e.posterPos}"`:""}>`:"";
 function icsFor(e){
   if(!e.time){ const day=iso=>iso.replace(/-/g,""), n=parse(e.endDate||e.date); n.setDate(n.getDate()+1);
     const s=day(e.date), en=`${n.getFullYear()}${String(n.getMonth()+1).padStart(2,"0")}${String(n.getDate()).padStart(2,"0")}`;
     return {start:s,end:en,text:["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Salone Lyrics//Events//EN","BEGIN:VEVENT",`UID:${e.slug}@salonelyrics`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").split(".")[0]}Z`,`DTSTART;VALUE=DATE:${s}`,`DTEND;VALUE=DATE:${en}`,`SUMMARY:${e.title}`,`LOCATION:${e.venue}, ${e.address}`,`DESCRIPTION:${e.desc}`,"END:VEVENT","END:VCALENDAR"].join("\r\n")}; }
   const dt=(d,t)=>d.replace(/-/g,"")+"T"+t.replace(":","")+"00";
+  if(!e.end) e=Object.assign({},e,{end:e.time}); // start time only: the calendar entry starts then
   let endD=e.date; if(e.end<e.time){ const n=parse(e.date); n.setDate(n.getDate()+1); endD=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`; }
   return {start:dt(e.date,e.time),end:dt(endD,e.end),text:["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Salone Lyrics//Events//EN","BEGIN:VEVENT",`UID:${e.slug}@salonelyrics`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").split(".")[0]}Z`,`DTSTART;TZID=Africa/Freetown:${dt(e.date,e.time)}`,`DTEND;TZID=Africa/Freetown:${dt(endD,e.end)}`,`SUMMARY:${e.title}`,`LOCATION:${e.venue}, ${e.address}`,`DESCRIPTION:${e.desc}`,"END:VEVENT","END:VCALENDAR"].join("\r\n")};
 }
@@ -786,10 +788,10 @@ VIEWS.event = r => {
     <div class="ev-bigdate" aria-hidden="true"><span class="d tnum">${d.getDate()}</span><span class="my">${MONTHS_L[d.getMonth()]}<br>${d.getFullYear()}</span></div>
     <div class="stack">${crumbs([["Home","#"],["Events","#events"],[e.title]])}<div class="row-wrap" style="gap:8px"><span class="status status-${st}">${STATUS_LABEL[st]}</span><span class="tag">${esc(e.type)}</span>${e.sample?'<span class="tag tag-amber">Sample listing</span>':""}</div><h1 class="display">${esc(e.title)}</h1><p style="font-size:18px">${evDates(e)}${e.time?" · "+esc(evTime(e)):""} · ${esc(e.town)}</p></div>
   </div></header>
-  <div class="wrap page"><div class="two-col"><div class="stack" style="gap:24px">${notice}<div class="prose"><p>${esc(e.desc)}</p></div>
+  <div class="wrap page"><div class="two-col"><div class="stack" style="gap:24px">${notice}<div class="prose"><p>${esc(e.desc)}</p></div>${e.programme?`<div><h2 class="display" style="font-size:28px;margin-bottom:12px">Programme</h2><ol class="ev-prog">${e.programme.map(([d,t])=>`<li><span>${esc(d)}</span><strong>${esc(t)}</strong></li>`).join("")}</ol></div>`:""}
     <dl class="detail-list"><div><dt>Date</dt><dd>${evDates(e)}</dd></div><div><dt>Time</dt><dd>${e.time?`${esc(e.time)}${e.end?" to "+esc(e.end):""} (Freetown time)`:"To be announced"}</dd></div><div><dt>Venue</dt><dd>${esc(e.venue)}<br><span class="muted">${esc(e.address)}</span></dd></div><div><dt>Lineup</dt><dd>${esc(e.lineup)}</dd></div><div><dt>Organiser</dt><dd>${esc(e.organiser)}</dd></div><div><dt>Tickets</dt><dd>${esc(e.paid===false?"Free entry":e.price)}</dd></div></dl></div>
   <aside class="stack" style="align-content:start;gap:16px">
-    <div class="aside-box"><h2>Tickets</h2><button class="btn btn-primary" type="button" aria-disabled="true">${st==="cancelled"||st==="completed"?"Tickets unavailable":st==="sold-out"?"Sold out":"Booking link pending"}</button>${st==="upcoming"?'<p class="paid-note">The organiser’s external booking link appears here once supplied.</p>':""}</div>
+    ${e.poster?`<figure class="ev-poster">${evPoster(e)}</figure>`:""}<div class="aside-box"><h2>Tickets</h2>${e.tickets&&st==="upcoming"?`<p style="margin:0 0 8px"><strong>${esc(e.price)}</strong></p><a class="btn btn-primary" href="${e.tickets.url}" target="_blank" rel="noopener">${esc(e.tickets.label)}<span class="sr"> (opens in a new tab)</span></a><p class="paid-note">Tickets are sold by the organiser, not by Salone Lyrics.</p>`:`<button class="btn btn-primary" type="button" aria-disabled="true">${st==="cancelled"||st==="completed"?"Tickets unavailable":st==="sold-out"?"Sold out":"Booking link pending"}</button>${st==="upcoming"?'<p class="paid-note">The organiser’s external booking link appears here once supplied.</p>':""}`}</div>
     <div class="aside-box"><h2>Add to calendar</h2>${canAdd?`<a class="btn btn-ghost btn-sm" href="${g}" target="_blank" rel="noopener">Google Calendar</a><button class="btn btn-ghost btn-sm" type="button" data-ics>Download .ics file</button><p class="paid-note">For Apple Calendar and Outlook. If your browser blocks the download, use Copy details.</p>`:`<p class="muted" style="font-size:14px">Not available for ${STATUS_LABEL[st].toLowerCase()} events.</p>`}<button class="btn btn-ghost btn-sm" type="button" data-copyd>Copy details</button></div>
     <div class="aside-box"><h2>Share</h2><button class="btn btn-ghost btn-sm" type="button" data-share>Share event</button></div>
   </aside></div>
