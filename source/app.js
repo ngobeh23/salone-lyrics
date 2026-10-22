@@ -207,7 +207,7 @@ function teamGrid(){
 
 /* ================= HOME ================= */
 VIEWS.home = () => {
-  const spot=D.artists.find(a=>a.spotlight);
+  const SP=currentSpotlight(), spot=SP.a;
   const picks=D.picks.map(song);
   const upcoming=D.events.filter(e=>evStatus(e)!=="completed").sort((a,b)=>a.date.localeCompare(b.date));
   const weekend=upcoming.filter(inWeekend);
@@ -254,9 +254,10 @@ VIEWS.home = () => {
   <section class="spotlight grain" aria-labelledby="spot-h">
     <div class="spot-art"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${portrait(spot,{cls:"cut cut-shadow",sizes:"(min-width:900px) 45vw, 90vw"})}</div></div>
     <div class="spot-copy">
-      <div class="spot-label"><span class="tag tag-amber">Weekly Spotlight</span></div>
+      <div class="spot-label"><span class="tag tag-amber">Weekly Spotlight</span>${SP.week?`<span class="spot-week">Week of ${SP.week.getDate()} ${MONTHS_L[SP.week.getMonth()]}</span>`:""}</div>
       <h2 id="spot-h" class="display spot-name reveal">${esc(spot.name)}</h2>
       <p class="lede">${esc(spot.intro)}</p>
+      ${SP.why?`<p class="spot-why"><strong>Why now:</strong> ${esc(SP.why)}</p><p class="spot-src">Source: ${esc(D.spotlight.chart)}, checked ${fmt(D.spotlight.checked)}.</p>`:""}
       <dl class="spot-facts"><div><dt>Genre</dt><dd>${esc(spot.genre)}</dd></div><div><dt>Based in</dt><dd>${esc(spot.town)}</dd></div>${spot.label?`<div><dt>Label</dt><dd>${esc(spot.label)}</dd></div>`:""}</dl>
       <div class="row-wrap"><a class="btn btn-primary" href="#artist.${spot.slug}">Meet the Artist</a></div>
       
@@ -326,6 +327,13 @@ VIEWS.home = () => {
     railControls(main); bindVideos(main); bindSvcLinks(main); szFlow(main); artistMarquee(main); newsCycle(main);
   }};
 };
+// Weekly Spotlight: works out this week's artist from D.spotlight (changes every Monday, repeats when the list ends)
+function currentSpotlight(){
+  const sp=D.spotlight, q=sp?sp.queue.filter(x=>{ const a=artist(x.artist); return a&&a.photo&&!a.hidden; }):[];
+  if(!q.length) return {a:D.artists.find(a=>a.spotlight),why:"",week:null};
+  const start=parse(sp.start), wk=Math.max(0,Math.floor(Math.round((TODAY-start)/864e5)/7)), e=q[wk%q.length], mon=new Date(start); mon.setDate(start.getDate()+wk*7);
+  return {a:artist(e.artist),why:e.why,week:mon};
+}
 function heroTitle(lines){
   let k=0;
   return lines.map((t,l)=>`<span class="ln${l===lines.length-1?" accent":""}" aria-hidden="true">${t.split(" ").map(w=>`<span class="w">${[...w].map(c=>`<span class="ch" style="--k:${k++}">${esc(c)}</span>`).join("")}</span>`).join(" ")}</span>`).join("");

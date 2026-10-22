@@ -1116,3 +1116,10 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 /* ---------- Brand icons: logos sit a little smaller inside their coloured tile ---------- */
 .plat-ic svg{width:20px;height:20px}
 .f-follow svg{width:24px;height:24px}
+
+/* ---------- Weekly Spotlight: week label and "Why now" ---------- */
+.spot-label{align-items:center}
+.spot-week{font:600 12px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--charcoal)}
+.spot-why{font-size:16px;line-height:1.5;max-width:44ch;margin:0;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,.4);color:var(--charcoal)}
+.home .spot-why{margin-inline:auto}
+.spot-src{font-size:12px;margin:-8px 0 0;color:var(--charcoal);opacity:.8}

@@ -216,6 +216,10 @@ releases: [
   {"slug":"a-perfect-time","title":"A Perfect Time","artist":"samza","type":"Album","year":2025,"tracks":["a-perfect-time-intro-by-twavula","a-perfect-time","table","away-samza","orbothy","more","asampete","think","fire","feelings","lesson","ignore","sympathy","god","somesie"],"colour":"blue","cover":true,"tracklist":[["A Perfect Time Intro, By: Twavula",""],["A Perfect Time",""],["Table","Marthson Blu, Bakitenno & Krio Mesaya"],["Away",""],["Orbothy","Kracktwist"],["More",""],["Asampete","Lucky Oyem"],["Think",""],["Fire",""],["Feelings","Joey"],["Lesson",""],["Ignore","Wisher"],["Sympathy",""],["God",""],["Somesie","Bakitenno, Apreel & Krio Mesaya"]],"tracklistSource":"https://music.apple.com/us/album/a-perfect-time-album/1857419070"}
 ],
 
+// Weekly Spotlight: one artist per week from "start" (a Monday), in this order, then it repeats. Refresh with new chart data.
+
+spotlight: {"chart":"Apple Music’s Sierra Leone Top Songs and Top Albums charts","checked":"2026-10-22","start":"2026-10-19","queue":[{"artist":"bakitenno","why":"KOTCS is the No. 1 album on Apple Music in Sierra Leone, with nine of its songs in the Top 50 songs chart."},{"artist":"drizilik","why":"“GO” is the No. 1 song on Apple Music in Sierra Leone, and Audacity is the No. 2 album."},{"artist":"incredible-jj","why":"The Maths is still in Apple Music’s Sierra Leone Top 20 albums, five months after its release."},{"artist":"d4nny","why":"Featured on Drizilik’s title track “Audacity”, No. 8 on Apple Music’s Sierra Leone songs chart, with the album M.O.U.S back in the Top 50 albums."},{"artist":"isat","why":"Featured on Drizilik’s “No Games”, No. 11 on Apple Music’s Sierra Leone songs chart, and on Bakitenno’s “Tonight”."},{"artist":"laj","why":"Featured on Bakitenno’s “Wantem”, No. 16 on Apple Music’s Sierra Leone songs chart."},{"artist":"kao-denero","why":"Featured on Bakitenno’s “Husai Yu Komot?”, in Apple Music’s Sierra Leone Top 50 songs."}]},
+
 picks: ["crush","feel-alright","bismillah","ashobi","peace","farr-away","break","fun"],
 
 articles: [
