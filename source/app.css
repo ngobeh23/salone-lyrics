@@ -1060,3 +1060,17 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 
 /* ---------- Phones & tablets: text boxes at 16px so iPhones don't zoom the page when you tap them ---------- */
 @media (max-width:1023px){input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{font-size:max(16px,1em)}}
+
+/* ---------- Footer: landscape layout (logo left, link columns side by side, centred follow + copyright) ---------- */
+.footer .f-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 24px;align-items:start}
+.f-about{grid-column:1/-1}
+.f-about img{height:64px;width:auto}
+.f-col h3,.f-follow h3{font:500 15px/1.2 var(--f-body);letter-spacing:0;text-transform:none;color:#8E9AA3;margin:0 0 10px}
+.f-col li a{min-height:40px;font-size:16px}
+.f-follow{display:grid;justify-items:center;gap:12px;margin-top:48px;text-align:center}
+.f-follow ul{list-style:none;margin:0;padding:0;display:flex;gap:12px}
+.f-follow a{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;color:#fff;transition:background var(--t)}
+.f-follow a:hover{background:rgba(255,255,255,.1);text-decoration:none}
+.f-follow svg{width:26px;height:26px}
+.footer .f-base{justify-content:center;text-align:center;margin-top:24px}
+@media (min-width:900px){.footer .f-grid{grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:48px}.f-about{grid-column:auto}}
