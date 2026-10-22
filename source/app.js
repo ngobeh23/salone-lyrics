@@ -212,7 +212,7 @@ VIEWS.home = () => {
   const upcoming=D.events.filter(e=>evStatus(e)!=="completed").sort((a,b)=>a.date.localeCompare(b.date));
   const weekend=upcoming.filter(inWeekend);
   const feat=D.articles[0], rest=D.articles.slice(1,4);
-  const spotSongs=SONGS().filter(s=>s.artist===spot.slug).slice(0,3), spotTop=spotSongs[0]?spotSongs[0].title:"Spotlight";
+  const spotSongs=SONGS().filter(s=>s.artist===spot.slug).slice(0,3);
   const slides=homeSlides(spot,upcoming,feat);
   return { title:"", html:`
 <div class="home">
@@ -251,22 +251,17 @@ VIEWS.home = () => {
     <ol class="songlist">${picks.map(songRow).join("")}</ol>
   </div></section>
 
-  <section class="section sp-sec" aria-labelledby="spot-h"><div class="wrap sp-grid">
-    <figure class="sp-poster reveal" aria-hidden="true">
-      <div class="sp-band"><span class="sp-kick">Weekly Spotlight</span><span class="sp-song" style="--fit:${fitCq(spotTop)}">${esc(spotTop)}</span><span class="sp-tab"></span><span class="sp-badge"><img src="assets/logo/salone-lyrics-light-240.png" width="240" height="248" alt="" loading="lazy"></span></div>
-      <div class="sp-photo">
-        <div class="sp-person">${portrait(spot,{cls:"cut",sizes:"(min-width:900px) 460px, 90vw",alt:""})}</div>
-        <div class="sp-foot"><div class="sp-tagrow"><span class="sp-tag">Artist</span></div><span class="sp-name" style="--fit:${fitCq(spot.name)}">${esc(spot.name)}</span>${spotSongs[0]&&spotSongs[0].feat?`<span class="sp-ft">ft ${esc(spotSongs[0].feat)}</span>`:""}<span class="sp-handle">@salonelyrics</span></div>
-      </div>
-    </figure>
-    <div class="sp-copy">
-      <span class="tag tag-green">Weekly Spotlight</span>
-      <h2 id="spot-h" class="display sp-h"><span class="sr">Weekly Spotlight: </span>${esc(spot.name)}</h2>
+  <section class="spotlight grain" aria-labelledby="spot-h">
+    <div class="spot-art"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${portrait(spot,{cls:"cut cut-shadow",sizes:"(min-width:900px) 45vw, 90vw"})}</div></div>
+    <div class="spot-copy">
+      <div class="spot-label"><span class="tag tag-amber">Weekly Spotlight</span></div>
+      <h2 id="spot-h" class="display spot-name reveal">${esc(spot.name)}</h2>
       <p class="lede">${esc(spot.intro)}</p>
       <dl class="spot-facts"><div><dt>Genre</dt><dd>${esc(spot.genre)}</dd></div><div><dt>Based in</dt><dd>${esc(spot.town)}</dd></div>${spot.label?`<div><dt>Label</dt><dd>${esc(spot.label)}</dd></div>`:""}</dl>
       <div class="row-wrap"><a class="btn btn-primary" href="#artist.${spot.slug}">Meet the Artist</a></div>
+      
     </div>
-  </div></section>
+  </section>
 
   <section class="section" aria-labelledby="rel-h"><div class="wrap">
     <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Albums &amp; EPs</p><h2 id="rel-h" class="display sec-title">Releases</h2></div>
@@ -331,7 +326,6 @@ VIEWS.home = () => {
     railControls(main); bindVideos(main); bindSvcLinks(main); szFlow(main); artistMarquee(main); newsCycle(main);
   }};
 };
-const fitCq=(t,w=86)=>Math.min(26,w/(Math.max(String(t).length,4)*.46)).toFixed(2);
 function heroTitle(lines){
   let k=0;
   return lines.map((t,l)=>`<span class="ln${l===lines.length-1?" accent":""}" aria-hidden="true">${t.split(" ").map(w=>`<span class="w">${[...w].map(c=>`<span class="ch" style="--k:${k++}">${esc(c)}</span>`).join("")}</span>`).join(" ")}</span>`).join("");
