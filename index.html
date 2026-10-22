@@ -1088,6 +1088,25 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 .footer .f-base{justify-content:center;text-align:center;margin-top:24px}
 @media (min-width:900px){.footer .f-grid{grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:48px}.f-about{grid-column:auto}}
 
+/* ---------- Get notified sign-up ---------- */
+.f-cta #nl{display:grid;gap:12px}
+.nl-topics{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px;min-width:0}
+.nl-chip{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:999px;background:rgba(255,255,255,.6);border:1.5px solid var(--charcoal);font-weight:600;font-size:14px;cursor:pointer}
+.nl-chip input{width:18px;height:18px;margin:0;accent-color:var(--charcoal)}
+.nl-row{display:flex;flex-wrap:wrap;gap:8px}
+.nl-row .input{flex:1 1 220px;min-width:0;background:#fff;border-color:var(--charcoal)}
+.nl-ok{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;cursor:pointer}
+.nl-ok input{margin-top:2px;width:18px;height:18px;flex:none;accent-color:var(--charcoal)}
+.nl-note{font-size:12px;line-height:1.45;margin:0;opacity:.85}
+.f-cta:focus{outline:none}
+[data-notify]{gap:8px}
+/* ---------- Release page extras ---------- */
+.rel-about{max-width:56ch;color:#D9E1E7;margin:0}
+.rel-share{color:#fff;border-color:rgba(255,255,255,.7)}
+.rel-credits{display:grid;gap:16px;margin:0;max-width:760px}
+.rel-credits dt{font:600 12px/1.2 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.rel-credits dd{margin:4px 0 0}
+
 
 </style>
 
@@ -1125,8 +1144,18 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 
 <footer class="footer">
   <div class="wrap">
-    <div class="f-cta"><div><h2 class="display">Don’t miss a new song</h2><p>New lyrics, releases and events in your inbox once a week.</p></div>
-      <div><form id="nl" novalidate><label for="nl-e" class="sr">Email address</label><input id="nl-e" class="input" type="email" placeholder="Your email address" autocomplete="email"><button class="btn" type="submit">Sign up</button></form><p class="form-msg" id="nl-msg" aria-live="polite"></p></div></div>
+    <div class="f-cta" id="notify" tabindex="-1"><div><h2 class="display">Get notified</h2><p>Hear first when we post new lyrics, events or stories. Pick what you want and we’ll email you.</p></div>
+      <div><form id="nl" novalidate>
+        <fieldset class="nl-topics"><legend class="sr">What should we email you about?</legend>
+          <label class="nl-chip"><input type="checkbox" name="topic" value="New lyrics &amp; releases" checked> New lyrics</label>
+          <label class="nl-chip"><input type="checkbox" name="topic" value="Events" checked> Events</label>
+          <label class="nl-chip"><input type="checkbox" name="topic" value="Stories &amp; news" checked> Stories</label>
+        </fieldset>
+        <div class="nl-row"><label for="nl-e" class="sr">Email address</label><input id="nl-e" class="input" type="email" placeholder="Your email address" autocomplete="email"><button class="btn" type="submit">Notify me</button></div>
+        <label class="nl-ok"><input type="checkbox" id="nl-c"> I agree to get emails from Salone Lyrics about the topics I picked. I can unsubscribe at any time.</label>
+        <input type="text" id="nl-h" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="nl-note">We only use your email to send these updates. It reaches our team through FormSubmit, a form service.</p>
+      </form><p class="form-msg" id="nl-msg" aria-live="polite"></p></div></div>
     <div class="f-grid">
       <div class="f-about"><img src="assets/logo/salone-lyrics-light-240.png" width="240" height="248" alt="Salone Lyrics" loading="lazy"><p>A home for Sierra Leonean music discovery: lyrics, artists, releases and stories.</p></div>
       <div class="f-col"><h3>Discover</h3><ul><li><a href="#lyrics">Lyrics</a></li><li><a href="#artists">Artists</a></li><li><a href="#events">Events</a></li><li><a href="#videos">Videos</a></li><li><a href="#gallery">Gallery</a></li></ul></div>
@@ -1251,6 +1280,22 @@ songs: [
   {"slug":"problem","title":"Problem","artist":"bakitenno","featA":"samza","feat":"Samza","genre":"Afrobeats","type":"Single","year":2024,"listen":{"links":{"deezer":"https://www.deezer.com/track/3566455081"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/3566455081","h":150}}},
   {"slug":"janka-nabay","title":"Janka Nabay","artist":"bakitenno","genre":"Afrobeats","type":"Single","year":2026,"listen":{"links":{"appleMusic":"https://music.apple.com/us/album/janka-nabay-single/6772010306"},"embed":{"name":"Apple Music","src":"https://embed.music.apple.com/us/album/janka-nabay-single/6772010306","h":175}}},
   {"slug":"light","title":"Light","artist":"bakitenno","feat":"Uchee","genre":"Afrobeats","type":"Single","year":2026,"listen":{"links":{"appleMusic":"https://music.apple.com/us/album/light-feat-uchee-single/1866917487"},"embed":{"name":"Apple Music","src":"https://embed.music.apple.com/us/album/light-feat-uchee-single/1866917487","h":175}}},
+  {"slug":"kotcs-intro","title":"KOTCS (Intro)","artist":"bakitenno","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":1,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372002"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372002","h":150}}},
+  {"slug":"update","title":"Update","artist":"bakitenno","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":2,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372012"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372012","h":150}}},
+  {"slug":"alhamdulillah","title":"Alhamdulillah","artist":"bakitenno","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":3,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372022"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372022","h":150}}},
+  {"slug":"we-dey-ya-fos","title":"We Dey Ya Fos","artist":"bakitenno","feat":"Baby Bernard","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":4,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372032"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372032","h":150}}},
+  {"slug":"scatter","title":"Scatter","artist":"bakitenno","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":5,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372042"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372042","h":150}}},
+  {"slug":"foday-sankoh","title":"Foday Sankoh","artist":"bakitenno","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":6,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372052"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372052","h":150}}},
+  {"slug":"wantem","title":"Wantem","artist":"bakitenno","featA":"laj","feat":"King Boss LA","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":7,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372062"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372062","h":150}}},
+  {"slug":"ah-lek-waist","title":"Ah Lek Waist","artist":"bakitenno","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":8,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372072"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372072","h":150}}},
+  {"slug":"well-na-dat","title":"Well Na Dat","artist":"bakitenno","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":9,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372082"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372082","h":150}}},
+  {"slug":"wuteteh","title":"Wuteteh","artist":"bakitenno","feat":"Shadow Boxxer","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":10,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372092"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372092","h":150}}},
+  {"slug":"husai-yu-komot","title":"Husai Yu Komot?","artist":"bakitenno","featA":"kao-denero","feat":"Kao Denero","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":11,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372102"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372102","h":150}}},
+  {"slug":"tonight","title":"Tonight","artist":"bakitenno","featA":"isat","feat":"Isat","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":12,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372112"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372112","h":150}}},
+  {"slug":"money","title":"Money","artist":"bakitenno","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":13,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372122"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372122","h":150}}},
+  {"slug":"na-god","title":"Na God","artist":"bakitenno","feat":"BadBoy Ivy","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":14,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372132"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372132","h":150}}},
+  {"slug":"this-life","title":"This Life","artist":"bakitenno","featA":"samza","feat":"Samza","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":15,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372142"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372142","h":150}}},
+  {"slug":"waytin","title":"Waytin?","artist":"bakitenno","feat":"M.I.C","genre":"Afrobeats","type":"Album","year":2026,"release":"kotcs","track":18,"listen":{"links":{"deezer":"https://www.deezer.com/track/4356372172"},"embed":{"name":"Deezer","src":"https://widget.deezer.com/widget/auto/track/4356372172","h":150}}},
   {"slug":"break","title":"Break","artist":"kracktwist","feat":"Lyrical Joe","genre":"Hip-hop","type":"Single","year":2026,"listen":{"links":{"appleMusic":"https://music.apple.com/us/album/break-feat-lyrical-joe/6786649545?i=6786649561"},"embed":{"name":"Apple Music","src":"https://embed.music.apple.com/us/album/break-feat-lyrical-joe/6786649545?i=6786649561","h":175}}},
   {"slug":"mi-paddi","title":"Mi Paddi","artist":"kracktwist","lead":"Chechii","featA":"samza","feat":"Kracktwist Lamina & Samza","genre":"Hip-hop","type":"Feature","year":2025},
   {"slug":"hustle-go-make-sense","title":"Hustle Go Make Sense","artist":"kracktwist","lead":"Blesz","featA":"star-zee","feat":"Star Zee, Prodigy, Arkman, Markmuday, Samza & Kracktwist","genre":"Hip-hop","type":"Feature","year":2020},
@@ -1359,6 +1404,7 @@ songs: [
 ],
 
 releases: [
+  {"slug":"kotcs","title":"KOTCS (King of the Country Sound)","artist":"bakitenno","type":"Album","year":2026,"tracks":["kotcs-intro","update","alhamdulillah","we-dey-ya-fos","scatter","foday-sankoh","wantem","ah-lek-waist","well-na-dat","wuteteh","husai-yu-komot","tonight","money","na-god","this-life","bismillah","janka-nabay","waytin"],"colour":"charcoal","cover":true,"tracklist":[["KOTCS (Intro)",""],["Update",""],["Alhamdulillah",""],["We Dey Ya Fos","Baby Bernard"],["Scatter",""],["Foday Sankoh",""],["Wantem","King Boss LA"],["Ah Lek Waist",""],["Well Na Dat",""],["Wuteteh","Shadow Boxxer"],["Husai Yu Komot?","Kao Denero"],["Tonight","Isat"],["Money",""],["Na God","BadBoy Ivy"],["This Life","Samza"],["Bismillah",""],["Janka Nabay",""],["Waytin?","M.I.C"]],"tracklistSource":"https://www.deezer.com/album/1125073152","listen":"https://www.deezer.com/album/1125073152","listenOn":"Deezer","about":"KOTCS (King of the Country Sound) is Bakitenno’s 18-track album, released on 17 October 2026 through New Wayv Music. It gathers his singles “Bismillah”, “Janka Nabay” and “Scatter” alongside new songs, with features from King Boss LA, Kao Denero, Isat, Samza, Shadow Boxxer, BadBoy Ivy, Baby Bernard and M.I.C.","credits":[["Produced by","Luciano (tracks 1, 3, 5, 8), Bash Beatz (9, 16), Jorem Beats (10, 11) and Frankenstein (2, 4, 6, 7, 12, 13, 14, 15, 17, 18)"],["Mixed and mastered by","2Lit On The Track (1, 2, 4, 5, 6, 7, 10, 14, 15, 17, 18), Jassie Jozzy (8, 11, 13) and Alman On The Mix (3)"],["Label","New Wayv Music"],["Released","17 October 2026"]]},
   {"slug":"audacity-album","title":"Audacity","artist":"drizilik","type":"Album","year":2026,"tracks":["never-know","alpha-and-omega","sabi-road","too-late","no-games","alcohol","real-friends","bete-pass-me-papa","audacity","go"],"colour":"charcoal","cover":true,"tracklist":[["NEVER KNOW","Reginald Thompson"],["ALPHA AND OMEGA",""],["SABI ROAD",""],["TOO LATE","Shadow Boxxer"],["NO GAMES","Isat"],["ALCOHOL",""],["REAL FRIENDS","Reginald Thompson"],["BETE PASS ME PAPA","Reginald Thompson"],["AUDACITY","D4nny & Solo’s Beats"],["GO",""]],"tracklistSource":"https://music.apple.com/us/album/audacity/6811765244"},
   {"slug":"the-maths","title":"The Maths","artist":"incredible-jj","type":"EP","year":2026,"tracks":["jakondeh","mood","crush","novice","love-code","morning-sunlight","city-bill"],"colour":"amber","cover":true,"tracklist":[["Jakondeh",""],["Mood",""],["Crush","JZyNO"],["Novice",""],["Love Code",""],["Morning Sunlight","King David 1995"],["City Bill","King Boss LA"]],"tracklistSource":"https://music.apple.com/us/album/the-maths/1895028643"},
   {"slug":"aunty-kadie","title":"Aunty Kadie","artist":"kracktwist","type":"EP","year":2026,"tracks":["intro","e-don-tay","aunty-kadie","nor-get-god","foolish-activity","dna","mi-foot"],"colour":"green","cover":true,"tracklist":[["Intro",""],["E Don Tay","Arkman"],["Aunty Kadie",""],["Nor Get God","Triple Hardest & Princess H"],["Foolish Activity","AL Dyce"],["Dna","King Ice, Depth & Father"],["Mi Foot",""]],"tracklistSource":"https://music.apple.com/us/album/aunty-kadie/1888240219"},
@@ -1517,7 +1563,7 @@ const normT = t => String(t).toLowerCase().replace(/[^a-z0-9]/g,"");
 function trackList(rel){
   const rows=rel.tracklist.map(([t,f],i)=>{ const s=SONGS().find(x=>(x.artist===rel.artist||x.featA===rel.artist)&&normT(x.title)===normT(t));
     return `<li><span class="num tnum" aria-hidden="true">${String(i+1).padStart(2,"0")}</span><span class="tt">${s?`<a href="#song.${s.slug}">${esc(t)}</a>`:esc(t)}${f?` <span class="ft">feat. ${esc(f)}</span>`:""}</span>${s?`<a class="go" href="#song.${s.slug}" aria-hidden="true" tabindex="-1">View Lyrics</a>`:""}</li>`; }).join("");
-  return `<ol class="tracklist">${rows}</ol>${rel.tracklistSource?`<p class="paid-note">${rel.tracklist.length} tracks. Tracklist from <a class="link" href="${rel.tracklistSource}" target="_blank" rel="noopener">Apple Music</a>.</p>`:""}`;
+  return `<ol class="tracklist">${rows}</ol>${rel.tracklistSource?`<p class="paid-note">${rel.tracklist.length} tracks. Tracklist from <a class="link" href="${rel.tracklistSource}" target="_blank" rel="noopener">${/deezer/.test(rel.tracklistSource)?"Deezer":"Apple Music"}</a>.</p>`:""}`;
 }
 function relArt(r,alt=""){
   return r.cover?`<img class="cover" src="${IMG}cover-${r.slug}-500.webp" srcset="${IMG}cover-${r.slug}-500.webp 500w, ${IMG}cover-${r.slug}-1000.webp 1000w" sizes="(min-width:900px) 360px, 45vw" width="500" height="500" alt="${esc(alt)}" loading="lazy" decoding="async">`:ttile(r);
@@ -2018,11 +2064,21 @@ VIEWS.song = r => {
     fb.addEventListener("click",()=>setFocus(!document.body.classList.contains("focus-mode")));
     const onKey=e=>{ if(e.key==="Escape"&&document.body.classList.contains("focus-mode")&&$("#sdlg").hidden) setFocus(false); };
     document.addEventListener("keydown",onKey); cleanup.push(()=>document.removeEventListener("keydown",onKey));
-    let raf=null,acc=0; const sb=$("#scrollbtn",main), sp=$("#speed",main);
-    const stop=()=>{ if(raf) cancelAnimationFrame(raf); raf=null; sb.setAttribute("aria-pressed","false"); sb.textContent="Auto-scroll"; };
-    const step=()=>{ acc+= +sp.value*0.35; if(acc>=1){ window.scrollBy(0,Math.floor(acc)); acc-=Math.floor(acc);} if(window.innerHeight+window.scrollY>=document.body.scrollHeight-2){stop();toast("End of lyrics");return;} raf=requestAnimationFrame(step); };
-    sb.addEventListener("click",()=>{ if(raf) stop(); else { sb.setAttribute("aria-pressed","true"); sb.textContent="Pause"; raf=requestAnimationFrame(step);} });
-    const userStop=()=>{ if(raf) stop(); }; window.addEventListener("wheel",userStop,{passive:true}); window.addEventListener("touchstart",userStop,{passive:true});
+    // Auto-scroll: steady, time-based speed (the same on every phone), starts at the lyrics, stops at the end of the lyrics,
+    // and stops if the reader scrolls or touches the page themselves (taps on the toolbar don't count)
+    let raf=null, last=0, pos=0, setY=0; const sb=$("#scrollbtn",main), sp=$("#speed",main), root=document.documentElement;
+    const stop=msg=>{ if(raf) cancelAnimationFrame(raf); raf=null; root.style.scrollBehavior=""; sb.setAttribute("aria-pressed","false"); sb.textContent="Auto-scroll"; if(typeof msg==="string") toast(msg); };
+    const step=t=>{ const dt=last?Math.min(500,t-last):16; last=t; // catch up with real time, even on a slow or busy phone
+      if(Math.abs(window.scrollY-setY)>3) pos=window.scrollY;
+      pos+=(+sp.value*14)*dt/1000; setY=Math.round(pos); window.scrollTo(0,setY);
+      const ly=$("#lyrics",main);
+      if((ly&&ly.getBoundingClientRect().bottom<window.innerHeight*0.55)||window.innerHeight+window.scrollY>=root.scrollHeight-2){ stop("End of lyrics"); return; }
+      raf=requestAnimationFrame(step); };
+    const start=()=>{ root.style.scrollBehavior="auto"; const ly=$("#lyrics",main);
+      if(ly&&ly.getBoundingClientRect().top>window.innerHeight*0.6) window.scrollTo(0,ly.getBoundingClientRect().top+window.scrollY-150);
+      pos=setY=window.scrollY; last=0; sb.setAttribute("aria-pressed","true"); sb.textContent="Pause"; raf=requestAnimationFrame(step); };
+    sb.addEventListener("click",()=>{ if(raf) stop(); else start(); });
+    const userStop=e=>{ if(raf&&!(e.target&&e.target.closest&&e.target.closest(".toolbar"))) stop(); }; window.addEventListener("wheel",userStop,{passive:true}); window.addEventListener("touchstart",userStop,{passive:true});
     cleanup.push(()=>{stop();window.removeEventListener("wheel",userStop);window.removeEventListener("touchstart",userStop);});
     const o=$("#lt-o",main), t=$("#lt-t",main);
     const set=tr=>{ o.setAttribute("aria-selected",!tr); t.setAttribute("aria-selected",tr); drawLy(tr); };
@@ -2038,10 +2094,11 @@ VIEWS.release = r => {
   const a=artist(rel.artist); const tracks=SONGS().filter(s=>s.release===rel.slug||rel.tracks.includes(s.slug));
   return { title:`${rel.title} by ${a.name}`, html:`
   <header class="phead charcoal"><div class="wrap">${crumbs([["Home","#"],["Lyrics","#lyrics"],[rel.title]])}
-    <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}</p><div class="row-wrap"><button class="btn btn-green" type="button" data-share>Share release</button></div></div>
+    <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}</p>${rel.about?`<p class="rel-about">${esc(rel.about)}</p>`:""}<div class="row-wrap">${rel.listen?`<a class="btn btn-green" href="${rel.listen}" target="_blank" rel="noopener">Listen on ${esc(rel.listenOn||"streaming")}<span class="sr"> (opens in a new tab)</span></a>`:""}<button class="btn ${rel.listen?"btn-ghost rel-share":"btn-green"}" type="button" data-share>Share release</button></div></div>
     <div style="max-width:360px;width:100%">${relArt(rel,`Cover of ${rel.title} by ${a.name}`)}<p class="credit" style="color:var(--muted-dark);margin-top:8px">${rel.cover?"Cover artwork.":"Typographic tile. Official artwork will be added when supplied."}</p></div></div>
   </div></header>
   <div class="wrap page"><h2 class="display" style="font-size:36px;margin-bottom:16px">${rel.tracklist?"Tracklist":"Songs on Salone Lyrics"}</h2>${rel.tracklist?trackList(rel):tracks.length?`<ol class="songlist">${tracks.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">The tracklist for ${esc(rel.title)} will be added with the artist.</p></div>`}
+  ${rel.credits?`<h2 class="display" style="font-size:28px;margin:40px 0 12px">Credits</h2><dl class="rel-credits">${rel.credits.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`:""}
   <div class="mt-l"><a class="arrow-link" href="#artist.${a.slug}.music">More lyrics from ${esc(a.name)}</a></div></div>`,
   after(main){ $("[data-share]",main).addEventListener("click",()=>share(document.title)); }};
 };
@@ -2116,7 +2173,7 @@ function artistPanel(a,id){
 VIEWS.news = () => {
   const cats=["All",...new Set(D.articles.map(a=>a.cat))];
   return { title:"Stories", html:`
-  <header class="phead charcoal grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Stories"]])}<h1 class="display">Stories</h1><p>Artist spotlights, career features and the stories behind the songs, with sources on every story.</p></div></header>
+  <header class="phead charcoal grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Stories"]])}<h1 class="display">Stories</h1><p>Artist spotlights, career features and the stories behind the songs, with sources on every story.</p><div class="row-wrap" style="margin-top:16px"><button type="button" class="btn btn-green btn-sm" data-notify="Stories"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>Get story alerts</button></div></div></header>
   <div class="wrap page"><div class="chips" role="group" aria-label="Filter stories">${cats.map(c=>`<button class="chip" type="button" data-cat="${c}" aria-pressed="${S.news===c}">${c}</button>`).join("")}</div><div id="newsout" class="mt-m" aria-live="polite"></div></div>`,
   after(main){
     const draw=()=>{ const list=D.articles.filter(a=>S.news==="All"||a.cat===S.news); if(!list.length){ $("#newsout").innerHTML=`<div class="empty"><p class="display">No stories yet</p></div>`; return; }
@@ -2153,7 +2210,7 @@ VIEWS.events = () => {
   const towns=["All",...new Set(D.events.map(e=>e.town))], types=["All",...new Set(D.events.map(e=>e.type))];
   const sel=(id,label,opts,val)=>`<div class="field-inline"><label for="${id}">${label}</label><select id="${id}" class="select">${opts.map(o=>`<option value="${esc(o[0])}" ${val===o[0]?"selected":""}>${esc(o[1])}</option>`).join("")}</select></div>`;
   return { title:"Events", html:`
-  <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Events"]])}<h1 class="display">Events</h1><p>Concerts, launches, workshops and listening sessions across Sierra Leone.</p></div></header>
+  <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Events"]])}<h1 class="display">Events</h1><p>Concerts, launches, workshops and listening sessions across Sierra Leone.</p><div class="row-wrap" style="margin-top:16px"><button type="button" class="btn btn-green btn-sm" data-notify="Events"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>Get event alerts</button></div></div></header>
   <div class="wrap page">
     <div class="notice notice-info" style="margin-bottom:24px"><strong>Check before you go</strong><span>Venues, times and ticket links are added as organisers confirm them. Details can change, so check with the organiser before you travel.</span></div>
     <div class="filterbar">
@@ -2428,9 +2485,27 @@ function bindLightbox(){
     if(e.key==="Tab"){ const f=$$("button:not([hidden]),a",el); if(e.shiftKey&&document.activeElement===f[0]){e.preventDefault();f[f.length-1].focus();} else if(!e.shiftKey&&document.activeElement===f[f.length-1]){e.preventDefault();f[0].focus();} } });
   let x0=null; el.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;},{passive:true}); el.addEventListener("touchend",e=>{ if(x0==null) return; const dx=e.changedTouches[0].clientX-x0; if(Math.abs(dx)>50) lbStep(dx<0?1:-1); x0=null; });
 }
-function bindNewsletter(){ $("#nl").addEventListener("submit",e=>{ e.preventDefault(); const i=$("#nl-e"), m=$("#nl-msg");
-  if(!/^\S+@\S+\.\S+$/.test(i.value)){ i.setAttribute("aria-invalid","true"); m.className="form-msg err"; m.textContent="Enter an email address like name@example.com."; i.focus(); return; }
-  i.setAttribute("aria-invalid","false"); m.className="form-msg ok"; m.textContent="Tenki! This preview has no mailing list connected, so you have not been subscribed yet."; }); }
+function bindNewsletter(){ const f=$("#nl"); if(!f) return;
+  const SAY={"New lyrics & releases":"new lyrics","Events":"events","Stories & news":"stories"};
+  f.addEventListener("submit",async e=>{ e.preventDefault();
+    const i=$("#nl-e"), m=$("#nl-msg"), c=$("#nl-c"), btn=$("button[type=submit]",f), topics=$$('input[name="topic"]:checked',f).map(x=>x.value);
+    const fail=(msg,el)=>{ m.className="form-msg err"; m.textContent=msg; if(el) el.focus(); };
+    if(!/^\S+@\S+\.\S+$/.test(i.value.trim())){ i.setAttribute("aria-invalid","true"); return fail("Enter an email address like name@example.com.",i); }
+    i.setAttribute("aria-invalid","false");
+    if(!topics.length) return fail("Pick at least one thing to hear about.",$('input[name="topic"]',f));
+    if(!c.checked) return fail("Please tick the box to agree to emails from us.",c);
+    if($("#nl-h").value) return; // filled in by spam bots only
+    btn.disabled=true; btn.textContent="Sending…"; m.className="form-msg"; m.textContent="";
+    try{
+      const r=await fetch(`https://formsubmit.co/ajax/${SUBMIT_TO}`,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({_subject:"Salone Lyrics: new notification sign-up",_template:"box",Email:i.value.trim(),"Wants updates about":topics.join(", "),"Agreed to emails":"Yes",Page:pageUrl()})});
+      const j=await r.json().catch(()=>({})); if(!r.ok||String(j.success)!=="true") throw new Error("Not sent");
+      m.className="form-msg ok"; m.textContent=`Tenki! You’re on the list. We’ll email you when we post ${topics.map(t=>SAY[t]||t).join(", ")}.`; f.reset();
+    }catch(_){ fail("That didn’t send. Please try again in a moment."); }
+    btn.disabled=false; btn.textContent="Notify me"; });
+}
+// "Get … alerts" buttons jump to the sign-up with that topic picked
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-notify]"); if(!b) return; const f=$("#nl"), box=$("#notify"); if(!f||!box) return;
+  $$('input[name="topic"]',f).forEach(x=>x.checked=x.value.startsWith(b.dataset.notify)); box.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"center"}); setTimeout(()=>$("#nl-e").focus({preventScroll:true}),REDUCED?0:600); });
 document.addEventListener("click",e=>{ const c=e.target.closest("[data-copytext]"); if(c) copyText(c.dataset.copytext,"Copied"); const s=e.target.closest("[data-open-search-btn]"); if(s) openSearch(); });
 /* Artist peek card */
 let peekOpener=null, peekY=0;

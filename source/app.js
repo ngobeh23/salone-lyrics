@@ -62,7 +62,7 @@ const normT = t => String(t).toLowerCase().replace(/[^a-z0-9]/g,"");
 function trackList(rel){
   const rows=rel.tracklist.map(([t,f],i)=>{ const s=SONGS().find(x=>(x.artist===rel.artist||x.featA===rel.artist)&&normT(x.title)===normT(t));
     return `<li><span class="num tnum" aria-hidden="true">${String(i+1).padStart(2,"0")}</span><span class="tt">${s?`<a href="#song.${s.slug}">${esc(t)}</a>`:esc(t)}${f?` <span class="ft">feat. ${esc(f)}</span>`:""}</span>${s?`<a class="go" href="#song.${s.slug}" aria-hidden="true" tabindex="-1">View Lyrics</a>`:""}</li>`; }).join("");
-  return `<ol class="tracklist">${rows}</ol>${rel.tracklistSource?`<p class="paid-note">${rel.tracklist.length} tracks. Tracklist from <a class="link" href="${rel.tracklistSource}" target="_blank" rel="noopener">Apple Music</a>.</p>`:""}`;
+  return `<ol class="tracklist">${rows}</ol>${rel.tracklistSource?`<p class="paid-note">${rel.tracklist.length} tracks. Tracklist from <a class="link" href="${rel.tracklistSource}" target="_blank" rel="noopener">${/deezer/.test(rel.tracklistSource)?"Deezer":"Apple Music"}</a>.</p>`:""}`;
 }
 function relArt(r,alt=""){
   return r.cover?`<img class="cover" src="${IMG}cover-${r.slug}-500.webp" srcset="${IMG}cover-${r.slug}-500.webp 500w, ${IMG}cover-${r.slug}-1000.webp 1000w" sizes="(min-width:900px) 360px, 45vw" width="500" height="500" alt="${esc(alt)}" loading="lazy" decoding="async">`:ttile(r);
@@ -563,11 +563,21 @@ VIEWS.song = r => {
     fb.addEventListener("click",()=>setFocus(!document.body.classList.contains("focus-mode")));
     const onKey=e=>{ if(e.key==="Escape"&&document.body.classList.contains("focus-mode")&&$("#sdlg").hidden) setFocus(false); };
     document.addEventListener("keydown",onKey); cleanup.push(()=>document.removeEventListener("keydown",onKey));
-    let raf=null,acc=0; const sb=$("#scrollbtn",main), sp=$("#speed",main);
-    const stop=()=>{ if(raf) cancelAnimationFrame(raf); raf=null; sb.setAttribute("aria-pressed","false"); sb.textContent="Auto-scroll"; };
-    const step=()=>{ acc+= +sp.value*0.35; if(acc>=1){ window.scrollBy(0,Math.floor(acc)); acc-=Math.floor(acc);} if(window.innerHeight+window.scrollY>=document.body.scrollHeight-2){stop();toast("End of lyrics");return;} raf=requestAnimationFrame(step); };
-    sb.addEventListener("click",()=>{ if(raf) stop(); else { sb.setAttribute("aria-pressed","true"); sb.textContent="Pause"; raf=requestAnimationFrame(step);} });
-    const userStop=()=>{ if(raf) stop(); }; window.addEventListener("wheel",userStop,{passive:true}); window.addEventListener("touchstart",userStop,{passive:true});
+    // Auto-scroll: steady, time-based speed (the same on every phone), starts at the lyrics, stops at the end of the lyrics,
+    // and stops if the reader scrolls or touches the page themselves (taps on the toolbar don't count)
+    let raf=null, last=0, pos=0, setY=0; const sb=$("#scrollbtn",main), sp=$("#speed",main), root=document.documentElement;
+    const stop=msg=>{ if(raf) cancelAnimationFrame(raf); raf=null; root.style.scrollBehavior=""; sb.setAttribute("aria-pressed","false"); sb.textContent="Auto-scroll"; if(typeof msg==="string") toast(msg); };
+    const step=t=>{ const dt=last?Math.min(500,t-last):16; last=t; // catch up with real time, even on a slow or busy phone
+      if(Math.abs(window.scrollY-setY)>3) pos=window.scrollY;
+      pos+=(+sp.value*14)*dt/1000; setY=Math.round(pos); window.scrollTo(0,setY);
+      const ly=$("#lyrics",main);
+      if((ly&&ly.getBoundingClientRect().bottom<window.innerHeight*0.55)||window.innerHeight+window.scrollY>=root.scrollHeight-2){ stop("End of lyrics"); return; }
+      raf=requestAnimationFrame(step); };
+    const start=()=>{ root.style.scrollBehavior="auto"; const ly=$("#lyrics",main);
+      if(ly&&ly.getBoundingClientRect().top>window.innerHeight*0.6) window.scrollTo(0,ly.getBoundingClientRect().top+window.scrollY-150);
+      pos=setY=window.scrollY; last=0; sb.setAttribute("aria-pressed","true"); sb.textContent="Pause"; raf=requestAnimationFrame(step); };
+    sb.addEventListener("click",()=>{ if(raf) stop(); else start(); });
+    const userStop=e=>{ if(raf&&!(e.target&&e.target.closest&&e.target.closest(".toolbar"))) stop(); }; window.addEventListener("wheel",userStop,{passive:true}); window.addEventListener("touchstart",userStop,{passive:true});
     cleanup.push(()=>{stop();window.removeEventListener("wheel",userStop);window.removeEventListener("touchstart",userStop);});
     const o=$("#lt-o",main), t=$("#lt-t",main);
     const set=tr=>{ o.setAttribute("aria-selected",!tr); t.setAttribute("aria-selected",tr); drawLy(tr); };
@@ -583,10 +593,11 @@ VIEWS.release = r => {
   const a=artist(rel.artist); const tracks=SONGS().filter(s=>s.release===rel.slug||rel.tracks.includes(s.slug));
   return { title:`${rel.title} by ${a.name}`, html:`
   <header class="phead charcoal"><div class="wrap">${crumbs([["Home","#"],["Lyrics","#lyrics"],[rel.title]])}
-    <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}</p><div class="row-wrap"><button class="btn btn-green" type="button" data-share>Share release</button></div></div>
+    <div class="about-split" style="gap:32px"><div class="stack"><div class="row-wrap" style="gap:8px"><span class="tag tag-green">${esc(rel.type)}</span>${rel.note?`<span class="tag tag-amber">${esc(rel.note)}</span>`:""}</div><h1 class="display">${esc(rel.title)}</h1><p>By <a class="link" style="color:#fff" href="#artist.${a.slug}">${esc(a.name)}</a>${rel.year?" · "+esc(rel.year):""}</p>${rel.about?`<p class="rel-about">${esc(rel.about)}</p>`:""}<div class="row-wrap">${rel.listen?`<a class="btn btn-green" href="${rel.listen}" target="_blank" rel="noopener">Listen on ${esc(rel.listenOn||"streaming")}<span class="sr"> (opens in a new tab)</span></a>`:""}<button class="btn ${rel.listen?"btn-ghost rel-share":"btn-green"}" type="button" data-share>Share release</button></div></div>
     <div style="max-width:360px;width:100%">${relArt(rel,`Cover of ${rel.title} by ${a.name}`)}<p class="credit" style="color:var(--muted-dark);margin-top:8px">${rel.cover?"Cover artwork.":"Typographic tile. Official artwork will be added when supplied."}</p></div></div>
   </div></header>
   <div class="wrap page"><h2 class="display" style="font-size:36px;margin-bottom:16px">${rel.tracklist?"Tracklist":"Songs on Salone Lyrics"}</h2>${rel.tracklist?trackList(rel):tracks.length?`<ol class="songlist">${tracks.map(songRow).join("")}</ol>`:`<div class="empty"><p class="muted">The tracklist for ${esc(rel.title)} will be added with the artist.</p></div>`}
+  ${rel.credits?`<h2 class="display" style="font-size:28px;margin:40px 0 12px">Credits</h2><dl class="rel-credits">${rel.credits.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`:""}
   <div class="mt-l"><a class="arrow-link" href="#artist.${a.slug}.music">More lyrics from ${esc(a.name)}</a></div></div>`,
   after(main){ $("[data-share]",main).addEventListener("click",()=>share(document.title)); }};
 };
@@ -661,7 +672,7 @@ function artistPanel(a,id){
 VIEWS.news = () => {
   const cats=["All",...new Set(D.articles.map(a=>a.cat))];
   return { title:"Stories", html:`
-  <header class="phead charcoal grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Stories"]])}<h1 class="display">Stories</h1><p>Artist spotlights, career features and the stories behind the songs, with sources on every story.</p></div></header>
+  <header class="phead charcoal grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Stories"]])}<h1 class="display">Stories</h1><p>Artist spotlights, career features and the stories behind the songs, with sources on every story.</p><div class="row-wrap" style="margin-top:16px"><button type="button" class="btn btn-green btn-sm" data-notify="Stories"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>Get story alerts</button></div></div></header>
   <div class="wrap page"><div class="chips" role="group" aria-label="Filter stories">${cats.map(c=>`<button class="chip" type="button" data-cat="${c}" aria-pressed="${S.news===c}">${c}</button>`).join("")}</div><div id="newsout" class="mt-m" aria-live="polite"></div></div>`,
   after(main){
     const draw=()=>{ const list=D.articles.filter(a=>S.news==="All"||a.cat===S.news); if(!list.length){ $("#newsout").innerHTML=`<div class="empty"><p class="display">No stories yet</p></div>`; return; }
@@ -698,7 +709,7 @@ VIEWS.events = () => {
   const towns=["All",...new Set(D.events.map(e=>e.town))], types=["All",...new Set(D.events.map(e=>e.type))];
   const sel=(id,label,opts,val)=>`<div class="field-inline"><label for="${id}">${label}</label><select id="${id}" class="select">${opts.map(o=>`<option value="${esc(o[0])}" ${val===o[0]?"selected":""}>${esc(o[1])}</option>`).join("")}</select></div>`;
   return { title:"Events", html:`
-  <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Events"]])}<h1 class="display">Events</h1><p>Concerts, launches, workshops and listening sessions across Sierra Leone.</p></div></header>
+  <header class="phead grain"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">${crumbs([["Home","#"],["Events"]])}<h1 class="display">Events</h1><p>Concerts, launches, workshops and listening sessions across Sierra Leone.</p><div class="row-wrap" style="margin-top:16px"><button type="button" class="btn btn-green btn-sm" data-notify="Events"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>Get event alerts</button></div></div></header>
   <div class="wrap page">
     <div class="notice notice-info" style="margin-bottom:24px"><strong>Check before you go</strong><span>Venues, times and ticket links are added as organisers confirm them. Details can change, so check with the organiser before you travel.</span></div>
     <div class="filterbar">
@@ -973,9 +984,27 @@ function bindLightbox(){
     if(e.key==="Tab"){ const f=$$("button:not([hidden]),a",el); if(e.shiftKey&&document.activeElement===f[0]){e.preventDefault();f[f.length-1].focus();} else if(!e.shiftKey&&document.activeElement===f[f.length-1]){e.preventDefault();f[0].focus();} } });
   let x0=null; el.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;},{passive:true}); el.addEventListener("touchend",e=>{ if(x0==null) return; const dx=e.changedTouches[0].clientX-x0; if(Math.abs(dx)>50) lbStep(dx<0?1:-1); x0=null; });
 }
-function bindNewsletter(){ $("#nl").addEventListener("submit",e=>{ e.preventDefault(); const i=$("#nl-e"), m=$("#nl-msg");
-  if(!/^\S+@\S+\.\S+$/.test(i.value)){ i.setAttribute("aria-invalid","true"); m.className="form-msg err"; m.textContent="Enter an email address like name@example.com."; i.focus(); return; }
-  i.setAttribute("aria-invalid","false"); m.className="form-msg ok"; m.textContent="Tenki! This preview has no mailing list connected, so you have not been subscribed yet."; }); }
+function bindNewsletter(){ const f=$("#nl"); if(!f) return;
+  const SAY={"New lyrics & releases":"new lyrics","Events":"events","Stories & news":"stories"};
+  f.addEventListener("submit",async e=>{ e.preventDefault();
+    const i=$("#nl-e"), m=$("#nl-msg"), c=$("#nl-c"), btn=$("button[type=submit]",f), topics=$$('input[name="topic"]:checked',f).map(x=>x.value);
+    const fail=(msg,el)=>{ m.className="form-msg err"; m.textContent=msg; if(el) el.focus(); };
+    if(!/^\S+@\S+\.\S+$/.test(i.value.trim())){ i.setAttribute("aria-invalid","true"); return fail("Enter an email address like name@example.com.",i); }
+    i.setAttribute("aria-invalid","false");
+    if(!topics.length) return fail("Pick at least one thing to hear about.",$('input[name="topic"]',f));
+    if(!c.checked) return fail("Please tick the box to agree to emails from us.",c);
+    if($("#nl-h").value) return; // filled in by spam bots only
+    btn.disabled=true; btn.textContent="Sending…"; m.className="form-msg"; m.textContent="";
+    try{
+      const r=await fetch(`https://formsubmit.co/ajax/${SUBMIT_TO}`,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({_subject:"Salone Lyrics: new notification sign-up",_template:"box",Email:i.value.trim(),"Wants updates about":topics.join(", "),"Agreed to emails":"Yes",Page:pageUrl()})});
+      const j=await r.json().catch(()=>({})); if(!r.ok||String(j.success)!=="true") throw new Error("Not sent");
+      m.className="form-msg ok"; m.textContent=`Tenki! You’re on the list. We’ll email you when we post ${topics.map(t=>SAY[t]||t).join(", ")}.`; f.reset();
+    }catch(_){ fail("That didn’t send. Please try again in a moment."); }
+    btn.disabled=false; btn.textContent="Notify me"; });
+}
+// "Get … alerts" buttons jump to the sign-up with that topic picked
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-notify]"); if(!b) return; const f=$("#nl"), box=$("#notify"); if(!f||!box) return;
+  $$('input[name="topic"]',f).forEach(x=>x.checked=x.value.startsWith(b.dataset.notify)); box.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"center"}); setTimeout(()=>$("#nl-e").focus({preventScroll:true}),REDUCED?0:600); });
 document.addEventListener("click",e=>{ const c=e.target.closest("[data-copytext]"); if(c) copyText(c.dataset.copytext,"Copied"); const s=e.target.closest("[data-open-search-btn]"); if(s) openSearch(); });
 /* Artist peek card */
 let peekOpener=null, peekY=0;

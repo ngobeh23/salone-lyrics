@@ -41,8 +41,18 @@ __CSS__
 
 <footer class="footer">
   <div class="wrap">
-    <div class="f-cta"><div><h2 class="display">Don’t miss a new song</h2><p>New lyrics, releases and events in your inbox once a week.</p></div>
-      <div><form id="nl" novalidate><label for="nl-e" class="sr">Email address</label><input id="nl-e" class="input" type="email" placeholder="Your email address" autocomplete="email"><button class="btn" type="submit">Sign up</button></form><p class="form-msg" id="nl-msg" aria-live="polite"></p></div></div>
+    <div class="f-cta" id="notify" tabindex="-1"><div><h2 class="display">Get notified</h2><p>Hear first when we post new lyrics, events or stories. Pick what you want and we’ll email you.</p></div>
+      <div><form id="nl" novalidate>
+        <fieldset class="nl-topics"><legend class="sr">What should we email you about?</legend>
+          <label class="nl-chip"><input type="checkbox" name="topic" value="New lyrics &amp; releases" checked> New lyrics</label>
+          <label class="nl-chip"><input type="checkbox" name="topic" value="Events" checked> Events</label>
+          <label class="nl-chip"><input type="checkbox" name="topic" value="Stories &amp; news" checked> Stories</label>
+        </fieldset>
+        <div class="nl-row"><label for="nl-e" class="sr">Email address</label><input id="nl-e" class="input" type="email" placeholder="Your email address" autocomplete="email"><button class="btn" type="submit">Notify me</button></div>
+        <label class="nl-ok"><input type="checkbox" id="nl-c"> I agree to get emails from Salone Lyrics about the topics I picked. I can unsubscribe at any time.</label>
+        <input type="text" id="nl-h" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="nl-note">We only use your email to send these updates. It reaches our team through FormSubmit, a form service.</p>
+      </form><p class="form-msg" id="nl-msg" aria-live="polite"></p></div></div>
     <div class="f-grid">
       <div class="f-about"><img src="assets/logo/salone-lyrics-light-240.png" width="240" height="248" alt="Salone Lyrics" loading="lazy"><p>A home for Sierra Leonean music discovery: lyrics, artists, releases and stories.</p></div>
       <div class="f-col"><h3>Discover</h3><ul><li><a href="#lyrics">Lyrics</a></li><li><a href="#artists">Artists</a></li><li><a href="#events">Events</a></li><li><a href="#videos">Videos</a></li><li><a href="#gallery">Gallery</a></li></ul></div>
