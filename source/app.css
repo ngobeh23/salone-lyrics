@@ -1105,10 +1105,14 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 .plat-ic{width:36px;height:36px;flex:none;border-radius:10px;display:grid;place-items:center;color:#fff}
 .plat-ic svg{width:22px;height:22px}
 .plat-t{display:grid;min-width:0;line-height:1.2}
-.plat-t strong{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plat-t strong{font-size:14px;font-weight:600;overflow-wrap:anywhere}
 .plat-t small{font-size:12px;color:var(--muted)}
 .plat.is-direct .plat-t small{color:var(--ok);font-weight:600}
 @media (min-width:640px){.song-layout>div .plat-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
 /* ---------- Official links: one tile per line with the platform icon ---------- */
 .plat-list{grid-template-columns:minmax(0,1fr)}
+
+/* ---------- Brand icons: logos sit a little smaller inside their coloured tile ---------- */
+.plat-ic svg{width:20px;height:20px}
+.f-follow svg{width:24px;height:24px}
