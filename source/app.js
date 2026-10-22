@@ -499,12 +499,27 @@ function bindContrib(root,s,a){
 }
 const PLAT=[["youtube","YouTube"],["youtubeMusic","YouTube Music"],["spotify","Spotify"],["appleMusic","Apple Music"],["audiomack","Audiomack"],["boomplay","Boomplay"],["amazonMusic","Amazon Music"],["deezer","Deezer"],["tidal","Tidal"]];
 function artistProfiles(a){ const m={}; (a.links||[]).forEach(([l,u])=>{ const [p,rest]=l.split(" — "); const hit=PLAT.find(([,n])=>n===p); if(hit&&rest&&/artist/i.test(rest)&&!m[hit[0]]) m[hit[0]]=u; }); return m; }
+// Streaming platforms shown on every song, in this order. A verified song link is used when we have one;
+// otherwise the tile opens a search for "artist + title" on that platform.
+const LISTEN=[["spotify","Spotify"],["appleMusic","Apple Music"],["youtubeMusic","YouTube Music"],["youtube","YouTube"],["audiomack","Audiomack"],["boomplay","Boomplay"],["deezer","Deezer"],["amazonMusic","Amazon Music"]];
+const PSEARCH={spotify:q=>`https://open.spotify.com/search/${encodeURIComponent(q)}`,appleMusic:q=>`https://music.apple.com/search?term=${encodeURIComponent(q)}`,youtubeMusic:q=>`https://music.youtube.com/search?q=${encodeURIComponent(q)}`,youtube:q=>`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,audiomack:q=>`https://audiomack.com/search?q=${encodeURIComponent(q)}`,boomplay:q=>`https://www.boomplay.com/search/default/${encodeURIComponent(q)}`,deezer:q=>`https://www.deezer.com/search/${encodeURIComponent(q)}`,amazonMusic:q=>`https://music.amazon.com/search/${encodeURIComponent(q)}`};
+const PCOLOR={spotify:"#1DB954",appleMusic:"#FA2D48",youtubeMusic:"#FF0000",youtube:"#FF0000",audiomack:"#FF8800",boomplay:"#1E5BFF",deezer:"#A238FF",amazonMusic:"#232F3E"};
+const PICON={
+  spotify:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M6.3 9.3c3.9-1.2 8.2-.9 11.6 1.1M7 12.8c3.2-.9 6.5-.6 9.4 1M7.8 16.1c2.5-.6 5-.4 7.2.8"/></svg>',
+  appleMusic:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17 3.5v11a3 3 0 1 1-1.8-2.75V7.6l-6.4 1.5v7.6a3 3 0 1 1-1.8-2.75V6.6z"/></svg>',
+  youtubeMusic:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.6" fill="none" stroke="currentColor" stroke-width="1.9"/><path fill="currentColor" d="M10.2 8.8v6.4l5.3-3.2z"/></svg>',
+  youtube:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.8" y="6" width="18.4" height="12" rx="3.6" fill="currentColor"/><path fill="#FF0000" d="M10.2 9.2v5.6l4.8-2.8z"/></svg>',
+  audiomack:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M4 11.5v2M8 8.5v8M12 5.5v13M16 8.5v8M20 10.5v4"/></svg>',
+  boomplay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4.5h6.2c2.7 0 4.3 1.4 4.3 3.6 0 1.5-.8 2.6-2.1 3.1 1.7.4 2.8 1.7 2.8 3.5 0 2.6-1.9 4.3-5 4.3H7zm3.2 5.9h2.4c1.1 0 1.7-.6 1.7-1.5s-.6-1.4-1.7-1.4h-2.4zm0 5.7h2.8c1.2 0 1.9-.6 1.9-1.6s-.7-1.6-1.9-1.6h-2.8z"/></svg>',
+  deezer:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 16.5h3.2v2.8H3zm4.6 0h3.2v2.8H7.6zm4.6 0h3.2v2.8h-3.2zm4.6 0H20v2.8h-3.2zM7.6 12.6h3.2v2.8H7.6zm4.6 0h3.2v2.8h-3.2zm4.6 0H20v2.8h-3.2zm-4.6-3.9h3.2v2.8h-3.2zm4.6 0H20v2.8h-3.2zm0-3.9H20v2.8h-3.2z"/></svg>',
+  amazonMusic:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="#25D1DA" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" d="M4 12.8c4.6 3.3 11.2 3.3 16 0M16.9 11.6l3.1 1.2-1 3.1"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M6.5 9.2V6.5l2.2 2.4 2.2-2.4v2.7"/></svg>'
+};
 function listenBlock(s,a){
-  const L=(s.listen&&s.listen.links)||{}, prof=s.lead?{}:artistProfiles(a), e=s.listen&&s.listen.embed; // guest appearances: song links only
-  // direct song links first, then artist profiles for platforms without a verified song link
-  const btns=PLAT.map(([k,n])=>L[k]?`<a class="btn btn-ghost btn-sm" href="${L[k]}" target="_blank" rel="noopener">Listen on ${n}<span class="sr"> (opens in a new tab)</span></a>`:"").join("")+PLAT.map(([k,n])=>!L[k]&&prof[k]?`<a class="btn btn-ghost btn-sm" href="${prof[k]}" target="_blank" rel="noopener">Visit Artist on ${n}<span class="sr"> (opens in a new tab)</span></a>`:"").join("");
+  const L=(s.listen&&s.listen.links)||{}, e=s.listen&&s.listen.embed, q=`${s.lead||a.name} ${s.title}`;
+  const tiles=LISTEN.map(([k,n])=>({k,n,url:L[k]||PSEARCH[k](q),direct:!!L[k]})).sort((x,y)=>y.direct-x.direct)
+    .map(o=>`<a class="plat${o.direct?" is-direct":""}" href="${o.url}" target="_blank" rel="noopener"><span class="plat-ic" style="background:${PCOLOR[o.k]}">${PICON[o.k]}</span><span class="plat-t"><strong>${o.n}</strong><small>${o.direct?"Listen to the song":"Search for it"}</small></span><span class="sr"> (opens in a new tab)</span></a>`).join("");
   const player=e?`<div class="player" data-src="${e.src}" data-h="${e.h}" data-title="${esc(s.title)} on ${esc(e.name)}"><button class="btn btn-primary btn-sm" type="button" data-play-embed>${ICON.play}<span>Play while you read</span></button><span class="player-note">Official recording on ${esc(e.name)}. Without an ${esc(e.name)} sign-in, it may play a preview.</span></div>`:"";
-  return `<section class="listen-sec" aria-labelledby="listen-h"><h2 id="listen-h" class="display">Listen</h2>${player}${btns?`<div class="listen">${btns}</div>`:`<p class="muted">Listening links will be added once the official recording is confirmed.</p>`}<p class="paid-note">Plays happen on each platform and follow its own rules for counting streams.</p></section>`;
+  return `<section class="listen-sec" aria-labelledby="listen-h"><h2 id="listen-h" class="display">Listen</h2>${player}<div class="plat-grid">${tiles}</div><p class="paid-note">“Listen to the song” goes straight to the track. “Search for it” opens a search for “${esc(q)}” on that platform. Plays follow each platform’s own rules for counting streams.</p></section>`;
 }
 function bindPlayer(root){ const p=$(".player",root); if(!p) return; $("[data-play-embed]",p).addEventListener("click",()=>{ p.innerHTML=`<iframe src="${p.dataset.src}" title="${p.dataset.title}" height="${p.dataset.h}" allow="autoplay *; encrypted-media *; clipboard-write; fullscreen" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"></iframe>`; }); }
 VIEWS.song = r => {
@@ -526,7 +541,7 @@ VIEWS.song = r => {
         ${s.demo?'<p class="paid-note">Demo text written for this preview to show the lyric reader. It is not a real song.</p>':s.contributors&&s.contributors.length?`<p class="paid-note">Lyrics contributed by ${esc(s.contributors.join(", "))}.</p>`:""}`
     : `
         <div class="toolbar" role="toolbar" aria-label="Song tools"><div class="grp"><button type="button" id="sharebtn">Share</button></div></div>
-        <div class="lyrics-pending reveal"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><h2 class="display">Lyrics coming soon</h2><p>We publish lyrics only when ${esc(a.name)} or their team has approved them, so every word is right.</p></div>
+        <div class="lyrics-pending reveal"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><h2 class="display">Lyrics coming soon</h2><p>We publish lyrics only when ${esc(a.name)} or their team has approved them, so every word is right.</p>${s.demo?"":contribBlock(s,a)}</div>
         ${listenBlock(s,a)}`;
   return { title:`${s.title} by ${s.lead||a.name}`, html:`
   <header class="song-head"><span class="grooves spin" aria-hidden="true"></span><div class="wrap">
@@ -540,7 +555,7 @@ VIEWS.song = r => {
   <div class="wrap">
     <p class="focus-title display" style="font-size:40px">${esc(s.title)}</p>
     <div class="song-layout"><div style="min-width:0"><div>${lyricBlock}</div>
-        ${s.demo?"":contribBlock(s,a)}
+        ${s.demo||!s.lyrics?"":contribBlock(s,a)}
       </div>
       <aside class="song-aside stack" style="gap:32px;align-content:start">
         <div class="aside-box"><h2>Credits</h2><dl class="credits"><dt>Artist</dt><dd>${esc(s.demo?"Sample":s.lead||a.name)}</dd>${Object.entries(credits).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}<dt>Year</dt><dd>${esc(yr(s.year))}</dd></dl><p class="paid-note">Full writer and producer credits are added with the lyrics.</p></div>
@@ -942,7 +957,7 @@ function sItem(it,q,idx){
   return `<a class="sitem" role="option" id="opt-${it.kind}-${it.slug}" href="#${it.kind}.${it.slug}" aria-selected="false" tabindex="-1">${th}<span style="min-width:0"><span class="t">${hl(it.t,q)}</span><br><span class="s">${hl(it.s,q)}</span></span><span class="k">${it.kind==="story"?"Story":it.kind[0].toUpperCase()+it.kind.slice(1)}</span></a>`;
 }
 let sTimer,sSel=-1,sOpener=null;
-function openSearch(q){ const dlg=$("#sdlg"), inp=$("#sq"); sOpener=document.activeElement; dlg.hidden=false; document.body.classList.add("locked"); inp.value=q!=null?q:S.search.q; S.search.q=inp.value; runSearch(true); setTimeout(()=>{inp.focus(); inp.select();},10); }
+function openSearch(q){ const dlg=$("#sdlg"), inp=$("#sq"); sOpener=document.activeElement; dlg.hidden=false; document.body.classList.add("locked"); inp.value=q!=null?q:S.search.q; S.search.q=inp.value; runSearch(true); inp.focus({preventScroll:true}); inp.select(); setTimeout(()=>{ if(document.activeElement!==inp){ inp.focus(); inp.select(); } },30); }
 window.SLsearch=()=>openSearch();
 function closeSearch(restore=true){ $("#sdlg").hidden=true; document.body.classList.remove("locked"); if(restore&&sOpener&&sOpener.focus) sOpener.focus(); }
 function runSearch(immediate){

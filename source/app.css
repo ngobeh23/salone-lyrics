@@ -1093,3 +1093,19 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 .rel-credits{display:grid;gap:16px;margin:0;max-width:760px}
 .rel-credits dt{font:600 12px/1.2 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .rel-credits dd{margin:4px 0 0}
+
+/* ---------- Add lyrics inside the "Lyrics coming soon" card ---------- */
+.lyrics-pending .contrib{margin-top:8px;padding:20px 0 0;border:0;border-top:1.5px solid var(--line);border-radius:0;background:transparent}
+.lyrics-pending .contrib h2{font-size:clamp(24px,3vw,30px)}
+/* ---------- Listen: platform tiles with icons ---------- */
+.plat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.plat{display:flex;align-items:center;gap:10px;min-height:56px;padding:8px 10px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);text-decoration:none;transition:border-color var(--t),transform var(--t)}
+.plat:hover{border-color:var(--charcoal);transform:translateY(-1px)}
+.plat.is-direct{border-color:#B7C3CC}
+.plat-ic{width:36px;height:36px;flex:none;border-radius:10px;display:grid;place-items:center;color:#fff}
+.plat-ic svg{width:22px;height:22px}
+.plat-t{display:grid;min-width:0;line-height:1.2}
+.plat-t strong{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plat-t small{font-size:12px;color:var(--muted)}
+.plat.is-direct .plat-t small{color:var(--ok);font-weight:600}
+@media (min-width:640px){.song-layout>div .plat-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
