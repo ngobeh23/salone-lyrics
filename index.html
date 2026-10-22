@@ -1073,6 +1073,32 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 /* ---------- Phones & tablets: text boxes at 16px so iPhones don't zoom the page when you tap them ---------- */
 @media (max-width:1023px){input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{font-size:max(16px,1em)}}
 
+/* ---------- Home: Weekly Spotlight poster ---------- */
+.sp-grid{display:grid;gap:32px;justify-items:center}
+.sp-poster{margin:0;width:100%;max-width:460px;container-type:inline-size;position:relative;border-radius:24px;overflow:hidden;background:#0B0D10;box-shadow:0 30px 60px -30px rgba(16,18,20,.55)}
+.sp-band{position:relative;z-index:3;display:grid;justify-items:center;gap:2cqi;padding:7cqi 5cqi 14cqi;background:var(--green);text-align:center}
+.sp-kick{font:700 max(11px,3.1cqi)/1 var(--f-body);letter-spacing:.18em;text-transform:uppercase;color:var(--charcoal)}
+.sp-song,.sp-name{font:400 calc(var(--fit) * 1cqi)/.9 var(--f-display);text-transform:uppercase;color:#fff;white-space:nowrap;transform:rotate(-2deg);text-shadow:-.035em .055em 0 #86E83A,-.06em .1em 0 #3E9A00}
+.sp-tab{position:absolute;left:50%;top:calc(100% - 1px);width:38cqi;height:9cqi;transform:translateX(-50%);background:var(--green);border-radius:0 0 19cqi 19cqi/0 0 9cqi 9cqi}
+.sp-badge{position:absolute;left:50%;top:100%;width:23cqi;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:#0B2F5C;display:grid;place-items:center;overflow:hidden}
+.sp-badge img{width:80%;height:auto}
+.sp-photo{position:relative;aspect-ratio:4/5;overflow:hidden;background:linear-gradient(180deg,transparent 50%,rgba(11,13,16,.8) 76%,#0B0D10 92%),repeating-linear-gradient(118deg,transparent 0 9cqi,rgba(255,255,255,.07) 9cqi 15cqi),radial-gradient(120% 80% at 50% 25%,#3D93E8 0%,#0F5FB8 45%,#0A3E80 78%)}
+.sp-person{position:absolute;inset:11cqi 0 0;z-index:1;display:flex;align-items:flex-end;justify-content:center}
+.sp-photo::after{content:"";position:absolute;left:0;right:0;bottom:0;height:46%;z-index:1;pointer-events:none;background:linear-gradient(180deg,transparent 0%,rgba(11,13,16,.7) 45%,#0B0D10 88%)}
+@media (max-width:899px){.sp-copy>.tag,.sp-copy>.sp-h{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
+.sp-person picture{height:100%;display:flex;justify-content:center}
+.sp-person img{height:100%;width:auto;max-width:none;object-fit:contain;filter:grayscale(1) contrast(1.08) drop-shadow(1.1cqi -.5cqi 0 var(--green)) drop-shadow(.9cqi -.4cqi 0 #FFC21A) drop-shadow(.8cqi -.3cqi 0 #44D7F0)}
+.sp-foot{position:absolute;left:0;right:0;bottom:0;z-index:2;display:grid;justify-items:center;gap:2cqi;padding:0 6cqi 6cqi;text-align:center}
+.sp-tagrow{width:100%;display:flex;align-items:center;gap:3cqi}
+.sp-tagrow::before,.sp-tagrow::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.85)}
+.sp-tag,.sp-ft{background:var(--green);color:#fff;font:400 max(12px,5cqi)/1 var(--f-display);text-transform:uppercase;padding:1.6cqi 4cqi;text-shadow:-.04em .06em 0 #3E9A00;transform:rotate(-1.5deg)}
+.sp-handle{margin-top:2cqi;font:600 max(11px,3.6cqi)/1 var(--f-body);color:#fff}
+.sp-copy{display:grid;justify-items:center;gap:18px;max-width:520px;text-align:center}
+.sp-copy .lede{font-size:18px;margin:0;max-width:38ch}
+.sp-h{font-size:clamp(40px,6vw,72px)}
+.sp-copy .spot-facts{justify-content:center}
+@media (min-width:900px){.sp-grid{grid-template-columns:minmax(0,460px) minmax(0,1fr);align-items:center;justify-items:stretch;gap:64px}.sp-copy{justify-self:center}}
+
 
 </style>
 
@@ -1648,7 +1674,7 @@ VIEWS.home = () => {
   const upcoming=D.events.filter(e=>evStatus(e)!=="completed").sort((a,b)=>a.date.localeCompare(b.date));
   const weekend=upcoming.filter(inWeekend);
   const feat=D.articles[0], rest=D.articles.slice(1,4);
-  const spotSongs=SONGS().filter(s=>s.artist===spot.slug).slice(0,3);
+  const spotSongs=SONGS().filter(s=>s.artist===spot.slug).slice(0,3), spotTop=spotSongs[0]?spotSongs[0].title:"Spotlight";
   const slides=homeSlides(spot,upcoming,feat);
   return { title:"", html:`
 <div class="home">
@@ -1687,17 +1713,22 @@ VIEWS.home = () => {
     <ol class="songlist">${picks.map(songRow).join("")}</ol>
   </div></section>
 
-  <section class="spotlight grain" aria-labelledby="spot-h">
-    <div class="spot-art"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${portrait(spot,{cls:"cut cut-shadow",sizes:"(min-width:900px) 45vw, 90vw"})}</div></div>
-    <div class="spot-copy">
-      <div class="spot-label"><span class="tag tag-amber">Weekly Spotlight</span></div>
-      <h2 id="spot-h" class="display spot-name reveal">${esc(spot.name)}</h2>
+  <section class="section sp-sec" aria-labelledby="spot-h"><div class="wrap sp-grid">
+    <figure class="sp-poster reveal" aria-hidden="true">
+      <div class="sp-band"><span class="sp-kick">Weekly Spotlight</span><span class="sp-song" style="--fit:${fitCq(spotTop)}">${esc(spotTop)}</span><span class="sp-tab"></span><span class="sp-badge"><img src="assets/logo/salone-lyrics-light-240.png" width="240" height="248" alt="" loading="lazy"></span></div>
+      <div class="sp-photo">
+        <div class="sp-person">${portrait(spot,{cls:"cut",sizes:"(min-width:900px) 460px, 90vw",alt:""})}</div>
+        <div class="sp-foot"><div class="sp-tagrow"><span class="sp-tag">Artist</span></div><span class="sp-name" style="--fit:${fitCq(spot.name)}">${esc(spot.name)}</span>${spotSongs[0]&&spotSongs[0].feat?`<span class="sp-ft">ft ${esc(spotSongs[0].feat)}</span>`:""}<span class="sp-handle">@salonelyrics</span></div>
+      </div>
+    </figure>
+    <div class="sp-copy">
+      <span class="tag tag-green">Weekly Spotlight</span>
+      <h2 id="spot-h" class="display sp-h"><span class="sr">Weekly Spotlight: </span>${esc(spot.name)}</h2>
       <p class="lede">${esc(spot.intro)}</p>
       <dl class="spot-facts"><div><dt>Genre</dt><dd>${esc(spot.genre)}</dd></div><div><dt>Based in</dt><dd>${esc(spot.town)}</dd></div>${spot.label?`<div><dt>Label</dt><dd>${esc(spot.label)}</dd></div>`:""}</dl>
-      <div class="row-wrap"><a class="btn btn-primary" href="#artist.${spot.slug}">Meet the Artist</a>${spotSongs[0]?`<a class="arrow-link" href="#song.${spotSongs[0].slug}">“${esc(spotSongs[0].title)}”</a>`:""}</div>
-      
+      <div class="row-wrap"><a class="btn btn-primary" href="#artist.${spot.slug}">Meet the Artist</a></div>
     </div>
-  </section>
+  </div></section>
 
   <section class="section" aria-labelledby="rel-h"><div class="wrap">
     <div class="sec-head"><div class="stack" style="gap:8px"><p class="eyebrow muted">Albums &amp; EPs</p><h2 id="rel-h" class="display sec-title">Releases</h2></div>
@@ -1762,6 +1793,7 @@ VIEWS.home = () => {
     railControls(main); bindVideos(main); bindSvcLinks(main); szFlow(main); artistMarquee(main); newsCycle(main);
   }};
 };
+const fitCq=(t,w=86)=>Math.min(26,w/(Math.max(String(t).length,4)*.46)).toFixed(2);
 function heroTitle(lines){
   let k=0;
   return lines.map((t,l)=>`<span class="ln${l===lines.length-1?" accent":""}" aria-hidden="true">${t.split(" ").map(w=>`<span class="w">${[...w].map(c=>`<span class="ch" style="--k:${k++}">${esc(c)}</span>`).join("")}</span>`).join(" ")}</span>`).join("");
