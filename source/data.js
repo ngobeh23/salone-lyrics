@@ -281,7 +281,6 @@ services: [
   { id:"spotlight", name:"Weekly Spotlight", tag:"One week on the homepage", photo:"p-alpha", what:"The homepage feature with a large portrait, introduction and links to your music.", gets:["Homepage Weekly Spotlight","Short interview or introduction","Announcement post on social media"], duration:"One week" },
   { id:"event", name:"Event Promotion", tag:"Fill the room", photo:"p-chernor", what:"Your show listed and highlighted across the Events section, with add-to-calendar for fans.", gets:["Event page with ticket link","Homepage event row","Add-to-calendar"], duration:"Until the event date" },
   { id:"social", name:"Social Media Promotion", tag:"Lyric cards and short videos", photo:"p-ahmed", what:"Lyric cards and short videos on Salone Lyrics Instagram and TikTok.", gets:["Lyric or feature post","Short video edit","Caption and tagging"], duration:"Agreed with the team" },
-  { id:"banner", name:"Banner Placement", tag:"Seen, never in the lyrics", photo:"p-michael", what:"A clearly labelled banner placed outside reading areas.", gets:["Banner design check","Placement outside lyric text","Link to your page or tickets"], duration:"Agreed with the team" },
   { id:"combined", name:"Combined Campaign", tag:"Launch everything together", photo:"p-alpha", what:"A planned mix of website and social placements for a release or tour.", gets:["Campaign plan","Website and social placements","Wrap-up summary"], duration:"Agreed per campaign" }
 ]
 };

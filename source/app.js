@@ -464,7 +464,7 @@ function contribBlock(s,a){
       <p class="err" id="cb-check-e" hidden></p>
       <input type="text" id="cb-honey" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="row-wrap"><button class="btn btn-primary" type="submit">Send ${what}</button><a class="link" href="${lyricsMailto(s,a,has)}">Or email us instead</a></div>
-      <p class="paid-note">Your ${what} reach the Salone Lyrics team by email through FormSubmit, a free form service.</p>
+      <p class="paid-note">Your ${has?"edit reaches":"lyrics reach"} the Salone Lyrics team by email through FormSubmit, a free form service.</p>
       <div id="cb-msg" aria-live="polite"></div>
     </form>
   </section>`;
@@ -523,7 +523,7 @@ VIEWS.song = r => {
         </div>
         ${s.translation?`<div class="lang-tabs" role="tablist" aria-label="Lyrics language"><button class="chip" role="tab" id="lt-o" aria-selected="true" aria-controls="lyrics">Original (Krio &amp; English)</button><button class="chip" role="tab" id="lt-t" aria-selected="false" aria-controls="lyrics">${esc(s.translation.label)}</button></div>`:""}
         <article class="lyrics" id="lyrics" role="tabpanel" style="--lsize:${S.lsize}px" aria-label="Lyrics"></article>
-        ${s.demo?'<p class="paid-note">Demo text written for this preview to show the lyric reader. It is not a real song.</p>':s.lyricsBy?`<p class="paid-note">${s.contributors&&s.contributors.length?`Lyrics contributed by ${esc(s.contributors.join(", "))}. `:""}Lyrics published with the approval of ${esc(s.lyricsBy)}. Lyrics remain the property of their writers.</p>`:""}`
+        ${s.demo?'<p class="paid-note">Demo text written for this preview to show the lyric reader. It is not a real song.</p>':s.contributors&&s.contributors.length?`<p class="paid-note">Lyrics contributed by ${esc(s.contributors.join(", "))}.</p>`:""}`
     : `
         <div class="toolbar" role="toolbar" aria-label="Song tools"><div class="grp"><button type="button" id="sharebtn">Share</button></div></div>
         <div class="lyrics-pending reveal"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><h2 class="display">Lyrics coming soon</h2><p>We publish lyrics only when ${esc(a.name)} or their team has approved them, so every word is right.</p></div>
