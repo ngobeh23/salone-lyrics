@@ -216,18 +216,18 @@ VIEWS.home = () => {
   const slides=homeSlides(spot,upcoming,feat);
   return { title:"", html:`
 <div class="home">
-  <section class="sz" aria-labelledby="hero-h" style="--tone:${slides[0].tone}">
+  <section class="sz" aria-labelledby="hero-h">
     <div class="sz-head">
       <p class="eyebrow">Kushe! Welcome to Salone Lyrics</p>
-      <h1 id="hero-h" class="display hero-title sz-title"><span class="sr">Salone music. Every word.</span>${heroTitle(["Salone music.","Every word."])}</h1>
+      <h1 id="hero-h" class="hero-title sz-title"><span class="sr">Salone music. Every word.</span>${heroTitle(["Salone music.","Every word."])}</h1>
     </div>
     <div class="sz-flow" data-sz aria-roledescription="carousel" aria-label="What’s on Salone Lyrics">
       <div class="sz-track">${slides.map((s,i)=>szSlide(s,i,slides.length)).join("")}</div>
-      <div class="sz-ctrl"><button type="button" class="sz-btn" data-sz-prev aria-label="Previous slide">${ICON.left}</button><span class="sz-dots">${slides.map((s,i)=>`<button type="button" data-sz-go="${i}" aria-label="Show ${esc(s.label)}"></button>`).join("")}</span><button type="button" class="sz-btn" data-sz-next aria-label="Next slide">${ICON.right}</button><button type="button" class="sz-pp" data-sz-pp aria-pressed="false" aria-label="Pause slideshow">Pause</button></div>
+      <div class="sz-ctrl"><span class="sz-dots">${slides.map((s,i)=>`<button type="button" data-sz-go="${i}" aria-label="Show ${esc(s.label)}"><span></span></button>`).join("")}</span><button type="button" class="sz-pp" data-sz-pp aria-pressed="false" aria-label="Pause slideshow">Pause</button></div>
     </div>
     <div class="sz-foot">
       <p class="sz-lede">Discover the lyrics, artists and stories shaping Sierra Leone’s sound.</p>
-      <form class="hero-search" role="search" data-hero-search><label for="hero-q" class="sr">Search songs, lyrics, artists or events</label><input id="hero-q" type="search" placeholder="Search songs, lyrics, artists or events…" autocomplete="off"><button type="submit">Search</button></form>
+      <form class="hero-search" role="search" data-hero-search><label for="hero-q" class="sr">Search songs, lyrics, artists or events</label><input id="hero-q" type="search" placeholder="Search songs &amp; artists" autocomplete="off"><button type="submit">Search</button></form>
       <div class="hero-actions"><a class="btn btn-primary" href="#lyrics">Explore Lyrics</a><a class="btn btn-ghost" href="#artists">Discover Artists</a></div>
     </div>
   </section>
@@ -351,10 +351,10 @@ function newsCycle(root){
   if(paused){ pp.setAttribute("aria-pressed","true"); pp.textContent="Play"; }
   cleanup.push(()=>clearInterval(timer)); start();
 }
-// Homepage cover-flow: one card per thing the site offers; the hero takes the active card's colour
-const SZ_TONES=["#0A5FA8","#2F6B00","#172126","#8A5A00"];
+// Homepage cover-flow (Shazam style): one card per thing the site offers; the hero and header take the active card's colour
+const SZ_TONES=["#1466C8","#2F7D12","#2E3A46","#A35F00"];
 function homeSlides(spot,upcoming,feat){
-  const fig=(a,i)=>`<span class="sz-art panel ${panelCls(i)}"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"320px",alt:"",eager:i<3})}</span>`;
+  const fig=(a,i)=>`<span class="sz-art panel ${panelCls(i)}"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"280px",alt:"",eager:i<2})}</span>`;
   const lyr=SONGS().filter(s=>s.lyrics), fresh=lyr[lyr.length-1], pick=song(D.picks[0]), rel=D.releases.find(r=>r.cover)||D.releases[0], ev=upcoming[0];
   const vid=D.videos.find(v=>v.artist&&artist(v.artist).photo), gap=SONGS().find(s=>!s.lyrics&&!s.lead&&artist(s.artist).photo&&!D.picks.includes(s.slug));
   return [
@@ -363,41 +363,47 @@ function homeSlides(spot,upcoming,feat){
     rel&&{label:"New releases",sub:"Albums and EPs out now",href:`#release.${rel.slug}`,art:`<span class="sz-art">${relArt(rel)}</span>`,title:rel.title,meta:`${artist(rel.artist).name} · ${rel.type}`},
     spot&&{label:"Weekly Spotlight",sub:"One artist, up close",href:`#artist.${spot.slug}`,a:spot,title:spot.name,meta:spot.genre},
     ev&&{label:"Coming up",sub:"Shows and events to catch",href:`#event.${ev.slug}`,art:`<span class="sz-art sz-date"><span class="d">${parse(ev.date).getDate()}</span><span class="m">${MONTHS_L[parse(ev.date).getMonth()]}</span></span>`,title:ev.title,meta:`${ev.venue}, ${ev.town}`},
-    feat&&{label:"Stories",sub:"Features on Salone’s artists",href:`#story.${feat.slug}`,art:`<span class="sz-art panel panel-blue"><span class="grooves" aria-hidden="true"></span>${pic(feat.photo,{sizes:"320px",alt:""})}</span>`,title:feat.title,meta:feat.cat},
+    feat&&{label:"Stories",sub:"Features on Salone’s artists",href:`#story.${feat.slug}`,art:`<span class="sz-art panel panel-blue"><span class="grooves" aria-hidden="true"></span>${pic(feat.photo,{sizes:"280px",alt:""})}</span>`,title:feat.title,meta:feat.cat},
     vid&&{label:"Lyric videos",sub:"Watch the words come alive",href:"#videos",a:artist(vid.artist),title:vid.title,meta:artist(vid.artist).name},
     gap&&{label:"Add lyrics",sub:"Know the words? Help fill the gaps",href:`#song.${gap.slug}`,a:artist(gap.artist),title:gap.title,meta:"Lyrics wanted"}
-  ].filter(Boolean).map((s,i)=>Object.assign(s,{tone:SZ_TONES[i%SZ_TONES.length],art:s.art||fig(s.a,i)}));
+  ].filter(Boolean).map((s,i)=>Object.assign(s,{tone:SZ_TONES[i%SZ_TONES.length],art:(s.art||fig(s.a,i)).replace('loading="lazy"','loading="eager"')}));
 }
 function szSlide(s,i,n){
-  return `<div class="sz-slide" data-tone="${s.tone}" role="group" aria-roledescription="slide" aria-label="${i+1} of ${n}: ${esc(s.label)}"><div class="sz-cap"><p class="sz-label">${esc(s.label)}</p><p class="sz-sub">${esc(s.sub)}</p></div><a class="sz-card" href="${s.href}">${s.art}<span class="sz-meta"><span class="sz-go" aria-hidden="true">${ICON.arrow}</span><span class="sz-txt"><strong>${esc(s.title)}</strong><small>${esc(s.meta)}</small></span></span></a></div>`;
+  return `<div class="sz-slide" data-tone="${s.tone}" role="group" aria-roledescription="slide" aria-label="${i+1} of ${n}: ${esc(s.label)}"><div class="sz-cap"><p class="sz-label">${esc(s.label)}</p><p class="sz-sub">${esc(s.sub)}</p></div><a class="sz-card" href="${s.href}"><span class="sz-pic">${s.art}<span class="sz-go" aria-hidden="true">${ICON.arrow}</span></span><span class="sz-txt"><strong>${esc(s.title)}</strong><small>${esc(s.meta)}</small></span></a></div>`;
 }
 function szFlow(root){
   const box=$("[data-sz]",root); if(!box) return;
-  const hero=box.closest(".sz"), slides=$$(".sz-slide",box), dots=$$("[data-sz-go]",box), pp=$("[data-sz-pp]",box), n=slides.length;
-  let i=0, timer=null, paused=false, held=false;
+  const hero=box.closest(".sz"), hdr=$(".site-header"), doc=document.documentElement, slides=$$(".sz-slide",box), dots=$$("[data-sz-go]",box), pp=$("[data-sz-pp]",box), n=slides.length;
+  let i=0, timer=null, paused=false; const hold={kb:false,hover:false};
   const show=k=>{ i=(k+n)%n;
     slides.forEach((s,j)=>{ let d=j-i; if(d>n/2) d-=n; else if(d<=-n/2) d+=n; const ad=Math.abs(d), on=d===0;
       s.style.setProperty("--d",d); s.style.setProperty("--ad",ad); s.style.zIndex=10-ad;
       s.classList.toggle("on",on); s.classList.toggle("far",ad>2); s.setAttribute("aria-hidden",!on);
       $$("a",s).forEach(x=>x.tabIndex=on?0:-1); });
     dots.forEach((b,j)=>b.setAttribute("aria-current",j===i));
-    hero.style.setProperty("--tone",slides[i].dataset.tone); };
-  // moves on by itself every 4.5 seconds; Pause stops it, and it waits while a keyboard user is inside it
-  const start=()=>{ clearInterval(timer); if(!paused&&!held) timer=setInterval(()=>show(i+1),4500); };
+    doc.style.setProperty("--tone",slides[i].dataset.tone); };
+  // moves on by itself every 4.5 seconds; it waits while the mouse is over it or a keyboard user is inside it,
+  // and keyboard users get a Pause button (it shows when focused)
+  const start=()=>{ clearInterval(timer); if(!paused&&!hold.kb&&!hold.hover) timer=setInterval(()=>show(i+1),4500); };
   const go=k=>{ show(k); start(); };
   slides.forEach((s,j)=>s.addEventListener("click",e=>{ if(j!==i){ e.preventDefault(); go(j); } }));
-  $("[data-sz-prev]",box).addEventListener("click",()=>go(i-1));
-  $("[data-sz-next]",box).addEventListener("click",()=>go(i+1));
   dots.forEach((b,j)=>b.addEventListener("click",()=>go(j)));
+  box.addEventListener("keydown",e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); go(i+(e.key==="ArrowRight"?1:-1)); } });
   pp.addEventListener("click",()=>{ paused=!paused; pp.setAttribute("aria-pressed",paused); pp.textContent=paused?"Play":"Pause"; pp.setAttribute("aria-label",(paused?"Play":"Pause")+" slideshow"); start(); });
-  box.addEventListener("focusin",e=>{ let kb=false; try{ kb=e.target.matches(":focus-visible"); }catch(_){} if(kb){ held=true; start(); } });
-  box.addEventListener("focusout",e=>{ if(!box.contains(e.relatedTarget)){ held=false; start(); } });
+  box.addEventListener("focusin",e=>{ let kb=false; try{ kb=e.target.matches(":focus-visible"); }catch(_){} if(kb){ hold.kb=true; start(); } });
+  box.addEventListener("focusout",e=>{ if(!box.contains(e.relatedTarget)){ hold.kb=false; start(); } });
+  if(window.matchMedia&&matchMedia("(hover:hover)").matches){ box.addEventListener("mouseenter",()=>{ hold.hover=true; start(); }); box.addEventListener("mouseleave",()=>{ hold.hover=false; start(); }); }
   const trk=$(".sz-track",box); let x0=null, y0=0;
   trk.addEventListener("touchstart",e=>{ x0=e.touches[0].clientX; y0=e.touches[0].clientY; },{passive:true});
   trk.addEventListener("touchend",e=>{ if(x0==null) return; const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0; x0=null; if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)) go(i+(dx<0?1:-1)); },{passive:true});
   const vis=()=>{ if(document.hidden) clearInterval(timer); else start(); }; document.addEventListener("visibilitychange",vis);
-  cleanup.push(()=>{ clearInterval(timer); document.removeEventListener("visibilitychange",vis); });
+  // header wears the hero colour until the hero has scrolled away (colour only, so nothing on the page moves)
+  hdr.classList.add("on-hero");
+  const io2="IntersectionObserver" in window ? new IntersectionObserver(([en])=>hdr.classList.toggle("on-hero",en.isIntersecting),{rootMargin:`-${hdr.offsetHeight+28}px 0px 0px 0px`}) : null;
+  if(io2) io2.observe(hero);
+  cleanup.push(()=>{ clearInterval(timer); document.removeEventListener("visibilitychange",vis); if(io2) io2.disconnect(); hdr.classList.remove("on-hero"); doc.style.removeProperty("--tone"); });
   show(0); start();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add("ready")));
 }
 function artistMarquee(root){
   const w=$("[data-amq]",root); if(!w) return; const pp=$("[data-amq-pp]",root);

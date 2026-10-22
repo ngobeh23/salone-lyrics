@@ -420,6 +420,8 @@ textarea.input{padding:12px 14px;min-height:120px;resize:vertical;line-height:1.
 .toolbar .grp + .grp{margin-left:0}
 .toolbar label{font-size:13px;display:inline-flex;align-items:center;gap:6px;padding:0 10px}
 .toolbar input[type=range]{width:90px;accent-color:var(--blue-deep)}
+@media (max-width:699px){.toolbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:6px;padding:8px var(--gut);margin-inline:calc(var(--gut) * -1);-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+  .toolbar::-webkit-scrollbar{display:none}.toolbar>*{flex:none}.toolbar>:last-child{margin-right:24px}}
 .lyrics{--lsize:19px;font-size:var(--lsize);line-height:1.85;max-width:62ch;padding-top:var(--s5)}
 .lyrics section{margin-bottom:28px}
 .lyrics h2{font:600 12px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--blue-deep);margin-bottom:10px}
@@ -979,57 +981,80 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 .contrib .err{color:var(--danger);font-size:13px}
 .lyr-input{min-height:280px}
 
-/* ---------- Home: Shazam-inspired cover-flow hero ---------- */
-.sz{--tone:#0A5FA8;position:relative;isolation:isolate;overflow:hidden;color:#fff;text-align:center;background:var(--tone);transition:background-color 900ms var(--ease);padding:var(--s6) 0 calc(var(--s7) + 28px)}
-.sz::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(16,18,20,.6) 0%,rgba(16,18,20,.28) 55%,rgba(16,18,20,.5) 100%)}
-.sz::after{content:"";position:absolute;left:50%;top:46%;width:1100px;height:1100px;transform:translate(-50%,-50%);z-index:-1;pointer-events:none;background:radial-gradient(circle,rgba(255,255,255,.14),transparent 60%)}
-.sz-head{display:grid;justify-items:center;gap:14px;max-width:820px;margin-inline:auto;padding-inline:var(--gut)}
-.sz-head .eyebrow{color:rgba(255,255,255,.85);margin:0}
-.sz-title{font-size:clamp(40px,9.5vw,96px);line-height:.92;color:#fff}
+/* ---------- Home: Shazam-style hero ---------- */
+.sz{position:relative;isolation:isolate;overflow:hidden;color:#fff;text-align:center;background-color:var(--tone,#1466C8);transition:background-color 900ms var(--ease);padding:28px 0 calc(var(--s7) + 28px)}
+.sz::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(80% 42% at 50% 55%,rgba(255,255,255,.16),transparent 70%),linear-gradient(180deg,rgba(16,18,20,.55) 0%,rgba(16,18,20,.2) 45%,rgba(16,18,20,.45) 100%)}
+.sz-head{display:grid;justify-items:center;gap:10px;max-width:720px;margin-inline:auto;padding-inline:var(--gut)}
+.sz-head .eyebrow{color:rgba(255,255,255,.9);margin:0}
+.sz-title{margin:0;font:700 clamp(30px,8vw,56px)/1.12 var(--f-body);letter-spacing:-.015em;color:#fff;text-wrap:balance}
 .sz-title .ln{display:block}
-.sz-flow{--cw:clamp(220px,62vw,320px);--step:calc(var(--cw) * .8);margin-top:var(--s6)}
-.sz-track{display:grid;justify-content:center;perspective:1200px;touch-action:pan-y}
-.sz-slide{grid-area:1/1;width:var(--cw);cursor:pointer;transform:translateX(calc(var(--d,0) * var(--step))) translateZ(calc(var(--ad,0) * -80px)) rotateY(calc(var(--d,0) * 22deg)) scale(calc(1 - var(--ad,0) * .08));opacity:calc(1 - var(--ad,0) * .36);transition:transform 700ms var(--ease),opacity 700ms var(--ease),visibility 700ms}
+.sz .hero-title .ch,.sz .hero-title .accent .ch{animation:ch-rise .6s var(--ease) both;animation-delay:calc(var(--k) * 25ms + 80ms)}
+.sz-flow{--cw:clamp(196px,54vw,280px);--step:calc(var(--cw) * .92);margin-top:36px}
+.sz-track{display:grid;justify-content:center;perspective:1000px;touch-action:pan-y}
+.sz-slide{grid-area:1/1;width:var(--cw);cursor:pointer;transform:translateX(calc(var(--d,0) * var(--step))) rotateY(calc(var(--d,0) * 28deg)) scale(calc(1 - var(--ad,0) * .14));opacity:calc(1 - var(--ad,0) * .42)}
+.sz.ready .sz-slide{transition:transform 650ms var(--ease),opacity 650ms var(--ease),visibility 650ms}
 .sz-slide.far{opacity:0;visibility:hidden}
 .sz-slide.on{cursor:auto}
-.sz-cap{padding:0 6px 14px}
-.sz-label{font:700 20px/1.2 var(--f-body);margin:0}
-.sz-sub{font-size:14px;line-height:1.4;color:rgba(255,255,255,.8);margin:4px 0 0}
-.sz-card{display:block;border-radius:22px;overflow:hidden;background:#101214;color:#fff;text-decoration:none;text-align:left;box-shadow:0 30px 60px -24px rgba(0,0,0,.65)}
+.sz-cap{width:calc(var(--cw) + 80px);margin-inline:-40px;padding-bottom:16px}
+.sz-label{font:700 19px/1.25 var(--f-body);margin:0;white-space:nowrap}
+.sz-sub{font-size:14px;line-height:1.35;color:rgba(255,255,255,.88);margin:4px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sz-card{display:block;padding:10px 10px 14px;border-radius:20px;background:rgba(14,16,20,.92);color:#fff;text-decoration:none;text-align:left;box-shadow:0 24px 48px -20px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.07)}
 .sz-card:focus-visible{outline:3px solid #fff;outline-offset:4px}
-.sz-art{position:relative;display:flex;align-items:flex-end;justify-content:center;aspect-ratio:1/1;overflow:hidden}
+.sz-pic{position:relative;display:block}
+.sz-art{position:relative;display:flex;align-items:flex-end;justify-content:center;aspect-ratio:1/1;overflow:hidden;border-radius:12px}
 .sz-art .grooves{width:130%;left:-15%;top:22%}
 .sz-art picture{height:94%;display:flex;justify-content:center}
 .sz-art picture img{height:100%;width:auto;max-width:none;object-fit:contain}
 .sz-art .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .sz-art .ttile{position:absolute;inset:0}
 .sz-date{flex-direction:column;align-items:center;justify-content:center;background:var(--amber);color:var(--charcoal)}
-.sz-date .d{font:400 clamp(96px,30vw,150px)/.85 var(--f-display)}
-.sz-date .m{font:700 16px/1 var(--f-body);letter-spacing:.16em;text-transform:uppercase;margin-top:10px}
-.sz-meta{display:flex;align-items:center;gap:12px;padding:14px 16px 16px}
-.sz-go{width:40px;height:40px;flex:none;border-radius:50%;background:#fff;color:var(--charcoal);display:grid;place-items:center}
-.sz-txt{display:grid;min-width:0;gap:2px}
-.sz-txt strong{font-size:16px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sz-txt small{font-size:13px;color:#C9D3DA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sz-ctrl{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:24px;padding-inline:var(--gut)}
-.sz-btn{width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(255,255,255,.65);background:transparent;color:#fff;display:grid;place-items:center;cursor:pointer;transition:background var(--t)}
-.sz-btn:hover,.sz-pp:hover{background:rgba(255,255,255,.14)}
-.sz-pp{min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,.65);background:transparent;color:#fff;font:600 13px/1 var(--f-body);cursor:pointer}
-.sz-dots{display:flex;gap:6px}
-.sz-dots button{width:8px;height:8px;padding:0;border:0;border-radius:999px;background:rgba(255,255,255,.45);cursor:pointer;position:relative;transition:width var(--t),background var(--t)}
-.sz-dots button::before{content:"";position:absolute;inset:-14px -3px}
-.sz-dots button[aria-current="true"]{width:22px;background:#fff}
-.sz-btn:focus-visible,.sz-pp:focus-visible,.sz-dots button:focus-visible{outline:3px solid #fff;outline-offset:3px}
-.sz-foot{display:grid;justify-items:center;gap:18px;margin-top:var(--s6);padding-inline:var(--gut)}
-.sz-lede{font-size:18px;max-width:36ch;color:rgba(255,255,255,.92);margin:0}
-.sz .hero-search{width:100%;max-width:560px;border-color:#fff}
-.sz .hero-actions{justify-content:center}
+.sz-date .d{font:400 clamp(80px,24vw,128px)/.85 var(--f-display)}
+.sz-date .m{font:700 14px/1 var(--f-body);letter-spacing:.16em;text-transform:uppercase;margin-top:10px}
+.sz-go{position:absolute;left:10px;bottom:10px;z-index:2;width:36px;height:36px;border-radius:50%;background:#fff;color:var(--blue-deep);display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.sz-go svg{width:16px;height:16px}
+.sz-txt{display:grid;gap:2px;padding:12px 4px 0;min-width:0}
+.sz-txt strong{font-size:15px;line-height:1.3;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sz-txt small{font-size:13px;line-height:1.35;color:#AEB8C1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sz-ctrl{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;padding-inline:var(--gut)}
+.sz-dots{display:flex}
+.sz-dots button{width:24px;height:24px;padding:0;border:0;background:none;display:grid;place-items:center;cursor:pointer;border-radius:50%}
+.sz-dots button span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.45);transition:transform var(--t),background var(--t)}
+.sz-dots button:hover span{background:rgba(255,255,255,.75)}
+.sz-dots button[aria-current="true"] span{background:#fff;transform:scale(1.45)}
+.sz-dots button:focus-visible{outline:2px solid #fff;outline-offset:0}
+.sz-pp{min-height:32px;padding:0 12px;border-radius:999px;border:1.5px solid rgba(255,255,255,.6);background:transparent;color:#fff;font:600 12px/1 var(--f-body);cursor:pointer}
+.sz-pp:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.sz-pp:not(:focus-visible):not([aria-pressed="true"]){position:absolute;width:1px;height:1px;margin:0;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.sz-foot{display:grid;justify-items:center;gap:16px;margin-top:36px;padding-inline:var(--gut)}
+.sz-lede{font-size:16px;line-height:1.5;max-width:34ch;color:rgba(255,255,255,.92);margin:0}
+.sz .hero-search{width:100%;max-width:520px;border:0;border-radius:999px;box-shadow:0 10px 30px -12px rgba(0,0,0,.45)}
+.sz .hero-search input{padding:0 6px 0 18px}
+.sz .hero-search button{border-radius:999px;margin:4px;padding:0 20px}
+.sz .hero-actions{justify-content:center;gap:10px}
+.sz .hero-actions .btn{border-radius:999px;padding-inline:20px;min-height:46px;flex:0 1 auto}
+.sz .hero-actions{flex-wrap:nowrap}
+@media (max-width:340px){.sz .hero-actions{flex-wrap:wrap}}
 .sz .btn-primary{background:#fff;color:var(--charcoal);border-color:#fff}
 .sz .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.75)}
 .sz .btn-ghost:hover{background:rgba(255,255,255,.14)}
-.sz-stats{background:var(--paper)}
-@media (min-width:900px){.sz{padding-top:var(--s7)}.sz-flow{--step:calc(var(--cw) * .9)}}
-@media (prefers-reduced-motion:reduce){.sz{transition:none}.sz-slide{transition:opacity 250ms linear,visibility 250ms}.cr-track{transition:none}}
+.sz-stats{position:relative;z-index:1;margin-top:-28px;padding-top:28px;background:var(--paper);border-radius:28px 28px 0 0}
+.sz-stats .stats{margin-top:0}
+@media (min-width:768px){.sz{padding-top:48px}.sz-flow{--cw:250px;--step:calc(var(--cw) * 1.02);margin-top:48px}.sz-foot{margin-top:44px}}
+@media (min-width:1100px){.sz-flow{--cw:270px;--step:calc(var(--cw) * 1.05)}}
+/* header wears the hero colour on the homepage until the hero scrolls away */
+.site-header{transition:border-color var(--t),box-shadow var(--t),background-color 300ms var(--ease),color 300ms}
+.site-header.on-hero{background-color:var(--tone,#1466C8);background-image:linear-gradient(rgba(16,18,20,.55),rgba(16,18,20,.55));border-bottom-color:transparent;box-shadow:none;color:#fff;transition:background-color 900ms var(--ease),color 300ms}
+.brand .logo-light{display:none}
+.on-hero .brand .logo-dark{display:none}
+.on-hero .brand .logo-light{display:block}
+.icon-btn{border:1.5px solid transparent}
+.on-hero .icon-btn{border-color:rgba(255,255,255,.35);border-radius:50%}
+.on-hero .icon-btn:hover{background:rgba(255,255,255,.12)}
+.on-hero .mainnav a{color:#fff}
+.on-hero .search-trigger{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.9)}
+.on-hero .search-trigger kbd{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);color:#fff;box-shadow:none}
+.on-hero .promote-btn{background:#fff;color:var(--charcoal);border-color:#fff}
+@media (prefers-reduced-motion:reduce){.sz,.site-header.on-hero{transition:none}.sz.ready .sz-slide{transition:opacity 250ms linear,visibility 250ms}.cr-track{transition:none}}
 
 /* ---------- Home: centred text on every screen size ---------- */
 .home .sec-head{flex-direction:column;align-items:center;justify-content:center;text-align:center}
@@ -1045,6 +1070,9 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 .home .spot-label,.home .spot-facts,.home .spot-copy .row-wrap,.home .promo-copy .row-wrap{justify-content:center}
 .home .spot-copy .lede,.home .promo p{margin-inline:auto}
 
+/* ---------- Phones & tablets: text boxes at 16px so iPhones don't zoom the page when you tap them ---------- */
+@media (max-width:1023px){input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{font-size:max(16px,1em)}}
+
 
 </style>
 
@@ -1052,10 +1080,9 @@ a.gal-item{cursor:pointer;border-radius:14px;overflow:hidden}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="demo-bar"><div class="wrap"><span>Artist details are drawn from published sources; lyrics are added with artist approval.</span><nav aria-label="Secondary"><a href="#gallery">Gallery</a><a href="#about">About</a><a href="#contact">Contact</a></nav></div></div>
 <header class="site-header">
   <div class="wrap hdr">
-    <a class="brand" href="#" aria-label="Salone Lyrics home"><img src="assets/logo/salone-lyrics-dark-240.png" width="240" height="248" alt="Salone Lyrics"></a>
+    <a class="brand" href="#" aria-label="Salone Lyrics home"><img class="logo-dark" src="assets/logo/salone-lyrics-dark-240.png" width="240" height="248" alt=""><img class="logo-light" src="assets/logo/salone-lyrics-light-240.png" width="240" height="248" alt=""></a>
     <nav class="mainnav" aria-label="Main"><ul>
       <li><a href="#lyrics">Lyrics</a></li><li><a href="#artists">Artists</a></li><li><a href="#stories">Stories</a></li><li><a href="#events">Events</a></li><li><a href="#videos">Videos</a></li>
     </ul></nav>
@@ -1626,18 +1653,18 @@ VIEWS.home = () => {
   const slides=homeSlides(spot,upcoming,feat);
   return { title:"", html:`
 <div class="home">
-  <section class="sz" aria-labelledby="hero-h" style="--tone:${slides[0].tone}">
+  <section class="sz" aria-labelledby="hero-h">
     <div class="sz-head">
       <p class="eyebrow">Kushe! Welcome to Salone Lyrics</p>
-      <h1 id="hero-h" class="display hero-title sz-title"><span class="sr">Salone music. Every word.</span>${heroTitle(["Salone music.","Every word."])}</h1>
+      <h1 id="hero-h" class="hero-title sz-title"><span class="sr">Salone music. Every word.</span>${heroTitle(["Salone music.","Every word."])}</h1>
     </div>
     <div class="sz-flow" data-sz aria-roledescription="carousel" aria-label="What’s on Salone Lyrics">
       <div class="sz-track">${slides.map((s,i)=>szSlide(s,i,slides.length)).join("")}</div>
-      <div class="sz-ctrl"><button type="button" class="sz-btn" data-sz-prev aria-label="Previous slide">${ICON.left}</button><span class="sz-dots">${slides.map((s,i)=>`<button type="button" data-sz-go="${i}" aria-label="Show ${esc(s.label)}"></button>`).join("")}</span><button type="button" class="sz-btn" data-sz-next aria-label="Next slide">${ICON.right}</button><button type="button" class="sz-pp" data-sz-pp aria-pressed="false" aria-label="Pause slideshow">Pause</button></div>
+      <div class="sz-ctrl"><span class="sz-dots">${slides.map((s,i)=>`<button type="button" data-sz-go="${i}" aria-label="Show ${esc(s.label)}"><span></span></button>`).join("")}</span><button type="button" class="sz-pp" data-sz-pp aria-pressed="false" aria-label="Pause slideshow">Pause</button></div>
     </div>
     <div class="sz-foot">
       <p class="sz-lede">Discover the lyrics, artists and stories shaping Sierra Leone’s sound.</p>
-      <form class="hero-search" role="search" data-hero-search><label for="hero-q" class="sr">Search songs, lyrics, artists or events</label><input id="hero-q" type="search" placeholder="Search songs, lyrics, artists or events…" autocomplete="off"><button type="submit">Search</button></form>
+      <form class="hero-search" role="search" data-hero-search><label for="hero-q" class="sr">Search songs, lyrics, artists or events</label><input id="hero-q" type="search" placeholder="Search songs &amp; artists" autocomplete="off"><button type="submit">Search</button></form>
       <div class="hero-actions"><a class="btn btn-primary" href="#lyrics">Explore Lyrics</a><a class="btn btn-ghost" href="#artists">Discover Artists</a></div>
     </div>
   </section>
@@ -1761,10 +1788,10 @@ function newsCycle(root){
   if(paused){ pp.setAttribute("aria-pressed","true"); pp.textContent="Play"; }
   cleanup.push(()=>clearInterval(timer)); start();
 }
-// Homepage cover-flow: one card per thing the site offers; the hero takes the active card's colour
-const SZ_TONES=["#0A5FA8","#2F6B00","#172126","#8A5A00"];
+// Homepage cover-flow (Shazam style): one card per thing the site offers; the hero and header take the active card's colour
+const SZ_TONES=["#1466C8","#2F7D12","#2E3A46","#A35F00"];
 function homeSlides(spot,upcoming,feat){
-  const fig=(a,i)=>`<span class="sz-art panel ${panelCls(i)}"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"320px",alt:"",eager:i<3})}</span>`;
+  const fig=(a,i)=>`<span class="sz-art panel ${panelCls(i)}"><span class="grooves" aria-hidden="true"></span>${portrait(a,{sizes:"280px",alt:"",eager:i<2})}</span>`;
   const lyr=SONGS().filter(s=>s.lyrics), fresh=lyr[lyr.length-1], pick=song(D.picks[0]), rel=D.releases.find(r=>r.cover)||D.releases[0], ev=upcoming[0];
   const vid=D.videos.find(v=>v.artist&&artist(v.artist).photo), gap=SONGS().find(s=>!s.lyrics&&!s.lead&&artist(s.artist).photo&&!D.picks.includes(s.slug));
   return [
@@ -1773,41 +1800,47 @@ function homeSlides(spot,upcoming,feat){
     rel&&{label:"New releases",sub:"Albums and EPs out now",href:`#release.${rel.slug}`,art:`<span class="sz-art">${relArt(rel)}</span>`,title:rel.title,meta:`${artist(rel.artist).name} · ${rel.type}`},
     spot&&{label:"Weekly Spotlight",sub:"One artist, up close",href:`#artist.${spot.slug}`,a:spot,title:spot.name,meta:spot.genre},
     ev&&{label:"Coming up",sub:"Shows and events to catch",href:`#event.${ev.slug}`,art:`<span class="sz-art sz-date"><span class="d">${parse(ev.date).getDate()}</span><span class="m">${MONTHS_L[parse(ev.date).getMonth()]}</span></span>`,title:ev.title,meta:`${ev.venue}, ${ev.town}`},
-    feat&&{label:"Stories",sub:"Features on Salone’s artists",href:`#story.${feat.slug}`,art:`<span class="sz-art panel panel-blue"><span class="grooves" aria-hidden="true"></span>${pic(feat.photo,{sizes:"320px",alt:""})}</span>`,title:feat.title,meta:feat.cat},
+    feat&&{label:"Stories",sub:"Features on Salone’s artists",href:`#story.${feat.slug}`,art:`<span class="sz-art panel panel-blue"><span class="grooves" aria-hidden="true"></span>${pic(feat.photo,{sizes:"280px",alt:""})}</span>`,title:feat.title,meta:feat.cat},
     vid&&{label:"Lyric videos",sub:"Watch the words come alive",href:"#videos",a:artist(vid.artist),title:vid.title,meta:artist(vid.artist).name},
     gap&&{label:"Add lyrics",sub:"Know the words? Help fill the gaps",href:`#song.${gap.slug}`,a:artist(gap.artist),title:gap.title,meta:"Lyrics wanted"}
-  ].filter(Boolean).map((s,i)=>Object.assign(s,{tone:SZ_TONES[i%SZ_TONES.length],art:s.art||fig(s.a,i)}));
+  ].filter(Boolean).map((s,i)=>Object.assign(s,{tone:SZ_TONES[i%SZ_TONES.length],art:(s.art||fig(s.a,i)).replace('loading="lazy"','loading="eager"')}));
 }
 function szSlide(s,i,n){
-  return `<div class="sz-slide" data-tone="${s.tone}" role="group" aria-roledescription="slide" aria-label="${i+1} of ${n}: ${esc(s.label)}"><div class="sz-cap"><p class="sz-label">${esc(s.label)}</p><p class="sz-sub">${esc(s.sub)}</p></div><a class="sz-card" href="${s.href}">${s.art}<span class="sz-meta"><span class="sz-go" aria-hidden="true">${ICON.arrow}</span><span class="sz-txt"><strong>${esc(s.title)}</strong><small>${esc(s.meta)}</small></span></span></a></div>`;
+  return `<div class="sz-slide" data-tone="${s.tone}" role="group" aria-roledescription="slide" aria-label="${i+1} of ${n}: ${esc(s.label)}"><div class="sz-cap"><p class="sz-label">${esc(s.label)}</p><p class="sz-sub">${esc(s.sub)}</p></div><a class="sz-card" href="${s.href}"><span class="sz-pic">${s.art}<span class="sz-go" aria-hidden="true">${ICON.arrow}</span></span><span class="sz-txt"><strong>${esc(s.title)}</strong><small>${esc(s.meta)}</small></span></a></div>`;
 }
 function szFlow(root){
   const box=$("[data-sz]",root); if(!box) return;
-  const hero=box.closest(".sz"), slides=$$(".sz-slide",box), dots=$$("[data-sz-go]",box), pp=$("[data-sz-pp]",box), n=slides.length;
-  let i=0, timer=null, paused=false, held=false;
+  const hero=box.closest(".sz"), hdr=$(".site-header"), doc=document.documentElement, slides=$$(".sz-slide",box), dots=$$("[data-sz-go]",box), pp=$("[data-sz-pp]",box), n=slides.length;
+  let i=0, timer=null, paused=false; const hold={kb:false,hover:false};
   const show=k=>{ i=(k+n)%n;
     slides.forEach((s,j)=>{ let d=j-i; if(d>n/2) d-=n; else if(d<=-n/2) d+=n; const ad=Math.abs(d), on=d===0;
       s.style.setProperty("--d",d); s.style.setProperty("--ad",ad); s.style.zIndex=10-ad;
       s.classList.toggle("on",on); s.classList.toggle("far",ad>2); s.setAttribute("aria-hidden",!on);
       $$("a",s).forEach(x=>x.tabIndex=on?0:-1); });
     dots.forEach((b,j)=>b.setAttribute("aria-current",j===i));
-    hero.style.setProperty("--tone",slides[i].dataset.tone); };
-  // moves on by itself every 4.5 seconds; Pause stops it, and it waits while a keyboard user is inside it
-  const start=()=>{ clearInterval(timer); if(!paused&&!held) timer=setInterval(()=>show(i+1),4500); };
+    doc.style.setProperty("--tone",slides[i].dataset.tone); };
+  // moves on by itself every 4.5 seconds; it waits while the mouse is over it or a keyboard user is inside it,
+  // and keyboard users get a Pause button (it shows when focused)
+  const start=()=>{ clearInterval(timer); if(!paused&&!hold.kb&&!hold.hover) timer=setInterval(()=>show(i+1),4500); };
   const go=k=>{ show(k); start(); };
   slides.forEach((s,j)=>s.addEventListener("click",e=>{ if(j!==i){ e.preventDefault(); go(j); } }));
-  $("[data-sz-prev]",box).addEventListener("click",()=>go(i-1));
-  $("[data-sz-next]",box).addEventListener("click",()=>go(i+1));
   dots.forEach((b,j)=>b.addEventListener("click",()=>go(j)));
+  box.addEventListener("keydown",e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); go(i+(e.key==="ArrowRight"?1:-1)); } });
   pp.addEventListener("click",()=>{ paused=!paused; pp.setAttribute("aria-pressed",paused); pp.textContent=paused?"Play":"Pause"; pp.setAttribute("aria-label",(paused?"Play":"Pause")+" slideshow"); start(); });
-  box.addEventListener("focusin",e=>{ let kb=false; try{ kb=e.target.matches(":focus-visible"); }catch(_){} if(kb){ held=true; start(); } });
-  box.addEventListener("focusout",e=>{ if(!box.contains(e.relatedTarget)){ held=false; start(); } });
+  box.addEventListener("focusin",e=>{ let kb=false; try{ kb=e.target.matches(":focus-visible"); }catch(_){} if(kb){ hold.kb=true; start(); } });
+  box.addEventListener("focusout",e=>{ if(!box.contains(e.relatedTarget)){ hold.kb=false; start(); } });
+  if(window.matchMedia&&matchMedia("(hover:hover)").matches){ box.addEventListener("mouseenter",()=>{ hold.hover=true; start(); }); box.addEventListener("mouseleave",()=>{ hold.hover=false; start(); }); }
   const trk=$(".sz-track",box); let x0=null, y0=0;
   trk.addEventListener("touchstart",e=>{ x0=e.touches[0].clientX; y0=e.touches[0].clientY; },{passive:true});
   trk.addEventListener("touchend",e=>{ if(x0==null) return; const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0; x0=null; if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)) go(i+(dx<0?1:-1)); },{passive:true});
   const vis=()=>{ if(document.hidden) clearInterval(timer); else start(); }; document.addEventListener("visibilitychange",vis);
-  cleanup.push(()=>{ clearInterval(timer); document.removeEventListener("visibilitychange",vis); });
+  // header wears the hero colour until the hero has scrolled away (colour only, so nothing on the page moves)
+  hdr.classList.add("on-hero");
+  const io2="IntersectionObserver" in window ? new IntersectionObserver(([en])=>hdr.classList.toggle("on-hero",en.isIntersecting),{rootMargin:`-${hdr.offsetHeight+28}px 0px 0px 0px`}) : null;
+  if(io2) io2.observe(hero);
+  cleanup.push(()=>{ clearInterval(timer); document.removeEventListener("visibilitychange",vis); if(io2) io2.disconnect(); hdr.classList.remove("on-hero"); doc.style.removeProperty("--tone"); });
   show(0); start();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add("ready")));
 }
 function artistMarquee(root){
   const w=$("[data-amq]",root); if(!w) return; const pp=$("[data-amq-pp]",root);
