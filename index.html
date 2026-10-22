@@ -1789,10 +1789,9 @@ VIEWS.home = () => {
   <section class="spotlight grain" aria-labelledby="spot-h">
     <div class="spot-art"><span class="grooves spin" aria-hidden="true"></span><div class="floaty">${portrait(spot,{cls:"cut cut-shadow",sizes:"(min-width:900px) 45vw, 90vw"})}</div></div>
     <div class="spot-copy">
-      <div class="spot-label"><span class="tag tag-amber">Weekly Spotlight</span>${SP.week?`<span class="spot-week">Week of ${SP.week.getDate()} ${MONTHS_L[SP.week.getMonth()]}</span>`:""}</div>
+      <div class="spot-label"><span class="tag tag-amber">Weekly Spotlight</span></div>
       <h2 id="spot-h" class="display spot-name reveal">${esc(spot.name)}</h2>
       <p class="lede">${esc(spot.intro)}</p>
-      ${SP.why?`<p class="spot-why"><strong>Why now:</strong> ${esc(SP.why)}</p><p class="spot-src">Source: ${esc(D.spotlight.chart)}, checked ${fmt(D.spotlight.checked)}.</p>`:""}
       <dl class="spot-facts"><div><dt>Genre</dt><dd>${esc(spot.genre)}</dd></div><div><dt>Based in</dt><dd>${esc(spot.town)}</dd></div>${spot.label?`<div><dt>Label</dt><dd>${esc(spot.label)}</dd></div>`:""}</dl>
       <div class="row-wrap"><a class="btn btn-primary" href="#artist.${spot.slug}">Meet the Artist</a></div>
       
